@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekspedisi Rimba Lima Benua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --jungle-dark: #0a1f1a;
+            --accent-yellow: #ffb703;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--jungle-dark);
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+            transition: background 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Overlay gelap agar teks tetap terbaca jelas di atas gambar */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(10, 31, 26, 0.7) 0%, rgba(10, 31, 26, 0.9) 100%);
+            z-index: -1;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-action {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.4);
+        }
+
+        .drop-zone {
+            min-height: 70px;
+            border: 2px dashed var(--accent-yellow);
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+            transition: all 0.3s;
+        }
+
+        .draggable {
+            cursor: grab;
+            background: white;
+            color: #1a3c34;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffb703, #fb8500);
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .matching-item {
+            cursor: pointer;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+
+        .matching-item:hover:not(.correct) {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .matching-item.selected {
+            border-color: var(--accent-yellow);
+            background: rgba(255, 183, 3, 0.25);
+            box-shadow: 0 0 15px rgba(255, 183, 3, 0.3);
+        }
+
+        .matching-item.correct {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: #4ade80;
+            color: #4ade80;
+            pointer-events: none;
+        }
+
+        .hidden { display: none; }
+
+        .player-turn-indicator {
+            border-bottom: 4px solid transparent;
+            transition: all 0.4s;
+        }
+        .player-active {
+            border-color: var(--accent-yellow);
+            background: rgba(255, 183, 3, 0.1);
+        }
+        
+        .feedback-pop {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            padding: 2.5rem;
+            border-radius: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body style="background-image: url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1600&q=80')">
+
+    <div class="bg-overlay"></div>
+
+    <div id="game-container" class="relative z-10 max-w-4xl mx-auto p-4 md:p-8">
+        
+        <!-- Screen: Intro -->
+        <div id="screen-intro" class="text-center py-12">
+            <h1 class="text-6xl md:text-8xl mb-6 text-green-400 drop-shadow-lg">Ekspedisi Rimba <br> <span class="text-yellow-400">Lima Benua</span></h1>
+            <p class="text-xl mb-10 text-green-100 px-4 max-w-2xl mx-auto">Jelajahi keajaiban alam dari puncak Alpen hingga savana Afrika. Siapkah kamu menjadi Ranger Dunia?</p>
+            
+            <div class="glass-panel p-8 max-w-lg mx-auto mb-8 text-left">
+                <h3 class="text-xl font-bold mb-4 text-yellow-400 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Misi Kamu:
+                </h3>
+                <ul class="space-y-3 text-gray-200">
+                    <li class="flex items-start gap-2"><span>🌿</span> <span>Taklukkan 5 zona benua yang menantang.</span></li>
+                    <li class="flex items-start gap-2"><span>🧠</span> <span>Gunakan logika untuk menjawab soal HOTS.</span></li>
+                    <li class="flex items-start gap-2"><span>🏆</span> <span>Kumpulkan poin untuk sertifikat Master Penjelajah.</span></li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <button onclick="setupGame(1)" class="btn-action bg-green-600 hover:bg-green-500 text-white font-bold py-5 px-12 rounded-full text-xl shadow-xl">Solo Explorer</button>
+                <button onclick="setupGame(2)" class="btn-action bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-5 px-12 rounded-full text-xl shadow-xl">Duo Ranger</button>
+            </div>
+        </div>
+
+        <!-- Screen: Setup -->
+        <div id="screen-setup" class="hidden text-center py-12">
+            <h2 class="text-4xl mb-8 font-bold text-yellow-400">Siapa Penjelajahnya?</h2>
+            <div class="max-w-md mx-auto space-y-6">
+                <input type="text" id="p1-name" placeholder="Nama Ranger 1" class="w-full p-5 rounded-2xl bg-black/50 border-2 border-green-700 outline-none focus:border-yellow-400 text-white text-lg">
+                <div id="p2-input-container" class="hidden">
+                    <input type="text" id="p2-name" placeholder="Nama Ranger 2" class="w-full p-5 rounded-2xl bg-black/50 border-2 border-blue-700 outline-none focus:border-yellow-400 text-white text-lg">
+                </div>
+                <button onclick="startGame()" class="btn-action w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-5 rounded-2xl mt-4 text-2xl shadow-lg">BERANGKAT!</button>
+            </div>
+        </div>
+
+        <!-- Screen: Level Info -->
+        <div id="screen-level-info" class="hidden">
+            <div id="level-intro-content" class="glass-panel p-10 text-center border-t-4 border-yellow-500">
+                <!-- Content via JS -->
+            </div>
+            <button onclick="showQuestion()" class="btn-action w-full bg-green-600 hover:bg-green-500 text-white font-bold py-5 rounded-2xl mt-6 uppercase tracking-widest text-xl shadow-xl">Mulai Investigasi</button>
+        </div>
+
+        <!-- Screen: Game -->
+        <div id="screen-game" class="hidden">
+            <div class="flex justify-between items-center mb-6 bg-black/40 p-5 rounded-3xl border border-white/10">
+                <div id="p1-stats" class="player-turn-indicator p-3 rounded-xl">
+                    <p class="text-[10px] uppercase font-bold text-green-400 mb-1">Ranger 1</p>
+                    <p class="text-xl font-bold" id="p1-display-name">---</p>
+                    <p class="text-lg font-bold text-yellow-400"><span id="p1-score">0</span> <span class="text-xs text-white/60">pts</span></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm font-bold text-gray-300 mb-2">Benua <span id="current-level-num">1</span> dari 5</p>
+                    <div class="progress-bar w-32 md:w-56 mb-2">
+                        <div id="level-progress" class="progress-fill"></div>
+                    </div>
+                    <span id="difficulty-label" class="px-3 py-1 bg-yellow-500 text-black text-[10px] font-black rounded-full">LOTS</span>
+                </div>
+                <div id="p2-stats" class="player-turn-indicator p-3 rounded-xl hidden opacity-50">
+                    <p class="text-[10px] uppercase font-bold text-blue-400 mb-1">Ranger 2</p>
+                    <p class="text-xl font-bold" id="p2-display-name">---</p>
+                    <p class="text-lg font-bold text-yellow-400"><span id="p2-score">0</span> <span class="text-xs text-white/60">pts</span></p>
+                </div>
+            </div>
+
+            <div id="question-container" class="glass-panel p-6 md:p-12 min-h-[500px] flex flex-col justify-center items-center">
+                <div id="turn-announcement" class="mb-6 text-yellow-400 font-black text-sm tracking-[0.2em] bg-yellow-400/10 px-4 py-1 rounded-full"></div>
+                
+                <h3 id="question-text" class="text-2xl md:text-3xl font-bold mb-10 leading-relaxed text-center drop-shadow-md"></h3>
+                
+                <!-- MCQ -->
+                <div id="answer-options" class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full"></div>
+
+                <!-- Matching -->
+                <div id="matching-container" class="grid grid-cols-2 gap-6 md:gap-16 w-full hidden">
+                    <div id="matching-left" class="space-y-3"></div>
+                    <div id="matching-right" class="space-y-3"></div>
+                </div>
+
+                <!-- Drag Drop -->
+                <div id="drag-drop-container" class="w-full hidden">
+                    <div id="drag-source" class="flex flex-wrap justify-center gap-4 mb-10 p-6 bg-black/30 rounded-2xl border border-white/5"></div>
+                    <div id="drop-targets" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </div>
+            </div>
+
+            <div id="feedback-msg" class="mt-6 text-center text-xl font-black italic tracking-wider h-8"></div>
+        </div>
+
+        <!-- Screen: Result -->
+        <div id="screen-result" class="hidden text-center py-8">
+            <h2 class="text-6xl font-black mb-10 text-yellow-400 drop-shadow-2xl">MISI SELESAI!</h2>
+            
+            <div id="final-scores" class="flex flex-wrap justify-center gap-8 mb-12">
+                <!-- Scores via JS -->
+            </div>
+            
+            <div class="glass-panel p-10 max-w-3xl mx-auto text-left mb-10 border-l-8 border-yellow-500">
+                <h3 class="text-3xl font-bold mb-6 text-green-400 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 18H20"/></svg>
+                    Jurnal Refleksi Ranger
+                </h3>
+                <div id="reflection-text" class="space-y-5 text-gray-100 text-lg leading-relaxed">
+                    <!-- Reflection via JS -->
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="btn-action bg-yellow-500 hover:bg-yellow-400 text-black font-black py-6 px-16 rounded-full text-2xl shadow-2xl">MULAI LAGI</button>
+        </div>
+
+    </div>
+
+    <!-- Visual Feedback Element -->
+    <div id="pop-feedback" class="feedback-pop glass-panel border-2"></div>
+
+    <script>
+        // --- GAME CONTENT DATA WITH IMAGES ---
+        const levels = [
+            {
+                number: 1,
+                continent: "Eropa",
+                bg: "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?auto=format&fit=crop&w=1600&q=80", // Alpen/Swiss
+                difficulty: "LOTS",
+                subTheme: "Hutan Pinus & Puncak Salju",
+                info: "Benua dengan banyak semenanjung, iklim sedang, dan dikenal sebagai benua putih karena salju di pegunungannya.",
+                questions: [
+                    {
+                        type: "mc",
+                        q: "Manakah deskripsi yang paling tepat mengenai kenampakan alam benua Eropa?",
+                        options: ["Dataran rendah yang luas dengan banyak semenanjung", "Daratan yang dipenuhi oleh hutan hujan tropis", "Benua yang seluruhnya terdiri dari gurun pasir", "Pulau-pulau vulkanik yang saling berjauhan"],
+                        correct: 0,
+                        points: 10
+                    },
+                    {
+                        type: "matching",
+                        q: "Hubungkan kenampakan unik Eropa dengan lokasinya!",
+                        pairs: [
+                            { left: "Fjord (Teluk Gletser)", right: "Negara Skandinavia" },
+                            { left: "Gunung Elbrus", right: "Puncak Tertinggi Eropa" },
+                            { left: "Sungai Volga", right: "Sungai Terpanjang Eropa" }
+                        ],
+                        points: 15
+                    },
+                    {
+                        type: "mc",
+                        q: "Hewan endemik pegunungan Alpen yang memiliki tanduk melengkung besar adalah...",
+                        options: ["Rusa Kutub", "Ibex (Kambing Gunung)", "Beruang Grizzly", "Bison"],
+                        correct: 1,
+                        points: 10
+                    }
+                ]
+            },
+            {
+                number: 2,
+                continent: "Amerika",
+                bg: "https://images.unsplash.com/photo-1440330034025-1398d7010f7f?auto=format&fit=crop&w=1600&q=80", // Amazon/Nature
+                difficulty: "MOTS",
+                subTheme: "Lembah Amazon & Ngarai Besar",
+                info: "Benua yang membentang dari utara ke selatan, memiliki air terjun terbesar (Niagara) dan paru-paru dunia (Amazon).",
+                questions: [
+                    {
+                        type: "mc",
+                        q: "Kenampakan alam 'Grand Canyon' di Amerika Serikat terbentuk karena fenomena...",
+                        options: ["Letusan gunung berapi", "Erosi aliran sungai Colorado selama jutaan tahun", "Gempa bumi tektonik", "Hantaman meteorit"],
+                        correct: 1,
+                        points: 15
+                    },
+                    {
+                        type: "drag",
+                        q: "Identifikasi Hewan Amerika berdasarkan ciri khasnya!",
+                        items: ["Jaguar", "Llama", "Condor"],
+                        targets: [
+                            { label: "Kucing besar yang pandai berenang di Amazon", accept: "Jaguar" },
+                            { label: "Burung pemakan bangkai raksasa di pegunungan Andes", accept: "Condor" }
+                        ],
+                        points: 20
+                    },
+                    {
+                        type: "mc",
+                        q: "Kejadian alam ekstrem yang sering melanda wilayah 'Tornado Alley' di Amerika Tengah disebabkan oleh...",
+                        options: ["Pertemuan udara panas dari Meksiko dan udara dingin dari Kanada", "Pasang surut air laut", "Penebangan hutan liar", "Aktivitas vulkanik bawah laut"],
+                        correct: 0,
+                        points: 20
+                    }
+                ]
+            },
+            {
+                number: 3,
+                continent: "Asia",
+                bg: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=80", // Tokyo/Asia Landscape
+                difficulty: "MOTS",
+                subTheme: "Rimba Tropis & Atap Dunia",
+                info: "Benua terbesar dengan keberagaman iklim dari tropis hingga kutub, serta rumah bagi puncak tertinggi dunia.",
+                questions: [
+                    {
+                        type: "mc",
+                        q: "Fenomena 'Angin Monsun' di Asia sangat mempengaruhi kehidupan karena menyebabkan...",
+                        options: ["Gempa bumi rutin", "Perubahan musim hujan dan kemarau yang ekstrem", "Munculnya aurora", "Tsunami setiap tahun"],
+                        correct: 1,
+                        points: 20
+                    },
+                    {
+                        type: "matching",
+                        q: "Cocokkan Karakteristik Hewan Asia!",
+                        pairs: [
+                            { left: "Panda Raksasa", right: "Memakan Bambu & Hidup di Tiongkok" },
+                            { left: "Orangutan", right: "Primata Cerdas di Hutan Kalimantan" },
+                            { left: "Harimau Benggala", right: "Predator Hutan Bakau & India" }
+                        ],
+                        points: 25
+                    },
+                    {
+                        type: "mc",
+                        q: "Bencana alam tsunami besar tahun 2004 di Asia Tenggara terjadi akibat fenomena alam...",
+                        options: ["Topan badai", "Gempa tektonik bawah laut di Samudra Hindia", "Tanah longsor salju", "Gerhana matahari"],
+                        correct: 1,
+                        points: 20
+                    }
+                ]
+            },
+            {
+                number: 4,
+                continent: "Australia",
+                bg: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=1600&q=80", // Uluru/Australia
+                difficulty: "HOTS",
+                subTheme: "Tanah Merah & Terumbu Karang",
+                info: "Benua terkecil yang terisolasi selama jutaan tahun, menciptakan ekosistem unik yang tidak ditemukan di tempat lain.",
+                questions: [
+                    {
+                        type: "mc",
+                        q: "Mengapa fauna di Australia (seperti Kangguru) sangat berbeda dengan benua lain? Analisislah penyebabnya!",
+                        options: ["Karena Australia benua yang paling panas", "Karena isolasi geografis yang memisahkan Australia dari daratan lain sejak lama", "Karena penduduknya hobi memelihara hewan kantung", "Karena vegetasi Australia hanya terdiri dari semak belukar"],
+                        correct: 1,
+                        points: 30
+                    },
+                    {
+                        type: "drag",
+                        q: "Klasifikasikan Karakter Unik Hewan Australia!",
+                        items: ["Platipus", "Koala", "Tasmanian Devil"],
+                        targets: [
+                            { label: "Hewan Mamalia yang justru bertelur", accept: "Platipus" },
+                            { label: "Mamalia berkantung pemakan daun Eucalyptus", accept: "Koala" }
+                        ],
+                        points: 30
+                    },
+                    {
+                        type: "mc",
+                        q: "Great Barrier Reef adalah struktur hidup terbesar di dunia. Apa ancaman utama fenomena alam ini sekarang?",
+                        options: ["Kenaikan suhu laut yang menyebabkan pemutihan karang", "Serangan hiu massal", "Tsunami besar", "Pembentukan pulau baru"],
+                        correct: 0,
+                        points: 30
+                    }
+                ]
+            },
+            {
+                number: 5,
+                continent: "Afrika",
+                bg: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1600&q=80", // Savannah
+                difficulty: "HOTS",
+                subTheme: "Sabana Emas & Lembah Nil",
+                info: "Benua hitam dengan ekosistem sabana terluas dan sungai terpanjang di dunia (Nil), menghadapi tantangan iklim yang berat.",
+                questions: [
+                    {
+                        type: "mc",
+                        q: "Analisislah: Bagaimana fenomena 'Desertifikasi' (perluasan Gurun Sahara) mempengaruhi keberlangsungan hidup 'The Big Five'?",
+                        options: ["Mempercepat pertumbuhan rumput sabana", "Mempersempit habitat dan memutus jalur migrasi alami hewan", "Membuat hewan lebih mudah berburu", "Tidak berdampak karena hewan sudah kuat"],
+                        correct: 1,
+                        points: 40
+                    },
+                    {
+                        type: "matching",
+                        q: "Evaluasi Peran Unik Hewan Afrika dalam Ekosistem!",
+                        pairs: [
+                            { left: "Gajah Afrika", right: "Membuka jalur di hutan & menyebar benih" },
+                            { left: "Burung Bangkai", right: "Pembersih alami dari bangkai penyakit" },
+                            { left: "Singa", right: "Penjaga populasi herbivora agar seimbang" }
+                        ],
+                        points: 40
+                    },
+                    {
+                        type: "mc",
+                        q: "Bencana kelaparan hebat di wilayah Sahel (selatan Sahara) sering terjadi. Faktor alam utama penyebabnya adalah...",
+                        options: ["Curah hujan yang terlalu tinggi", "Kekeringan berkepanjangan akibat anomali iklim", "Erupsi gunung berapi massal", "Terlalu banyak hewan ternak"],
+                        correct: 1,
+                        points: 40
+                    }
+                ]
+            }
+        ];
+
+        // --- GAME STATE ---
+        let playerCount = 1;
+        let scores = [0, 0];
+        let playerNames = ["", ""];
+        let currentLevelIndex = 0;
+        let currentQuestionIndex = 0;
+        let currentPlayerTurn = 0;
+        let tempLeftSelection = null;
+
+        // --- CORE FUNCTIONS ---
+
+        function updateBackground(url) {
+            document.body.style.backgroundImage = `url('${url}')`;
+        }
+
+        function setupGame(count) {
+            playerCount = count;
+            document.getElementById('screen-intro').classList.add('hidden');
+            document.getElementById('screen-setup').classList.remove('hidden');
+            if(count === 2) {
+                document.getElementById('p2-input-container').classList.remove('hidden');
+                document.getElementById('p2-stats').classList.remove('hidden');
+            }
+        }
+
+        function startGame() {
+            playerNames[0] = document.getElementById('p1-name').value || "Ranger Satu";
+            playerNames[1] = document.getElementById('p2-name').value || "Ranger Dua";
+            
+            document.getElementById('p1-display-name').innerText = playerNames[0];
+            document.getElementById('p2-display-name').innerText = playerNames[1];
+            
+            document.getElementById('screen-setup').classList.add('hidden');
+            showLevelIntro();
+        }
+
+        function showLevelIntro() {
+            const level = levels[currentLevelIndex];
+            updateBackground(level.bg);
+
+            const container = document.getElementById('screen-level-info');
+            const content = document.getElementById('level-intro-content');
+            
+            content.innerHTML = `
+                <div class="mb-4 text-yellow-500 font-bold tracking-[0.3em] uppercase text-xs">Zona Ekspedisi 0${level.number}</div>
+                <h2 class="text-6xl text-white mb-2 drop-shadow-lg">${level.continent}</h2>
+                <p class="text-2xl italic text-yellow-400 mb-8 font-light">"${level.subTheme}"</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-8">
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                        <h4 class="text-green-400 font-bold mb-3 flex items-center gap-2">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 
+                           Laporan Geografis
+                        </h4>
+                        <p class="text-sm text-gray-300 leading-relaxed">${level.info}</p>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                        <h4 class="text-yellow-500 font-bold mb-3 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            Tingkat Kesulitan
+                        </h4>
+                        <p class="text-sm text-gray-300">Level ini menuntut kemampuan berpikir <strong>${level.difficulty}</strong>. Analisis setiap petunjuk dengan teliti.</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('screen-game').classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+        function showQuestion() {
+            document.getElementById('screen-level-info').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            
+            const level = levels[currentLevelIndex];
+            const q = level.questions[currentQuestionIndex];
+            
+            document.getElementById('current-level-num').innerText = level.number;
+            document.getElementById('level-progress').style.width = `${((currentLevelIndex * 3 + currentQuestionIndex) / (levels.length * 3)) * 100}%`;
+            document.getElementById('difficulty-label').innerText = level.difficulty;
+            document.getElementById('question-text').innerText = q.q;
+            
+            if(playerCount === 2) {
+                const activeName = playerNames[currentPlayerTurn];
+                document.getElementById('turn-announcement').innerText = `GILIRAN: ${activeName.toUpperCase()}`;
+                
+                document.getElementById('p1-stats').classList.toggle('player-active', currentPlayerTurn === 0);
+                document.getElementById('p2-stats').classList.toggle('player-active', currentPlayerTurn === 1);
+                document.getElementById('p1-stats').style.opacity = currentPlayerTurn === 0 ? "1" : "0.5";
+                document.getElementById('p2-stats').style.opacity = currentPlayerTurn === 1 ? "1" : "0.5";
+            }
+
+            resetQuestionLayouts();
+
+            if(q.type === 'mc') {
+                const optContainer = document.getElementById('answer-options');
+                optContainer.classList.remove('hidden');
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "bg-white/5 hover:bg-yellow-500/20 p-6 rounded-2xl text-left transition-all border border-white/10 hover:border-yellow-500 group";
+                    btn.innerHTML = `<span class="inline-block w-8 h-8 rounded-lg bg-white/10 text-yellow-500 font-black text-center leading-8 mr-3 group-hover:bg-yellow-500 group-hover:text-black transition-colors">${String.fromCharCode(65+idx)}</span> ${opt}`;
+                    btn.onclick = () => processResult(idx === q.correct, q.points);
+                    optContainer.appendChild(btn);
+                });
+            } else if(q.type === 'matching') {
+                setupMatching(q);
+            } else if(q.type === 'drag') {
+                setupDragDrop(q);
+            }
+        }
+
+        function resetQuestionLayouts() {
+            document.getElementById('answer-options').innerHTML = '';
+            document.getElementById('answer-options').classList.add('hidden');
+            document.getElementById('matching-container').classList.add('hidden');
+            document.getElementById('drag-drop-container').classList.add('hidden');
+            document.getElementById('feedback-msg').innerText = '';
+            tempLeftSelection = null;
+        }
+
+        function setupMatching(q) {
+            const container = document.getElementById('matching-container');
+            container.classList.remove('hidden');
+            const leftSide = document.getElementById('matching-left');
+            const rightSide = document.getElementById('matching-right');
+            leftSide.innerHTML = '<p class="text-[10px] text-yellow-500 uppercase font-black mb-4">Item Temuan</p>';
+            rightSide.innerHTML = '<p class="text-[10px] text-yellow-500 uppercase font-black mb-4">Lokasi/Ciri</p>';
+
+            let matchesNeeded = q.pairs.length;
+            let matchesFound = 0;
+            const shuffledPairs = [...q.pairs].sort(() => Math.random() - 0.5);
+
+            q.pairs.forEach((pair, idx) => {
+                const lItem = document.createElement('div');
+                lItem.className = "matching-item";
+                lItem.innerText = pair.left;
+                lItem.dataset.pairId = idx;
+                lItem.onclick = () => {
+                    if(tempLeftSelection) tempLeftSelection.classList.remove('selected');
+                    tempLeftSelection = lItem;
+                    lItem.classList.add('selected');
+                };
+                leftSide.appendChild(lItem);
+            });
+
+            shuffledPairs.forEach((pair) => {
+                const rItem = document.createElement('div');
+                rItem.className = "matching-item";
+                rItem.innerText = pair.right;
+                const originalIdx = q.pairs.findIndex(p => p.right === pair.right);
+                rItem.dataset.pairId = originalIdx;
+                rItem.onclick = () => {
+                    if(!tempLeftSelection) return;
+                    if(tempLeftSelection.dataset.pairId === rItem.dataset.pairId) {
+                        tempLeftSelection.classList.add('correct');
+                        rItem.classList.add('correct');
+                        tempLeftSelection = null;
+                        matchesFound++;
+                        triggerPopFeedback("TEPAT!", true);
+                        if(matchesFound === matchesNeeded) processResult(true, q.points);
+                    } else {
+                        triggerPopFeedback("SALAH!", false);
+                        processResult(false, q.points);
+                        tempLeftSelection.classList.remove('selected');
+                        tempLeftSelection = null;
+                    }
+                };
+                rightSide.appendChild(rItem);
+            });
+        }
+
+        function setupDragDrop(q) {
+            const container = document.getElementById('drag-drop-container');
+            container.classList.remove('hidden');
+            const source = document.getElementById('drag-source');
+            const targets = document.getElementById('drop-targets');
+            source.innerHTML = '';
+            targets.innerHTML = '';
+
+            q.items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "draggable";
+                div.innerText = item;
+                div.draggable = true;
+                div.addEventListener('dragstart', (e) => e.dataTransfer.setData("text", item));
+                source.appendChild(div);
+            });
+
+            let solved = 0;
+            q.targets.forEach(t => {
+                const zoneWrap = document.createElement('div');
+                zoneWrap.className = "bg-white/5 p-6 rounded-2xl border border-white/5";
+                zoneWrap.innerHTML = `<p class="text-sm mb-4 text-green-400 font-bold">${t.label}</p>
+                                      <div class="drop-zone flex items-center justify-center text-xs text-white/30" data-accept="${t.accept}">Tarik ke sini</div>`;
+                
+                const targetBox = zoneWrap.querySelector('.drop-zone');
+                targetBox.addEventListener('dragover', (e) => e.preventDefault());
+                targetBox.addEventListener('drop', (e) => {
+                    const droppedData = e.dataTransfer.getData("text");
+                    if(droppedData === t.accept) {
+                        targetBox.innerText = droppedData;
+                        targetBox.className = "drop-zone border-green-500 bg-green-500/20 text-green-400 font-bold flex items-center justify-center";
+                        solved++;
+                        triggerPopFeedback("BAGUS!", true);
+                        if(solved === q.targets.length) processResult(true, q.points);
+                    } else {
+                        triggerPopFeedback("COBA LAGI!", false);
+                        processResult(false, q.points);
+                    }
+                });
+                targets.appendChild(zoneWrap);
+            });
+        }
+
+        function triggerPopFeedback(text, isCorrect) {
+            const pop = document.getElementById('pop-feedback');
+            pop.innerText = text;
+            pop.style.display = "block";
+            pop.style.color = isCorrect ? "#4ade80" : "#f87171";
+            pop.style.borderColor = isCorrect ? "#4ade80" : "#f87171";
+            pop.style.background = isCorrect ? "rgba(74, 222, 128, 0.2)" : "rgba(248, 113, 113, 0.2)";
+            
+            setTimeout(() => { pop.style.display = "none"; }, 900);
+        }
+
+        function processResult(isCorrect, points) {
+            const feedbackEl = document.getElementById('feedback-msg');
+            
+            if(isCorrect) {
+                feedbackEl.innerText = "✓ BERHASIL TERIDENTIFIKASI! +" + points;
+                feedbackEl.style.color = "#4ade80";
+                scores[currentPlayerTurn] += points;
+            } else {
+                feedbackEl.innerText = "✗ JALUR TERHAMBAT! - 5";
+                feedbackEl.style.color = "#f87171";
+                scores[currentPlayerTurn] = Math.max(0, scores[currentPlayerTurn] - 5);
+            }
+
+            updateScoreUI();
+
+            if(isCorrect || (levels[currentLevelIndex].questions[currentQuestionIndex].type === 'mc')) {
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if(playerCount === 2) currentPlayerTurn = currentPlayerTurn === 0 ? 1 : 0;
+                    
+                    if(currentQuestionIndex >= levels[currentLevelIndex].questions.length) {
+                        currentQuestionIndex = 0;
+                        currentLevelIndex++;
+                        if(currentLevelIndex >= levels.length) {
+                            showFinalResult();
+                        } else {
+                            showLevelIntro();
+                        }
+                    } else {
+                        showQuestion();
+                    }
+                }, 1300);
+            }
+        }
+
+        function updateScoreUI() {
+            document.getElementById('p1-score').innerText = scores[0];
+            if(playerCount === 2) document.getElementById('p2-score').innerText = scores[1];
+        }
+
+        function showFinalResult() {
+            updateBackground("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=80"); // Deep Forest
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            
+            const scoreContainer = document.getElementById('final-scores');
+            scoreContainer.innerHTML = `
+                <div class="glass-panel p-8 border-t-8 border-green-500 min-w-[240px]">
+                    <p class="text-xs uppercase tracking-widest text-gray-400 mb-2">${playerNames[0]}</p>
+                    <p class="text-7xl font-black text-white">${scores[0]}</p>
+                    <p class="text-sm mt-3 text-green-400 font-bold uppercase">Skor Akhir</p>
+                </div>
+            `;
+            if(playerCount === 2) {
+                scoreContainer.innerHTML += `
+                    <div class="glass-panel p-8 border-t-8 border-blue-500 min-w-[240px]">
+                        <p class="text-xs uppercase tracking-widest text-gray-400 mb-2">${playerNames[1]}</p>
+                        <p class="text-7xl font-black text-white">${scores[1]}</p>
+                        <p class="text-sm mt-3 text-blue-400 font-bold uppercase">Skor Akhir</p>
+                    </div>
+                `;
+            }
+
+            const winnerScore = Math.max(scores[0], scores[1]);
+            const reflectionEl = document.getElementById('reflection-text');
+            
+            let html = "";
+            if(winnerScore >= 250) {
+                html = `
+                    <p class="text-2xl font-bold text-yellow-400">🏅 PANGKAT: MASTER RANGER DUNIA</p>
+                    <p>Luar biasa! Kamu memiliki wawasan geografi yang sangat tajam. Kamu memahami bahwa alam bukan sekadar peta, tapi sistem kehidupan yang saling terhubung. Analisismu terhadap krisis di Australia dan Afrika menunjukkan empati lingkungan yang tinggi.</p>
+                    <p><i>Teruslah menjadi penjaga bumi di kehidupan nyata!</i></p>
+                `;
+            } else if(winnerScore >= 150) {
+                html = `
+                    <p class="text-2xl font-bold text-green-400">🥈 PANGKAT: PENJELAJAH SENIOR</p>
+                    <p>Kamu hebat! Sebagian besar misteri benua berhasil kamu pecahkan. Ingatlah bahwa geografi selalu berubah. Terus pelajari bagaimana manusia mempengaruhi bentang alam agar skormu mencapai puncak di ekspedisi berikutnya.</p>
+                `;
+            } else {
+                html = `
+                    <p class="text-2xl font-bold text-blue-400">🥉 PANGKAT: RANGER MAGANG</p>
+                    <p>Perjalanan yang cukup baik! Dunia ini sangat luas dan penuh kejutan. Jangan berhenti bereksplorasi. Cobalah baca lebih banyak tentang karakteristik fauna endemik agar kamu tidak tersesat di rimba pengetahuan.</p>
+                `;
+            }
+            reflectionEl.innerHTML = html;
+        }
+
+    </script>
+</body>
+</html>

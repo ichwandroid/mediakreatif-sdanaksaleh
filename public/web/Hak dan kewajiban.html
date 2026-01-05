@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Pendidikan Pancasila: Hak & Kewajiban</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #e8f5e9;
+            overflow-x: hidden;
+        }
+        .font-game { font-family: 'Fredoka+One', cursive; }
+        
+        .jungle-bg {
+            background: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), 
+                        url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-forest {
+            background: rgba(255, 255, 255, 0.98);
+            border: 6px solid #38b000;
+            border-radius: 30px;
+            box-shadow: 0 15px 0 #1b4332;
+        }
+
+        .btn-option {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid #d8f3dc;
+        }
+        .btn-option:hover:not(:disabled) {
+            transform: scale(1.02);
+            background-color: #f7fee7;
+            border-color: #38b000;
+        }
+
+        .visual-container {
+            width: 100%;
+            height: 220px;
+            background: #f0fdf4;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border: 3px dashed #86efac;
+            position: relative;
+        }
+
+        #question-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .loader-forest {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .leaf-spin {
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #leaf-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+
+        .leaf {
+            position: absolute;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        .shake { animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .leaderboard-item:nth-child(1) { background: #fef3c7; border-color: #f59e0b; }
+
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            background: white;
+            border: 4px solid #38b000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="jungle-bg min-h-screen flex items-center justify-center p-4">
+
+    <div id="leaf-container"></div>
+
+    <div onclick="toggleMusic()" class="sound-toggle" id="music-btn" title="Aktifkan/Matikan Musik">
+        <span id="music-icon" class="text-2xl">🔊</span>
+    </div>
+
+    <div class="max-w-2xl w-full z-10">
+        <div id="start-screen" class="card-forest p-8 text-center animate__animated animate__fadeIn">
+            <div class="flex justify-center gap-4 mb-4">
+                <div class="text-7xl animate-bounce">🦁</div>
+                <div class="text-7xl animate-bounce" style="animation-delay: 0.2s">🦜</div>
+            </div>
+            <h1 class="font-game text-4xl text-green-800 mb-4">Petualangan Hutan Pancasila</h1>
+            <p class="text-xl text-gray-700 mb-6 font-semibold">Siapa namamu, Petualang Cilik?</p>
+            
+            <input type="text" id="player-name" placeholder="Masukkan nama kamu..." 
+                class="w-full p-4 mb-6 rounded-2xl border-4 border-green-200 text-center text-xl font-bold focus:border-green-500 outline-none">
+            
+            <button onclick="checkNameAndStart()" class="bg-green-600 hover:bg-green-700 text-white font-game text-3xl py-5 px-12 rounded-full shadow-xl border-b-8 border-green-900 transition transform active:scale-95">
+                MULAI JELAJAH!
+            </button>
+        </div>
+
+        <div id="quiz-screen" class="hidden card-forest p-6 relative">
+            <div class="flex justify-between items-center mb-4">
+                <div class="bg-white px-4 py-1 rounded-full border-4 border-green-600 shadow-sm font-game text-green-700 text-sm md:text-base">👤 <span id="display-name">User</span></div>
+                <div class="bg-white px-4 py-1 rounded-full border-4 border-yellow-500 shadow-sm font-game text-yellow-700">⭐ <span id="score">0</span></div>
+                <div class="bg-white px-4 py-1 rounded-full border-4 border-blue-500 shadow-sm font-game text-blue-700">📝 <span id="question-num">1</span>/10</div>
+            </div>
+
+            <div class="visual-container shadow-inner">
+                <div id="image-loader" class="loader-forest">
+                    <div class="text-4xl leaf-spin mb-2">🌿</div>
+                    <p class="text-sm font-bold text-green-600">Mencari petunjuk di semak-semak...</p>
+                </div>
+                <img id="question-image" class="hidden animate__animated animate__fadeIn" src="" alt="Ilustrasi Soal">
+            </div>
+
+            <div id="question-container" class="text-center">
+                <h2 id="question-text" class="text-lg md:text-xl font-bold text-gray-800 mb-6 min-h-[3rem]">Memuat tantangan...</h2>
+                <div id="options" class="grid grid-cols-1 gap-3"></div>
+            </div>
+            
+            <div id="feedback" class="hidden mt-4 p-4 rounded-2xl text-center font-bold animate__animated"></div>
+        </div>
+
+        <div id="end-screen" class="hidden card-forest p-8 text-center animate__animated animate__zoomIn">
+            <h2 class="font-game text-4xl text-green-800 mb-2">Penjelajahan Selesai!</h2>
+            <div id="final-animal" class="text-6xl mb-4">🏆</div>
+            <p id="final-score" class="font-game text-6xl text-green-600 mb-2">0</p>
+            <div id="score-message" class="text-lg text-gray-600 mb-6 font-semibold italic"></div>
+            
+            <div class="bg-green-50 rounded-2xl p-4 mb-6 border-2 border-green-200">
+                <h3 class="font-game text-xl text-green-800 mb-3 underline">🏆 Papan Skor Petualang</h3>
+                <div id="leaderboard-list" class="space-y-2 max-h-48 overflow-y-auto pr-2"></div>
+            </div>
+
+            <button onclick="restartGame()" class="bg-orange-500 hover:bg-orange-600 text-white font-game text-xl py-3 px-8 rounded-full shadow-lg border-b-8 border-orange-800">
+                JELAJAH LAGI 🔄
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; 
+
+        // --- Audio Management ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let musicGainNode = null;
+        let isMusicPlaying = false;
+        let musicMuted = false;
+
+        function playTone(freq, duration, type = 'sine', volume = 0.1) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // Ceria Adventure Theme (Upbeat Major Scale)
+        function startAdventureMusic() {
+            if (isMusicPlaying) return;
+            isMusicPlaying = true;
+            
+            musicGainNode = audioCtx.createGain();
+            musicGainNode.gain.value = musicMuted ? 0 : 0.08;
+            musicGainNode.connect(audioCtx.destination);
+
+            // Melody: C4, E4, G4, C5, A4, G4, E4, D4 (Cheerful and bright)
+            const melody = [261.63, 329.63, 392.00, 523.25, 440.00, 392.00, 329.63, 293.66];
+            // Harmony/Chords: C Major, F Major, G Major
+            const harmony = [130.81, 174.61, 196.00, 164.81]; 
+            
+            let beat = 0;
+
+            function playLoop() {
+                if (!isMusicPlaying) return;
+
+                // Percussive Kick-like Bass
+                if (beat % 2 === 0) {
+                    const kickOsc = audioCtx.createOscillator();
+                    const kickGain = audioCtx.createGain();
+                    kickOsc.frequency.setValueAtTime(80, audioCtx.currentTime);
+                    kickOsc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    kickGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    kickGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                    kickOsc.connect(kickGain);
+                    kickGain.connect(musicGainNode);
+                    kickOsc.start(); kickOsc.stop(audioCtx.currentTime + 0.1);
+                }
+
+                // Cheerful Arpeggio
+                const mOsc = audioCtx.createOscillator();
+                const mGain = audioCtx.createGain();
+                mOsc.type = 'triangle';
+                mOsc.frequency.setValueAtTime(melody[beat % melody.length], audioCtx.currentTime);
+                mGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                mGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                mOsc.connect(mGain);
+                mGain.connect(musicGainNode);
+                mOsc.start();
+                mOsc.stop(audioCtx.currentTime + 0.2);
+
+                // Supporting Harmony
+                if (beat % 4 === 0) {
+                    const hOsc = audioCtx.createOscillator();
+                    const hGain = audioCtx.createGain();
+                    hOsc.type = 'sine';
+                    hOsc.frequency.setValueAtTime(harmony[(beat/4) % harmony.length], audioCtx.currentTime);
+                    hGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    hGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.6);
+                    hOsc.connect(hGain);
+                    hGain.connect(musicGainNode);
+                    hOsc.start();
+                    hOsc.stop(audioCtx.currentTime + 0.6);
+                }
+
+                beat++;
+                setTimeout(playLoop, 250); // Faster tempo for more energy
+            }
+            
+            playLoop();
+        }
+
+        function toggleMusic() {
+            musicMuted = !musicMuted;
+            const icon = document.getElementById('music-icon');
+            icon.innerText = musicMuted ? "🔇" : "🔊";
+            
+            if (musicGainNode) {
+                musicGainNode.gain.setTargetAtTime(musicMuted ? 0 : 0.08, audioCtx.currentTime, 0.1);
+            }
+        }
+
+        // --- Game Logic ---
+        const questions = [
+            {
+                question: "Mendapat kasih sayang dan perhatian dari ayah dan ibu di rumah adalah...",
+                options: ["Hak Anak", "Kewajiban Anak"],
+                correct: 0,
+                prompt: "A child receiving a warm hug from parents, cozy living room, 3d cartoon style",
+                explanation: "Disayangi adalah hak yang harus didapat setiap anak."
+            },
+            {
+                question: "Membantu orang tua merapikan tempat tidur setelah bangun adalah...",
+                options: ["Hak", "Kewajiban"],
+                correct: 1,
+                prompt: "A child neatly folding a blanket and pillow, morning light, 3d clay style",
+                explanation: "Menjaga kerapihan kamar adalah kewajibanmu di rumah."
+            },
+            {
+                question: "Mendapatkan makanan sehat dan bergizi setiap hari merupakan...",
+                options: ["Kewajiban", "Hak Anak"],
+                correct: 1,
+                prompt: "A plate of healthy colorful food, fruits and vegetables, 3d cute art",
+                explanation: "Tubuhmu butuh nutrisi, itu adalah hakmu!"
+            },
+            {
+                question: "Mendengarkan nasehat orang tua dengan baik adalah contoh...",
+                options: ["Kewajiban Anak", "Hak Anak"],
+                correct: 0,
+                prompt: "A child listening respectfully to an adult, warm atmosphere, 3d cartoon",
+                explanation: "Hormat pada orang tua adalah kewajiban yang utama."
+            },
+            {
+                question: "Belajar dengan tekun dan mengerjakan PR adalah...",
+                options: ["Hak untuk lelah", "Kewajiban Anak"],
+                correct: 1,
+                prompt: "A child studying at a desk with a lamp, 3d stylized character",
+                explanation: "Belajar adalah tugas (kewajiban) penting bagi siswa."
+            },
+            {
+                question: "Mendapatkan uang saku untuk jajan secukupnya adalah...",
+                options: ["Hak Anak", "Kewajiban Anak"],
+                correct: 0,
+                prompt: "A parent giving a coin to a happy child, 3d cute character style",
+                explanation: "Uang saku adalah hak tambahan dari orang tua untuk kebutuhanmu."
+            },
+            {
+                question: "Merapikan kembali mainan yang telah digunakan adalah...",
+                options: ["Hak Bermain", "Kewajiban Anak"],
+                correct: 1,
+                prompt: "A child putting toys back in a box, tidy playroom, 3d cartoon style",
+                explanation: "Merapikan mainan adalah kewajiban setelah kamu menggunakan hak bermain."
+            },
+            {
+                question: "Tidur yang cukup dan teratur agar tubuh sehat merupakan...",
+                options: ["Kewajiban", "Hak Anak"],
+                correct: 1,
+                prompt: "A child sleeping peacefully in a soft bed, 3d storybook style",
+                explanation: "Istirahat yang cukup adalah hakmu agar tetap bugar."
+            },
+            {
+                question: "Menjaga kebersihan rumah dengan menyapu lantai adalah...",
+                options: ["Hak", "Kewajiban"],
+                correct: 1,
+                prompt: "A child holding a broom and sweeping the floor, 3d character animation",
+                explanation: "Menjaga rumah tetap bersih adalah kewajiban anggota keluarga."
+            },
+            {
+                question: "Bertanya jika ada pelajaran yang tidak dimengerti kepada orang tua adalah...",
+                options: ["Hak Bertanya", "Kewajiban Diam"],
+                correct: 0,
+                prompt: "A curious child asking questions to a parent, 3d stylized scene",
+                explanation: "Mendapat bimbingan belajar di rumah adalah hakmu."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "";
+        let leaderboard = [];
+
+        async function generateQuestionImage(promptText) {
+            const loader = document.getElementById('image-loader');
+            const imgEl = document.getElementById('question-image');
+            loader.classList.remove('hidden');
+            imgEl.classList.add('hidden');
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        instances: [{ prompt: promptText }],
+                        parameters: { sampleCount: 1 }
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                
+                if (result?.predictions?.[0]?.bytesBase64Encoded) {
+                    const base64Data = result.predictions[0].bytesBase64Encoded;
+                    imgEl.src = `data:image/png;base64,${base64Data}`;
+                    imgEl.onload = () => {
+                        loader.classList.add('hidden');
+                        imgEl.classList.remove('hidden');
+                    };
+                }
+            } catch (error) {
+                console.error('Gagal memuat gambar:', error);
+                loader.innerHTML = '<div class="text-red-500 font-bold p-2 text-center">⚠️ Gambar hutan sedang bersembunyi</div>';
+            }
+        }
+
+        function checkNameAndStart() {
+            playerName = document.getElementById('player-name').value.trim();
+            if (playerName === "") {
+                const input = document.getElementById('player-name');
+                input.classList.add('border-red-500', 'shake');
+                setTimeout(() => input.classList.remove('shake'), 500);
+                return;
+            }
+            document.getElementById('display-name').innerText = playerName;
+            
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            startAdventureMusic();
+            
+            startGame();
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        async function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('question-text').innerText = question.question;
+            
+            document.getElementById('image-loader').innerHTML = `
+                <div class="text-4xl leaf-spin mb-2">🌿</div>
+                <p class="text-sm font-bold text-green-600">Menelusuri jejak di hutan...</p>
+            `;
+            
+            generateQuestionImage(question.prompt);
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'btn-option bg-white p-4 rounded-xl text-lg font-bold text-gray-700 shadow-md animate__animated animate__fadeInUp';
+                button.innerText = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const buttons = document.querySelectorAll('.btn-option');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === question.correct) {
+                // Happy Success Jingle
+                playTone(523.25, 0.1, 'sine', 0.2);
+                setTimeout(() => playTone(659.25, 0.1, 'sine', 0.2), 100);
+                setTimeout(() => playTone(783.99, 0.3, 'sine', 0.2), 200);
+                
+                score += 10;
+                feedback.innerHTML = `🌟 LUAR BIASA! <br> ${question.explanation}`;
+                feedback.className = "mt-4 p-3 rounded-2xl text-center font-bold bg-green-100 text-green-800 border-4 border-green-500 block animate__animated animate__tada";
+            } else {
+                playTone(150, 0.4, 'square', 0.1); 
+                document.getElementById('quiz-screen').classList.add('shake');
+                setTimeout(() => document.getElementById('quiz-screen').classList.remove('shake'), 500);
+                feedback.innerHTML = `💪 JANGAN MENYERAH! <br> ${question.explanation}`;
+                feedback.className = "mt-4 p-3 rounded-2xl text-center font-bold bg-orange-100 text-orange-800 border-4 border-orange-500 block animate__animated animate__shakeX";
+            }
+
+            document.getElementById('score').innerText = score;
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    saveAndShowLeaderboard();
+                }
+            }, 3000);
+        }
+
+        function saveAndShowLeaderboard() {
+            leaderboard.push({ name: playerName, score: score });
+            leaderboard.sort((a, b) => b.score - a.score);
+            
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            let msg = score >= 80 ? "Kamu adalah Penjelajah Sejati! 👑" : "Hebat! Teruslah menjelajahi ilmu! 🐨";
+            document.getElementById('score-message').innerText = msg;
+
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item flex justify-between items-center p-3 bg-white rounded-xl border-2 border-green-100 font-bold';
+                item.innerHTML = `<span>#${index + 1} ${entry.name}</span><span class="text-green-600">${entry.score} pts</span>`;
+                list.appendChild(item);
+            });
+        }
+
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('score').innerText = 0;
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('player-name').value = "";
+        }
+
+        const createLeaves = () => {
+            const container = document.getElementById('leaf-container');
+            for (let i = 0; i < 15; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf text-green-600';
+                leaf.innerText = '🍃';
+                leaf.style.left = Math.random() * 100 + 'vw';
+                leaf.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                leaf.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(leaf);
+            }
+        };
+        createLeaves();
+    </script>
+</body>
+</html>

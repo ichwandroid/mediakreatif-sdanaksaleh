@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force and Motion Explorer</title>
+    <style>
+        :root {
+            --force-red: #FF5252;
+            --motion-blue: #448AFF;
+            --gravity-purple: #7C4DFF;
+            --friction-orange: #FFAB40;
+            --white: #ffffff;
+            --bg-soft: #F0F4F8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-soft);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        #game-container {
+            background-color: var(--white);
+            width: 95%;
+            max-width: 800px;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 6px solid var(--motion-blue);
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        h1 { color: var(--motion-blue); margin-top: 0; font-size: 2.5em; text-transform: uppercase; }
+        
+        .btn-main {
+            background-color: var(--force-red);
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.4em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 82, 82, 0.3);
+        }
+
+        .btn-main:hover { transform: scale(1.05); background-color: #D32F2F; }
+
+        /* Quiz UI */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: var(--motion-blue);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--motion-blue), var(--gravity-purple));
+            width: 0%;
+            transition: width 0.4s;
+        }
+
+        .image-box {
+            font-size: 6rem;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #F5F5F5;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 3px dashed var(--motion-blue);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #e0e0e0;
+            padding: 20px;
+            font-size: 1.1em;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .option-btn:hover { border-color: var(--motion-blue); background: #E3F2FD; }
+        
+        /* State for wrong button */
+        .option-btn.wrong-shake {
+            background-color: #FFCDD2;
+            border-color: var(--force-red);
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        /* Feedback Popups */
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 50px;
+            border-radius: 20px;
+            font-size: 2.5em;
+            font-weight: bold;
+            display: none;
+            z-index: 100;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+
+        .correct { background: #C8E6C9; color: #2E7D32; border: 5px solid #2E7D32; }
+
+        #hint-message {
+            margin-top: 15px;
+            color: var(--force-red);
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        #final-score { font-size: 4em; color: var(--motion-blue); margin: 20px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Layar Awal -->
+    <div id="start-screen" class="screen active">
+        <h1>🏎️ Force & Motion</h1>
+        <p>Welcome, Explorer! You must answer correctly to move to the next stage!</p>
+        <div class="image-box">🚀 🧲 ⚽</div>
+        <button class="btn-main" onclick="startGame()">Start Challenge!</button>
+    </div>
+
+    <!-- Layar Kuis -->
+    <div id="game-screen" class="screen">
+        <div class="hud">
+            <span id="q-number">Question 1/15</span>
+            <span id="score">Score: 0</span>
+        </div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+        
+        <h2 id="question-text">Loading question...</h2>
+        <div class="image-box" id="q-image">🖼️</div>
+
+        <div class="options-grid" id="options">
+            <!-- Tombol pilihan -->
+        </div>
+        <div id="hint-message"></div>
+    </div>
+
+    <!-- Layar Hasil -->
+    <div id="end-screen" class="screen">
+        <h1>Mission Accomplished! 🏆</h1>
+        <p>Great job! You answered all questions correctly.</p>
+        <div id="final-score">0</div>
+        <button class="btn-main" onclick="location.reload()">Play Again</button>
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+</div>
+
+<script>
+    const questions = [
+        { q: "A push or a pull acting on an object is called a...", img: "🤝", opt: ["Motion", "Force", "Speed", "Gravity"], ans: 1 },
+        { q: "What force pulls everything down toward the Earth?", img: "🍎", opt: ["Friction", "Magnetism", "Gravity", "Push"], ans: 2 },
+        { q: "Which of these is an example of a 'PULL'?", img: "🐕", opt: ["Kicking a ball", "Closing a drawer", "Walking the dog", "Hitting a nail"], ans: 2 },
+        { q: "Which surface would create the MOST friction for a toy car?", img: "🛣️", opt: ["Ice", "Glass", "Sandpaper", "Smooth floor"], ans: 2 },
+        { q: "When you push an object, it moves ______ from you.", img: "➡️", opt: ["Away", "Toward", "Under", "Up"], ans: 0 },
+        { q: "What force slows down moving objects when they rub together?", img: "👟", opt: ["Gravity", "Friction", "Speed", "Energy"], ans: 1 },
+        { q: "Using a magnet to pick up paperclips is a...", img: "🧲", opt: ["Push", "Pull", "Gravity", "Friction"], ans: 1 },
+        { q: "If you want an object to move faster, you should use...?", img: "🏃", opt: ["Less force", "More force", "No force", "Gravity"], ans: 1 },
+        { q: "Which object is the hardest to move because of its mass?", img: "🐘", opt: ["A feather", "A bicycle", "A big truck", "A tennis ball"], ans: 2 },
+        { q: "What do we call the change in position of an object?", img: "📍", opt: ["Force", "Motion", "Friction", "Stationary"], ans: 1 },
+        { q: "Opening a door by pulling the handle is an example of...?", img: "🚪", opt: ["Pushing", "Pulling", "Gravity", "Rolling"], ans: 1 },
+        { q: "Which tool can we use to measure how heavy something is?", img: "⚖️", opt: ["Ruler", "Thermometer", "Scale", "Clock"], ans: 2 },
+        { q: "What happens when two people push a box with equal force from opposite sides?", img: "📦", opt: ["Box moves left", "Box moves right", "Box stays still", "Box flies up"], ans: 2 },
+        { q: "Rough surfaces have ______ friction than smooth surfaces.", img: "🧱", opt: ["Less", "More", "No", "Equal"], ans: 1 },
+        { q: "An object at rest will stay at rest unless a ______ acts on it.", img: "🛑", opt: ["Color", "Sound", "Force", "Light"], ans: 2 }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let attemptsThisQuestion = 0;
+
+    function startGame() {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        attemptsThisQuestion = 0;
+        const data = questions[currentQ];
+        document.getElementById('q-number').innerText = `Question ${currentQ + 1}/${questions.length}`;
+        document.getElementById('question-text').innerText = data.q;
+        document.getElementById('q-image').innerText = data.img;
+        document.getElementById('hint-message').innerText = "";
+        
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = '';
+        
+        data.opt.forEach((o, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = o;
+            btn.onclick = (e) => checkAnswer(i, e.target);
+            optionsDiv.appendChild(btn);
+        });
+
+        document.getElementById('progress-fill').style.width = (currentQ / questions.length * 100) + "%";
+    }
+
+    function checkAnswer(i, btnElement) {
+        const feedback = document.getElementById('feedback');
+        const hint = document.getElementById('hint-message');
+        const isCorrect = i === questions[currentQ].ans;
+        
+        if (isCorrect) {
+            // Reward: 10 points if first try, 5 points if they struggled
+            score += (attemptsThisQuestion === 0) ? 10 : 5;
+            
+            feedback.innerText = "Correct! 🌟";
+            feedback.className = "feedback correct";
+            feedback.style.display = 'block';
+            
+            // Disable all buttons so they can't spam click after winning
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            document.getElementById('score').innerText = `Score: ${score}`;
+
+            setTimeout(() => {
+                feedback.style.display = 'none';
+                currentQ++;
+                if (currentQ < questions.length) {
+                    showQuestion();
+                } else {
+                    showEnd();
+                }
+            }, 1200);
+        } else {
+            // WRONG ANSWER: Shake the button and show hint
+            attemptsThisQuestion++;
+            btnElement.classList.add('wrong-shake');
+            hint.innerText = "Wrong! Try again to unlock the next question!";
+            
+            // Remove shake class so it can be re-applied
+            setTimeout(() => {
+                btnElement.classList.remove('wrong-shake');
+            }, 400);
+        }
+    }
+
+    function showEnd() {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('end-screen').classList.add('active');
+        document.getElementById('progress-fill').style.width = "100%";
+        document.getElementById('final-score').innerText = score;
+    }
+</script>
+</body>
+</html>

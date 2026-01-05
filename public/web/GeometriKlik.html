@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeometriKlik - Media Belajar Luas Bangun Datar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f7ff;
+        }
+
+        .shape-container {
+            transition: all 0.3s ease;
+        }
+
+        .grid-bg {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .card-active {
+            border: 3px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        .quiz-option:hover {
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">📐 GeometriKlik</h1>
+            <div class="space-x-4">
+                <button onclick="switchTab('concept')" class="hover:underline">Konsep</button>
+                <button onclick="switchTab('quiz')" class="hover:underline">Kuis</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <!-- Tab: Konsep (Interactive Simulation instead of static video for better engagement) -->
+        <section id="tab-concept" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+                <h2 class="text-3xl font-bold text-blue-800 mb-4">Laboratorium Konsep</h2>
+                <p class="text-gray-600 mb-6">Pilih bangun datar untuk melihat bagaimana rumus luas ditemukan dari persegi satuan.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-9 gap-2 mb-8">
+                    <button onclick="showConcept('persegi')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">Persegi</button>
+                    <button onclick="showConcept('p_panjang')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">P. Panjang</button>
+                    <button onclick="showConcept('segitiga')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">Segitiga</button>
+                    <button onclick="showConcept('j_genjang')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">J. Genjang</button>
+                    <button onclick="showConcept('trapesium')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">Trapesium</button>
+                    <button onclick="showConcept('layang')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">Layang2</button>
+                    <button onclick="showConcept('b_ketupat')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">B. Ketupat</button>
+                    <button onclick="showConcept('lingkaran')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">Lingkaran</button>
+                    <button onclick="showConcept('gabungan')" class="p-2 border rounded-lg hover:bg-blue-50 focus:bg-blue-100 transition">Gabungan</button>
+                </div>
+
+                <div id="concept-display" class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300">
+                    <div class="flex justify-center items-center h-64 grid-bg rounded-lg border bg-white" id="visual-area">
+                        <!-- SVG Animation will load here -->
+                        <p class="text-gray-400">Pilih menu di atas untuk memulai simulasi</p>
+                    </div>
+                    <div id="explanation-area">
+                        <h3 class="text-2xl font-bold text-blue-700 mb-2" id="concept-title">Mari Belajar!</h3>
+                        <p class="text-gray-700 leading-relaxed" id="concept-text">
+                            Klik salah satu bangun datar untuk melihat visualisasi pembentukan rumusnya. Kita akan mulai dari satuan terkecil (persegi satuan).
+                        </p>
+                        <div id="formula-box" class="mt-4 p-4 bg-yellow-100 rounded-lg hidden">
+                            <p class="font-mono text-xl font-bold text-center" id="formula-text"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Kuis -->
+        <section id="tab-quiz" class="tab-content hidden">
+            <div id="quiz-intro" class="bg-white rounded-2xl shadow-xl p-10 text-center">
+                <h2 class="text-4xl font-bold text-blue-800 mb-4">Tantangan Geometri</h2>
+                <p class="text-xl text-gray-600 mb-8">Uji pemahamanmu tentang luas bangun datar dan bantu tokoh kita menyelesaikan masalah sehari-hari.</p>
+                <button onclick="startQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-full text-xl font-bold hover:bg-blue-700 transition transform hover:scale-105">
+                    Mulai Kuis Sekarang
+                </button>
+            </div>
+
+            <div id="quiz-container" class="hidden max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
+                    <span id="quiz-progress">Soal 1 dari 5</span>
+                    <span id="quiz-score">Skor: 0</span>
+                </div>
+                <div class="p-8">
+                    <div id="quiz-question-visual" class="mb-6 flex justify-center"></div>
+                    <h3 id="quiz-question-text" class="text-xl font-semibold mb-6"></h3>
+                    <div id="quiz-options" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Discussion / Pembahasan Section -->
+            <div id="discussion-container" class="hidden mt-8 max-w-3xl mx-auto bg-green-50 rounded-2xl p-8 border-2 border-green-200">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">Analisis Jawaban & Pembahasan</h2>
+                <div id="discussion-list" class="space-y-6"></div>
+                <button onclick="location.reload()" class="mt-8 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Ulangi Belajar</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Data Konsep
+        const concepts = {
+            persegi: {
+                title: "Konsep Luas Persegi",
+                text: "Luas persegi ditemukan dengan menghitung jumlah kotak (persegi satuan) yang mengisi seluruh permukaannya. Jika ada sisi 's', maka jumlah kotak adalah s horizontal dikali s vertikal.",
+                formula: "L = s \times s",
+                svg: `<svg viewBox="0 0 100 100" width="150"><rect x="10" y="10" width="80" height="80" fill="#3b82f6" fill-opacity="0.3" stroke="#1d4ed8" stroke-width="2"/><line x1="10" y1="30" x2="90" y2="30" stroke="#1d4ed8" stroke-dasharray="2"/><line x1="10" y1="50" x2="90" y2="50" stroke="#1d4ed8" stroke-dasharray="2"/><line x1="10" y1="70" x2="90" y2="70" stroke="#1d4ed8" stroke-dasharray="2"/><line x1="30" y1="10" x2="30" y2="90" stroke="#1d4ed8" stroke-dasharray="2"/><line x1="50" y1="10" x2="50" y2="90" stroke="#1d4ed8" stroke-dasharray="2"/><line x1="70" y1="10" x2="70" y2="90" stroke="#1d4ed8" stroke-dasharray="2"/></svg>`
+            },
+            p_panjang: {
+                title: "Konsep Persegi Panjang",
+                text: "Sama seperti persegi, kita menghitung ubin. Bedanya, sisi-sisinya tidak sama panjang. Kita menyebutnya Panjang (p) dan Lebar (l).",
+                formula: "L = p \times l",
+                svg: `<svg viewBox="0 0 160 100" width="200"><rect x="10" y="20" width="140" height="60" fill="#10b981" fill-opacity="0.3" stroke="#047857" stroke-width="2"/><line x1="10" y1="40" x2="150" y2="40" stroke="#047857" stroke-dasharray="2"/><line x1="10" y1="60" x2="150" y2="60" stroke="#047857" stroke-dasharray="2"/><line x1="40" y1="20" x2="40" y2="80" stroke="#047857" stroke-dasharray="2"/><line x1="70" y1="20" x2="70" y2="80" stroke="#047857" stroke-dasharray="2"/><line x1="100" y1="20" x2="100" y2="80" stroke="#047857" stroke-dasharray="2"/><line x1="130" y1="20" x2="130" y2="80" stroke="#047857" stroke-dasharray="2"/></svg>`
+            },
+            segitiga: {
+                title: "Konsep Luas Segitiga",
+                text: "Sebuah segitiga adalah setengah dari persegi panjang yang memiliki alas (a) dan tinggi (t) yang sama. Itulah mengapa rumusnya dikali setengah.",
+                formula: "L = \frac{1}{2} \times a \times t",
+                svg: `<svg viewBox="0 0 100 100" width="150"><rect x="10" y="10" width="80" height="80" fill="none" stroke="#ccc" stroke-dasharray="4"/><path d="M 10 90 L 90 90 L 10 10 Z" fill="#ef4444" fill-opacity="0.3" stroke="#b91c1c" stroke-width="2"/></svg>`
+            },
+            j_genjang: {
+                title: "Konsep Jajar Genjang",
+                text: "Potong bagian segitiga di salah satu ujung jajar genjang, lalu pindahkan ke ujung lainnya. Kamu akan mendapatkan sebuah persegi panjang sempurna!",
+                formula: "L = a \times t",
+                svg: `<svg viewBox="0 0 150 100" width="200"><path d="M 40 20 L 140 20 L 110 80 L 10 80 Z" fill="#f59e0b" fill-opacity="0.3" stroke="#b45309" stroke-width="2"/><line x1="40" y1="20" x2="40" y2="80" stroke="#b45309" stroke-dasharray="4" stroke-width="1"/></svg>`
+            },
+            trapesium: {
+                title: "Konsep Trapesium",
+                text: "Luasnya adalah jumlah sisi sejajar dibagi dua, lalu dikali tinggi. Ini seperti mencari rata-rata panjang dua sisi sejajarnya.",
+                formula: "L = \frac{(a+b)}{2} \times t",
+                svg: `<svg viewBox="0 0 150 100" width="200"><path d="M 40 20 L 110 20 L 140 80 L 10 80 Z" fill="#8b5cf6" fill-opacity="0.3" stroke="#6d28d9" stroke-width="2"/></svg>`
+            },
+            layang: {
+                title: "Konsep Layang-layang",
+                text: "Layang-layang dibentuk dari dua pasang segitiga. Luasnya dihitung menggunakan panjang diagonal-diagonalnya (d1 dan d2).",
+                formula: "L = \frac{1}{2} \times d1 \times d2",
+                svg: `<svg viewBox="0 0 100 120" width="120"><path d="M 50 10 L 90 50 L 50 110 L 10 50 Z" fill="#ec4899" fill-opacity="0.3" stroke="#be185d" stroke-width="2"/><line x1="10" y1="50" x2="90" y2="50" stroke="#be185d" stroke-dasharray="2"/><line x1="50" y1="10" x2="50" y2="110" stroke="#be185d" stroke-dasharray="2"/></svg>`
+            },
+            b_ketupat: {
+                title: "Konsep Belah Ketupat",
+                text: "Mirip dengan layang-layang, belah ketupat juga menggunakan diagonal. Bedanya, keempat sisinya sama panjang.",
+                formula: "L = \frac{1}{2} \times d1 \times d2",
+                svg: `<svg viewBox="0 0 100 100" width="120"><path d="M 50 10 L 90 50 L 50 90 L 10 50 Z" fill="#06b6d4" fill-opacity="0.3" stroke="#0e7490" stroke-width="2"/><line x1="10" y1="50" x2="90" y2="50" stroke="#0e7490" stroke-dasharray="2"/><line x1="50" y1="10" x2="50" y2="90" stroke="#0e7490" stroke-dasharray="2"/></svg>`
+            },
+            lingkaran: {
+                title: "Konsep Luas Lingkaran",
+                text: "Bayangkan lingkaran dipotong menjadi juring-juring sangat kecil lalu disusun selang-seling. Susunannya akan membentuk persegi panjang dengan panjang πr dan lebar r.",
+                formula: "L = \pi \times r^2",
+                svg: `<svg viewBox="0 0 100 100" width="120"><circle cx="50" cy="50" r="40" fill="#6366f1" fill-opacity="0.3" stroke="#4338ca" stroke-width="2"/><line x1="50" y1="50" x2="90" y2="50" stroke="#4338ca" stroke-width="2"/><text x="65" y="45" font-size="8" fill="#4338ca">r</text></svg>`
+            },
+            gabungan: {
+                title: "Konsep Bangun Gabungan",
+                text: "Untuk menghitung luas gabungan, pecahlah bangun yang rumit menjadi beberapa bangun datar sederhana, hitung luasnya masing-masing, lalu jumlahkan.",
+                formula: "L_{total} = L_1 + L_2 + ...",
+                svg: `<svg viewBox="0 0 150 120" width="180"><rect x="20" y="50" width="100" height="50" fill="#f43f5e" fill-opacity="0.3" stroke="#e11d48" stroke-width="2"/><path d="M 20 50 L 70 10 L 120 50 Z" fill="#f43f5e" fill-opacity="0.2" stroke="#e11d48" stroke-width="2"/></svg>`
+            }
+        };
+
+        // Data Kuis
+        const quizData = [
+            {
+                type: "concept",
+                question: "Manakah pernyataan yang benar mengenai asal-usul rumus luas segitiga?",
+                options: [
+                    "Segitiga adalah dua kali luas persegi panjang",
+                    "Segitiga adalah setengah dari luas jajar genjang/persegi panjang",
+                    "Segitiga dihitung dengan menjumlahkan semua sisinya",
+                    "Segitiga tidak memiliki hubungan dengan persegi panjang"
+                ],
+                answer: 1,
+                explanation: "Segitiga dapat dipandang sebagai hasil pemotongan diagonal sebuah persegi panjang atau jajar genjang, sehingga luasnya adalah 1/2 kali alas kali tinggi."
+            },
+            {
+                type: "story",
+                question: "Budi ingin membuat sebuah layang-layang. Ia memiliki kerangka diagonal sepanjang 30 cm dan 40 cm. Berapakah luas kertas minimal yang dibutuhkan Budi?",
+                options: [
+                    "1200 cm²",
+                    "70 cm²",
+                    "600 cm²",
+                    "300 cm²"
+                ],
+                answer: 2,
+                explanation: "Rumus luas layang-layang adalah 1/2 × d1 × d2. Maka: 1/2 × 30 × 40 = 600 cm²."
+            },
+            {
+                type: "story",
+                question: "Sebuah taman berbentuk lingkaran memiliki jari-jari 7 meter. Jika π = 22/7, berapakah luas taman tersebut?",
+                options: [
+                    "44 m²",
+                    "154 m²",
+                    "49 m²",
+                    "144 m²"
+                ],
+                answer: 1,
+                explanation: "Luas Lingkaran = π × r². L = 22/7 × 7 × 7 = 22 × 7 = 154 m²."
+            },
+            {
+                type: "concept",
+                question: "Jika kita memindahkan potongan segitiga dari ujung jajar genjang ke ujung lainnya, bangun datar apa yang akan terbentuk?",
+                options: [
+                    "Lingkaran",
+                    "Trapesium",
+                    "Persegi Panjang",
+                    "Segitiga"
+                ],
+                answer: 2,
+                explanation: "Jajar genjang memiliki sifat unik di mana jika dipotong secara tegak lurus pada tingginya, potongannya bisa membentuk persegi panjang."
+            },
+            {
+                type: "story",
+                question: "Sebuah atap rumah berbentuk trapesium dengan panjang sisi sejajar 6m dan 10m, serta tingginya 4m. Berapa luas atap tersebut?",
+                options: [
+                    "32 m²",
+                    "64 m²",
+                    "16 m²",
+                    "20 m²"
+                ],
+                answer: 0,
+                explanation: "L = ((a + b) / 2) × t = ((6 + 10) / 2) × 4 = (16 / 2) × 4 = 8 × 4 = 32 m²."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        }
+
+        // Show Concept
+        function showConcept(key) {
+            const data = concepts[key];
+            document.getElementById('visual-area').innerHTML = data.svg;
+            document.getElementById('concept-title').innerText = data.title;
+            document.getElementById('concept-text').innerText = data.text;
+            document.getElementById('formula-box').classList.remove('hidden');
+            document.getElementById('formula-text').innerText = data.formula;
+        }
+
+        // Quiz Logic
+        function startQuiz() {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const data = quizData[currentQuestion];
+            document.getElementById('quiz-progress').innerText = `Soal ${currentQuestion + 1} dari ${quizData.length}`;
+            document.getElementById('quiz-question-text').innerText = data.question;
+            
+            const optionsBox = document.getElementById('quiz-options');
+            optionsBox.innerHTML = '';
+            
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option w-full text-left p-4 border-2 border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition flex items-center";
+                btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-4">${String.fromCharCode(65 + idx)}</span> ${opt}`;
+                btn.onclick = () => selectAnswer(idx);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(idx) {
+            userAnswers.push(idx);
+            if(idx === quizData[currentQuestion].answer) {
+                score += 20;
+            }
+            
+            currentQuestion++;
+            document.getElementById('quiz-score').innerText = `Skor: ${score}`;
+            
+            if(currentQuestion < quizData.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('discussion-container').classList.remove('hidden');
+            
+            const list = document.getElementById('discussion-list');
+            list.innerHTML = `<p class="text-xl mb-6">Total Skor Kamu: <span class="font-bold text-blue-600">${score}</span></p>`;
+            
+            quizData.forEach((data, i) => {
+                const isCorrect = userAnswers[i] === data.answer;
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border-l-4 ${isCorrect ? 'border-green-500 bg-white' : 'border-red-500 bg-white shadow-sm'}`;
+                item.innerHTML = `
+                    <p class="font-bold mb-1">${i+1}. ${data.question}</p>
+                    <p class="text-sm ${isCorrect ? 'text-green-600' : 'text-red-600'}">Jawaban Kamu: ${data.options[userAnswers[i]]}</p>
+                    <div class="mt-2 text-gray-700 bg-gray-50 p-3 rounded text-sm">
+                        <strong>Pembahasan:</strong> ${data.explanation}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>

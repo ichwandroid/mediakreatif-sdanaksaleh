@@ -124,7 +124,7 @@
           class="hidden md:flex items-center gap-1 bg-white/60 p-1.5 rounded-xl border border-white/50 backdrop-blur-md shadow-inner">
           <a href="#"
             class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Beranda</a>
-          <a href="#kategori"
+          <a href="#"
             class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Kategori</a>
           <a href="media.html"
             class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Terbaru</a>
@@ -211,18 +211,18 @@
         </p>
 
         <div class="flex flex-wrap gap-4">
-          <button
+          <a href="media.html"
             class="bg-gradient-to-r from-brand-blue to-brand-cyan text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-brand-blue/30 hover:shadow-brand-blue/50 transition-all transform hover:-translate-y-1 hover:scale-105 active:scale-95 flex items-center gap-2">
             <span>Mulai Jelajah</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
-          </button>
-          <button
+          </a>
+          <!-- <a href="#"
             class="glass-panel text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-white/80 transition-all border-slate-200">
             Upload Media
-          </button>
+          </a> -->
         </div>
       </div>
 
@@ -461,10 +461,10 @@
         duration: 0.8,
         stagger: 0.1,
         ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".stat-card",
-          start: "top 80%"
-        },
+        // scrollTrigger: {
+        //   trigger: ".stat-card",
+        //   start: "top 80%"
+        // },
         delay: 1.5
       });
 

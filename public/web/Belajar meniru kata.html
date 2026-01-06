@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Meniru Kata - Inklusi</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #game-container {
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .image-box {
+            margin-bottom: 20px;
+        }
+
+        /* Gambar sederhana, minim warna */
+        svg {
+            width: 200px;
+            height: 200px;
+            fill: none;
+            stroke: #333;
+            stroke-width: 2;
+        }
+
+        .word-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Tombol Besar untuk Aksesibilitas */
+        .big-button {
+            padding: 30px 60px;
+            font-size: 24px;
+            background-color: #f0f0f0;
+            border: 4px solid #333;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .big-button:active {
+            transform: scale(0.95);
+            background-color: #d1d1d1;
+        }
+
+        /* Animasi Pujian */
+        #praise-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .praise-text {
+            font-size: 60px;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <div id="content-area">
+            <div class="image-box" id="image-display"> </div>
+            <div class="word-text" id="word-display">BOLA</div> <button class="big-button"
+                onclick="showPraise()">SELESAI</button>
+        </div>
+    </div>
+    <div id="praise-overlay">
+        <div class="praise-text">HEBAT! 🌟</div>
+    </div>
+    <script>
+        const data = [
+            {
+                word: "BOLA",
+                svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/><path d="M50 10 Q 70 50 50 90 M50 10 Q 30 50 50 90 M10 50 Q 50 30 90 50 M10 50 Q 50 70 90 50"/></svg>`
+            },
+            {
+                word: "BUKU",
+                svg: `<svg viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="70" rx="5"/><line x1="30" y1="40" x2="70" y2="40"/><line x1="30" y1="55" x2="70" y2="55"/><line x1="30" y1="70" x2="70" y2="70"/></svg>`
+            },
+            {
+                word: "MEJA",
+                svg: `<svg viewBox="0 0 100 100"><line x1="10" y1="40" x2="90" y2="40"/><line x1="20" y1="40" x2="20" y2="80"/><line x1="80" y1="40" x2="80" y2="80"/><line x1="10" y1="40" x2="20" y2="30"/><line x1="20" y1="30" x2="90" y2="30"/><line x1="90" y1="30" x2="90" y2="40"/></svg>`
+            },
+            {
+                word: "SAPI",
+                svg: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="55" rx="30" ry="20"/><circle cx="75" cy="40" r="15"/><circle cx="70" cy="35" r="2"/><circle cx="80" cy="35" r="2"/><rect x="30" y="70" width="5" height="15"/><rect x="65" y="70" width="5" height="15"/></svg>`
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function loadCard() {
+            const item = data[currentIndex];
+            document.getElementById('image-display').innerHTML = item.svg;
+            document.getElementById('word-display').innerText = item.word;
+        }
+
+        function showPraise() {
+            const overlay = document.getElementById('praise-overlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                nextItem();
+            }, 1500);
+        }
+
+        function nextItem() {
+            currentIndex++;
+            if (currentIndex >= data.length) {
+                currentIndex = 0; // Mengulang kembali
+            }
+            loadCard();
+        }
+
+        // Inisialisasi kartu pertama
+        loadCard();
+    </script>
+</body>
+
+</html>

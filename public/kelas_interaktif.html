@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jurnal Kelas Interaktif - Media Kreatif</title>
+
+    <!-- Google Fonts: Outfit (Modern) & Fredoka (Cheerful/School) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        friendly: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#4FACFE',
+                            cyan: '#00F2FE',
+                            yellow: '#FFD200',
+                            orange: '#F7971E',
+                            purple: '#A855F7',
+                            pink: '#EC4899'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .blob {
+            position: absolute;
+            background-size: cover;
+            opacity: 0.6;
+            filter: blur(40px);
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Background Elements -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="blob w-96 h-96 rounded-full bg-brand-blue/10 top-0 left-[-100px] animate-float"
+            style="animation-delay: 0s;"></div>
+        <div class="blob w-[30rem] h-[30rem] rounded-full bg-brand-pink/10 bottom-[-100px] right-[-100px] animate-float"
+            style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-4 pt-6 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto relative">
+            <div
+                class="glass-panel rounded-2xl px-4 py-3 md:px-6 md:py-4 flex justify-between items-center shadow-lg/5 border border-white/40 relative z-50">
+
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-blue/30 group-hover:scale-110 transition-transform duration-300">
+                        M
+                    </div>
+                    <span
+                        class="font-friendly font-semibold text-xl tracking-tight text-slate-700 group-hover:text-brand-blue transition-colors">
+                        Media<span class="text-brand-blue group-hover:text-slate-700 transition-colors">Kreatif</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div
+                    class="hidden md:flex items-center gap-1 bg-white/60 p-1.5 rounded-xl border border-white/50 backdrop-blur-md shadow-inner">
+                    <a href="index.html"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Beranda</a>
+                    <!-- <a href="index.html#kategori"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Kategori</a> -->
+                    <a href="#"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-brand-blue bg-white shadow-md transition-all">Kelas
+                        Interaktif</a>
+                    <a href="media.html"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Terbaru</a>
+                </div>
+
+                <!-- Right Side -->
+                <div class="flex items-center gap-4">
+                    <button
+                        class="login-btn hidden md:flex bg-slate-900 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 items-center gap-2">
+                        <span>Masuk Guru</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                            </path>
+                        </svg>
+                    </button>
+
+                    <!-- Mobile Hamburger -->
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 text-slate-600 hover:text-brand-blue transition-colors bg-white/50 rounded-lg hover:bg-white">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobile-menu" class="hidden absolute top-full left-0 w-full mt-3 z-40 origin-top">
+                <div
+                    class="glass-panel rounded-2xl p-4 flex flex-col gap-2 shadow-2xl border border-white/50 bg-white/90 backdrop-blur-xl">
+                    <a href="index.html"
+                        class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
+                        Beranda
+                        <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="index.html#kategori"
+                        class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
+                        Kategori
+                        <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="#"
+                        class="px-4 py-3 rounded-xl text-brand-blue bg-brand-blue/5 font-bold flex items-center justify-between group">
+                        Kelas Interaktif
+                        <span class="text-brand-blue opacity-100 transition-opacity">→</span>
+                    </a>
+                    <a href="media.html"
+                        class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
+                        Terbaru
+                        <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                    </a>
+                    <div class="h-px bg-slate-200 my-2"></div>
+                    <button
+                        class="login-btn w-full bg-slate-900 text-white px-5 py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg flex items-center justify-center gap-2">
+                        <span>Masuk Portal Guru</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
+        <!-- Header Page -->
+        <div class="text-center mb-12 page-header">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4 font-friendly">Jurnal Kelas Interaktif</h1>
+            <p class="text-slate-500 max-w-2xl mx-auto">Catat penggunaan Interactive Flat Panel di sini untuk menunjang
+                pembelajaran yang lebih efektif.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex justify-end items-center gap-3 mb-8 stagger-card">
+            <button onclick="downloadJSON()"
+                class="bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl font-bold hover:bg-slate-50 hover:text-brand-blue hover:border-brand-blue transition-all flex items-center gap-2 shadow-sm">
+                <span>⬇️</span> <span class="hidden sm:inline">Download JSON</span>
+            </button>
+
+            <!-- Hidden file input for import -->
+            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importJSON(this)">
+            <button onclick="document.getElementById('importFile').click()"
+                class="bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl font-bold hover:bg-slate-50 hover:text-brand-blue hover:border-brand-blue transition-all flex items-center gap-2 shadow-sm">
+                <span>⬆️</span> <span class="hidden sm:inline">Upload JSON</span>
+            </button>
+
+            <button onclick="openModal()"
+                class="bg-brand-blue text-white px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl shadow-brand-blue/30 hover:bg-blue-600 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+                <span>+</span> Catat Baru
+            </button>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-panel rounded-3xl p-1 overflow-hidden shadow-sm stagger-card">
+            <div class="bg-white rounded-[1.25rem] overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left" id="journalTable">
+                        <thead
+                            class="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase font-bold tracking-wider">
+                            <tr>
+                                <th class="px-6 py-5">Tanggal & Jam</th>
+                                <th class="px-6 py-5">Nama Guru</th>
+                                <th class="px-6 py-5">Kelas</th>
+                                <th class="px-6 py-5">Mata Pelajaran</th>
+                                <th class="px-6 py-5">Materi</th>
+                                <th class="px-6 py-5">Keterangan</th>
+                                <th class="px-6 py-5 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm" id="tableBody">
+                            <!-- Data will be populated here by JS -->
+                            <tr class="text-center py-12">
+                                <td colspan="7" class="text-slate-400 py-12">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <span class="text-3xl opacity-50">📂</span>
+                                        <p>Sedang memuat data...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                            M
+                        </div>
+                        <span class="font-friendly font-bold text-xl text-slate-700">MediaKreatif</span>
+                    </div>
+                    <p class="text-slate-500 leading-relaxed max-w-sm">
+                        Platform berbagi media pembelajaran digital untuk mendukung kegiatan belajar mengajar di SD Anak
+                        Saleh yang
+                        lebih interaktif dan menyenangkan.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800 mb-6">Tautan</h4>
+                    <ul class="space-y-4 text-slate-500">
+                        <li><a href="index.html" class="hover:text-brand-blue transition-colors">Beranda</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Tentang Kami</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Panduan Guru</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Hubungi Admin</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800 mb-6">Hubungi Kami</h4>
+                    <ul class="space-y-4 text-slate-500">
+                        <li class="flex items-center gap-3">
+                            <span>📧</span> operator@sekolahanaksaleh.sch.id
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span>🏫</span> Malang, Jawa Timur
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 text-center text-slate-400 text-sm">
+                &copy; 2026 SD Anak Saleh. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Form (Input Entry) -->
+    <div id="entryModal"
+        class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300"
+            id="modalContent">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800">Catat Penggunaan</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 transition-colors">✕</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="entryId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tanggal</label>
+                        <input type="date" id="date"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Jam</label>
+                        <input type="time" id="time"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Guru</label>
+                    <input type="text" id="teacherName" placeholder="Nama Guru..."
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kelas</label>
+                        <select id="className"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                            <option value="">Pilih Kelas</option>
+                            <option value="1A">Kelas 1A</option>
+                            <option value="1B">Kelas 1B</option>
+                            <option value="1C">Kelas 1C</option>
+                            <option value="1D">Kelas 1D</option>
+                            <option value="2A">Kelas 2A</option>
+                            <option value="2B">Kelas 2B</option>
+                            <option value="2C">Kelas 2C</option>
+                            <option value="2D">Kelas 2D</option>
+                            <option value="3A">Kelas 3A</option>
+                            <option value="3B">Kelas 3B</option>
+                            <option value="3C">Kelas 3C</option>
+                            <option value="3D">Kelas 3D</option>
+                            <option value="4A">Kelas 4A</option>
+                            <option value="4B">Kelas 4B</option>
+                            <option value="4C">Kelas 4C</option>
+                            <option value="4D">Kelas 4D</option>
+                            <option value="5A">Kelas 5A</option>
+                            <option value="5B">Kelas 5B</option>
+                            <option value="5C">Kelas 5C</option>
+                            <option value="5D">Kelas 5D</option>
+                            <option value="6A">Kelas 6A</option>
+                            <option value="6B">Kelas 6B</option>
+                            <option value="6C">Kelas 6C</option>
+                            <option value="6D">Kelas 6D</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Mata Pelajaran</label>
+                        <input type="text" id="subject" placeholder="Mapel..."
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Materi</label>
+                    <textarea id="topic" rows="2" placeholder="Topik materi yang diajarkan..."
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Keterangan (Opsional)</label>
+                    <input type="text" id="notes" placeholder="Catatan tambahan..."
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                <button onclick="closeModal()"
+                    class="px-4 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
+                <button onclick="saveEntry()"
+                    class="px-5 py-2 rounded-xl font-bold bg-brand-blue text-white hover:bg-blue-600 transition-colors shadow-lg shadow-brand-blue/30 hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal (Same as media/index) -->
+    <div id="login-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div
+            class="modal-content glass-panel bg-white/95 rounded-3xl w-full max-w-md p-8 relative shadow-2xl border border-white/50">
+            <button id="close-login"
+                class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="text-center mb-8">
+                <div
+                    class="w-16 h-16 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-lg shadow-brand-blue/30 mx-auto mb-4">
+                    M
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 font-friendly">Selamat Datang Guru!</h2>
+                <p class="text-slate-500 text-sm mt-2">Silahkan login untuk mengelola media pembelajaran.</p>
+            </div>
+
+            <form class="space-y-4" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Email Sekolah</label>
+                    <input type="email"
+                        class="w-full px-5 py-3 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all placeholder:text-slate-300"
+                        placeholder="nama@sdanaksaleh.sch.id" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Kata Sandi</label>
+                    <input type="password"
+                        class="w-full px-5 py-3 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all placeholder:text-slate-300"
+                        placeholder="••••••••" required>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-2 text-slate-500 cursor-pointer">
+                        <input type="checkbox" class="rounded border-slate-300 text-brand-blue focus:ring-brand-blue">
+                        <span>Ingat saya</span>
+                    </label>
+                    <a href="#" class="text-brand-blue font-bold hover:underline">Lupa sandi?</a>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:shadow-brand-blue/30 hover:-translate-y-1 transition-all active:scale-95 mt-4">
+                    Masuk Sekarang
+                </button>
+            </form>
+
+            <div class="mt-8 text-center text-sm text-slate-400">
+                Belum punya akun? <a href="#" class="text-brand-blue font-bold hover:underline">Hubungi Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase App, Auth, Firestore, Storage (Compat) -->
+    <script defer src="/__/firebase/12.7.0/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/12.7.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/12.7.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/12.7.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <!-- Scripts -->
+    <script src="kelas_interaktif.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Navbar & Animations Logic (Similar to media.html)
+
+            // GSAP Animations
+            gsap.from(".page-header", {
+                y: -30,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+
+            gsap.from(".stagger-card", {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: "power2.out",
+                delay: 0.2
+            });
+
+            // Mobile Menu
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const isHidden = menu.classList.contains('hidden');
+                    if (isHidden) {
+                        menu.classList.remove('hidden');
+                        gsap.fromTo(menu,
+                            { opacity: 0, scaleY: 0.8, y: -20 },
+                            { opacity: 1, scaleY: 1, y: 0, duration: 0.4, ease: "back.out(1.7)" }
+                        );
+                    } else {
+                        gsap.to(menu, {
+                            opacity: 0,
+                            y: -20,
+                            scaleY: 0.9,
+                            duration: 0.2,
+                            ease: "power2.in",
+                            onComplete: () => menu.classList.add('hidden')
+                        });
+                    }
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!btn.contains(e.target) && !menu.contains(e.target) && !menu.classList.contains('hidden')) {
+                        gsap.to(menu, {
+                            opacity: 0,
+                            y: -20,
+                            scaleY: 0.9,
+                            duration: 0.2,
+                            ease: "power2.in",
+                            onComplete: () => menu.classList.add('hidden')
+                        });
+                    }
+                });
+            }
+
+            // Login Modal Logic
+            const loginBtns = document.querySelectorAll('.login-btn');
+            const loginModal = document.getElementById('login-modal');
+            const closeLoginBtn = document.getElementById('close-login');
+
+            if (loginModal) {
+                function openLogin() {
+                    loginModal.classList.remove('hidden');
+                    gsap.fromTo(loginModal.querySelector('.modal-content'),
+                        { opacity: 0, scale: 0.8, y: 50 },
+                        { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
+                    );
+                    gsap.fromTo(loginModal, { backgroundColor: "rgba(0,0,0,0)" }, { backgroundColor: "rgba(0,0,0,0.5)", duration: 0.3 });
+                }
+
+                function closeLogin() {
+                    gsap.to(loginModal.querySelector('.modal-content'), {
+                        opacity: 0,
+                        scale: 0.8,
+                        y: 50,
+                        duration: 0.3,
+                        ease: "power2.in"
+                    });
+                    gsap.to(loginModal, {
+                        backgroundColor: "rgba(0,0,0,0)",
+                        duration: 0.3,
+                        onComplete: () => loginModal.classList.add('hidden')
+                    });
+                }
+
+                loginBtns.forEach(b => b.addEventListener('click', openLogin));
+                if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLogin);
+
+                loginModal.addEventListener('click', (e) => {
+                    if (e.target === loginModal) closeLogin();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

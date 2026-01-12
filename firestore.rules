@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Aturan untuk Jurnal Kelas Interaktif
+    // Mengizinkan siapa saja (public) untuk membaca dan menulis
+    // WARNING: Ini untuk kemudahan akses. Untuk keamanan lebih baik, tambahkan autentikasi.
+    match /jurnal_kelas/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Aturan default: tolak akses ke koleksi lain jika tidak didefinisikan
+    // (Anda mungkin perlu menggabungkan ini dengan aturan yang sudah ada di Console)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

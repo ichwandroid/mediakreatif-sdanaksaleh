@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBudaya - Nusantara Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .batik-pattern {
+            background-image: url('https://www.transparenttextures.com/patterns/batik-fabric.png');
+            opacity: 0.04;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
+
+    <!-- Latar Belakang Dekoratif -->
+    <div class="fixed inset-0 pointer-events-none -z-10">
+        <div class="absolute inset-0 batik-pattern"></div>
+        <div class="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-300/20 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-300/20 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-8 relative z-50">
+            <div class="flex items-center space-x-4 cursor-pointer group" onclick="showTab('home')">
+                <div class="p-4 bg-indigo-600 text-white rounded-[1.5rem] shadow-2xl group-hover:rotate-[15deg] transition-all duration-500 scale-110">
+                    <i class="fa-solid fa-globe text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black tracking-tighter uppercase italic leading-none">Edu<span class="text-indigo-600">Budaya</span></h1>
+                    <p class="text-[10px] font-black text-gray-400 tracking-[0.4em] mt-1 uppercase">Nusantara Experience</p>
+                </div>
+            </div>
+            
+            <nav class="flex items-center glass-nav p-2 rounded-[2rem] shadow-2xl">
+                <button onclick="showTab('home')" id="nav-home" class="nav-btn px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 bg-indigo-600 text-white shadow-xl">Beranda</button>
+                <button onclick="showTab('warisan')" id="nav-warisan" class="nav-btn px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 text-gray-400 hover:text-gray-800">Warisan Dunia</button>
+                <button onclick="showTab('kearifan')" id="nav-kearifan" class="nav-btn px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 text-gray-400 hover:text-gray-800">Kearifan Lokal</button>
+            </nav>
+        </header>
+
+        <!-- Konten Utama -->
+        <main id="main-content">
+            <!-- Beranda -->
+            <section id="tab-home" class="fade-in space-y-6">
+                <div class="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-blue-950 to-purple-950 text-white p-12 rounded-[3rem] shadow-2xl border border-white/10">
+                    <div class="relative z-10">
+                        <span class="bg-blue-500/20 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-md text-blue-200 border border-blue-400/20">Cultural Archive v5.0</span>
+                        <h1 class="text-5xl md:text-7xl font-black mt-6 mb-6 leading-none tracking-tighter">Warisan <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">Luhur Bangsa</span></h1>
+                        <p class="text-blue-100/70 max-w-xl text-lg leading-relaxed font-light">Eksplorasi mendalam terhadap kekayaan budaya Nusantara melalui media interaktif yang memadukan tradisi dan teknologi.</p>
+                        <div class="mt-10">
+                            <button onclick="showTab('warisan')" class="bg-white text-indigo-950 px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all flex items-center group">
+                                Jelajahi Sekarang <i class="fa-solid fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div onclick="showTab('warisan')" class="group cursor-pointer relative overflow-hidden p-10 bg-white/70 backdrop-blur-lg border border-white rounded-[2.5rem] hover:shadow-2xl transition-all duration-500">
+                        <div class="flex items-center space-x-6">
+                            <div class="p-6 bg-orange-100 text-orange-600 rounded-[1.5rem] group-hover:bg-orange-600 group-hover:text-white transition-all duration-500 shadow-lg">
+                                <i class="fa-solid fa-award text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-2xl text-gray-800 tracking-tight">Warisan Dunia</h3>
+                                <p class="text-gray-500 font-medium">Visualisasi & Dokumenter</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div onclick="showTab('kearifan')" class="group cursor-pointer relative overflow-hidden p-10 bg-white/70 backdrop-blur-lg border border-white rounded-[2.5rem] hover:shadow-2xl transition-all duration-500">
+                        <div class="flex items-center space-x-6">
+                            <div class="p-6 bg-teal-100 text-teal-600 rounded-[1.5rem] group-hover:bg-teal-600 group-hover:text-white transition-all duration-500 shadow-lg">
+                                <i class="fa-solid fa-compass text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-2xl text-gray-800 tracking-tight">Kearifan Lokal</h3>
+                                <p class="text-gray-500 font-medium">Filosofi Hidup Nusantara</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Katalog Warisan (Menu) -->
+            <section id="tab-warisan" class="hidden fade-in space-y-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                    <div>
+                        <h2 class="text-5xl font-black text-gray-900 tracking-tighter">Katalog Budaya</h2>
+                        <p class="text-gray-500 text-lg mt-2">Pilih salah satu untuk membuka materi video dan penjelasan.</p>
+                    </div>
+                    <button onclick="showTab('home')" class="px-6 py-3 bg-white rounded-2xl shadow-sm text-gray-700 font-bold flex items-center hover:bg-gray-50 transition-all border border-gray-100">
+                        <i class="fa-solid fa-chevron-left mr-2"></i> Kembali
+                    </button>
+                </div>
+                <div id="warisan-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Grid item diisi oleh JS -->
+                </div>
+            </section>
+
+            <!-- Detail Warisan (Slide) -->
+            <section id="tab-warisan-detail" class="hidden fade-in space-y-8">
+                <!-- Detail diisi oleh JS -->
+            </section>
+
+            <!-- Kearifan Lokal -->
+            <section id="tab-kearifan" class="hidden fade-in space-y-16">
+                <div class="bg-white/90 backdrop-blur-xl p-16 rounded-[4rem] border border-white shadow-2xl relative overflow-hidden">
+                    <h2 class="text-5xl font-black text-gray-900 mb-10 tracking-tighter">Esensi Kearifan Lokal</h2>
+                    <p id="kearifan-pengertian" class="text-3xl text-gray-600 leading-snug font-light italic border-l-8 border-amber-500 pl-12 bg-amber-50/30 py-8 rounded-r-[3rem]">
+                        Memuat data...
+                    </p>
+                </div>
+                <section class="bg-slate-950 p-16 rounded-[4rem] text-white shadow-2xl">
+                    <div class="flex items-center space-x-4 mb-14">
+                        <div class="p-4 bg-blue-600/20 rounded-2xl border border-blue-500/30 text-blue-400">
+                            <i class="fa-solid fa-map text-2xl"></i>
+                        </div>
+                        <h2 class="text-4xl font-black tracking-tight">Eksplorasi Budaya Jawa Timur</h2>
+                    </div>
+                    <div id="jatim-list" class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <!-- List diisi oleh JS -->
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-32 pb-12 flex flex-col items-center">
+            <div class="flex items-center space-x-8 text-gray-300 mb-8 scale-125">
+               <i class="fa-solid fa-info hover:text-indigo-600 cursor-pointer"></i>
+               <i class="fa-solid fa-award hover:text-orange-600 cursor-pointer"></i>
+               <i class="fa-solid fa-compass hover:text-teal-600 cursor-pointer"></i>
+            </div>
+            <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.5em] mb-4">EduBudaya Interactive Experience</p>
+            <div class="flex gap-3">
+               <div class="w-12 h-1 bg-red-500 rounded-full opacity-30"></div>
+               <div class="w-12 h-1 bg-white rounded-full opacity-30 border border-gray-300"></div>
+               <div class="w-12 h-1 bg-indigo-500 rounded-full opacity-30"></div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Data Aplikasi
+        const warisanBudaya = [
+            { id: 'wayang', title: 'Wayang Kulit', icon: 'fa-theater-masks', color: 'bg-amber-100', accent: 'text-amber-700', videoUrl: 'https://www.youtube.com/embed/b8mZRqU8CsU?si=SqOtZQ1FtsDODhAI', desc: 'Seni pertunjukan tradisional menggunakan boneka kulit kerbau, menceritakan kisah Ramayana atau Mahabharata.' },
+            { id: 'keris', title: 'Keris', icon: 'fa-sword', color: 'bg-slate-100', accent: 'text-slate-700', videoUrl: 'https://www.youtube.com/embed/y0EFzuY0VDM?si=V7yKHw4fBwP0z5aV', desc: 'Senjata tikam golongan belati dengan bilah berkelok atau lurus. Memiliki nilai spiritual dan estetika tinggi.' },
+            { id: 'batik', title: 'Batik', icon: 'fa-palette', color: 'bg-orange-100', accent: 'text-orange-700', videoUrl: 'https://www.youtube.com/embed/_ywqYfMKxHA?si=ZS0Hfa6sbgO2I0M6', desc: 'Teknik menghias kain menggunakan malam (lilin). Batik adalah simbol identitas bangsa Indonesia.' },
+            { id: 'angklung', title: 'Angklung', icon: 'fa-music', color: 'bg-emerald-100', accent: 'text-emerald-700', videoUrl: 'https://www.youtube.com/embed/rV5ztiV6y1Y?si=_K8qlsxjQuCfk1rG', desc: 'Alat musik bambu dari Jawa Barat yang menghasilkan bunyi multitonal yang harmonis.' },
+            { id: 'saman', title: 'Tari Saman', icon: 'fa-users', color: 'bg-red-100', accent: 'text-red-700', videoUrl: 'https://www.youtube.com/embed/9z0vu2-n53k?si=_XSfcmHlRCd-el3y', desc: 'Tarian "seribu tangan" dari Aceh yang mengandalkan tepukan tangan dan gerak tubuh ritmis.' },
+            { id: 'noken', title: 'Noken', icon: 'fa-bag-shopping', color: 'bg-yellow-100', accent: 'text-yellow-700', videoUrl: 'https://www.youtube.com/embed/wDTdleWVVZ4?si=INwRpUbv9iAQ3REr', desc: 'Tas rajut tradisional Papua dari serat kayu. Simbol kehidupan yang baik dan perdamaian.' },
+            { id: 'bali', title: 'Tari Bali', icon: 'fa-wind', color: 'bg-pink-100', accent: 'text-pink-700', videoUrl: '', desc: 'Seni tari yang mencakup nilai sakral dan hiburan dengan gerak mata "seledet" yang khas.' },
+            { id: 'silat', title: 'Pencak Silat', icon: 'fa-shield-halved', color: 'bg-blue-100', accent: 'text-blue-700', videoUrl: 'https://www.youtube.com/embed/q4phb3bhnJc?si=n6hOrloSua34muxh', desc: 'Seni bela diri yang menggabungkan aspek mental-spiritual, bela diri, seni, dan olahraga.' }
+        ];
+
+        const kearifanLokal = {
+            pengertian: "Kearifan lokal adalah identitas atau kepribadian budaya sebuah bangsa yang menyebabkan bangsa tersebut mampu menyerap, bahkan mengolah kebudayaan luar menjadi watak dan kemampuan sendiri.",
+            jawaTimur: [
+                { nama: "Reog Ponorogo", desc: "Seni pertunjukan dari Ponorogo yang mengandung nilai keberanian melalui sosok Singo Barong." },
+                { nama: "Upacara Kasada Bromo", desc: "Ritual Suku Tengger memberikan sesaji ke kawah Bromo sebagai wujud syukur kepada alam." },
+                { nama: "Karapan Sapi Madura", desc: "Tradisi balapan sapi yang mencerminkan ketangkasan dan kebanggaan petani Madura." },
+                { nama: "Batik Pesisiran", desc: "Motif batik khas pesisir utara Jawa Timur yang menggambarkan keterbukaan masyarakat." },
+                { nama: "Ludruk", desc: "Kesenian drama tradisional asli Jawa Timur yang menggunakan dialog bahasa sehari-hari dan seringkali menyelipkan kritik sosial." }
+            ]
+        };
+
+        // Fungsi Navigasi
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            
+            // Show target tab
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.remove('hidden');
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-xl');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById('nav-' + (tabId === 'warisan-detail' ? 'warisan' : tabId));
+            if (activeBtn) {
+                activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-xl');
+                activeBtn.classList.remove('text-gray-400');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Katalog Warisan
+        function initWarisanGrid() {
+            const grid = document.getElementById('warisan-grid');
+            grid.innerHTML = warisanBudaya.map((item, index) => `
+                <button onclick="showDetail(${index})" class="group relative flex flex-col items-center p-10 bg-white/90 backdrop-blur-sm border border-white rounded-[2.5rem] hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 ${item.color} opacity-50 rounded-bl-[4rem] group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative mb-6 p-6 ${item.color} ${item.accent} rounded-3xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-lg">
+                        <i class="fa-solid ${item.icon} text-2xl"></i>
+                    </div>
+                    <span class="relative font-black text-xl text-gray-800 group-hover:text-indigo-600 tracking-tight">${item.title}</span>
+                </button>
+            `).join('');
+        }
+
+        // Render Detail Warisan
+        function showDetail(index) {
+            const item = warisanBudaya[index];
+            const detailSec = document.getElementById('tab-warisan-detail');
+            
+            detailSec.innerHTML = `
+                <div class="flex items-center justify-between bg-white/50 backdrop-blur-md p-4 rounded-3xl border border-white/50">
+                    <button onclick="showTab('warisan')" class="bg-indigo-600 px-6 py-3 rounded-2xl shadow-xl text-white font-bold flex items-center hover:bg-indigo-700 transition-all">
+                        <i class="fa-solid fa-table-cells-large mr-2"></i> Kembali ke Katalog
+                    </button>
+                    <div class="flex items-center px-6 py-3 bg-white rounded-2xl border border-indigo-100 shadow-sm">
+                        <i class="fa-solid fa-sparkles text-amber-500 mr-2"></i>
+                        <span class="text-sm font-black text-indigo-900 uppercase tracking-widest">Mempelajari: ${item.title}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-indigo-50">
+                            <div class="flex items-center space-x-4 mb-8">
+                                <div class="p-5 ${item.color} ${item.accent} rounded-[1.5rem] shadow-lg">
+                                    <i class="fa-solid ${item.icon} text-2xl"></i>
+                                </div>
+                                <h2 class="text-4xl font-black text-gray-900 tracking-tighter">${item.title}</h2>
+                            </div>
+                            <div class="p-8 bg-slate-50 rounded-[2rem] border-l-[12px] border-indigo-600 mb-8">
+                                <p class="text-gray-700 text-lg font-medium italic">"${item.desc}"</p>
+                            </div>
+                            <div class="h-64 bg-slate-100 rounded-[2rem] flex flex-col items-center justify-center border-4 border-white shadow-inner group overflow-hidden">
+                                <i class="fa-solid fa-image text-4xl text-indigo-300 mb-4 group-hover:scale-125 transition-transform duration-500"></i>
+                                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Visualisasi Contoh</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 h-full">
+                        <div class="bg-slate-950 rounded-[3rem] overflow-hidden shadow-2xl border-[8px] border-white h-[450px] relative flex flex-col">
+                            <div class="bg-slate-900 p-4 flex items-center justify-between">
+                                <div class="flex space-x-2"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></div>
+                                <span class="text-[10px] text-slate-500 uppercase font-black tracking-widest"><i class="fa-brands fa-youtube text-red-500 mr-1"></i> Dokumenter Resmi</span>
+                            </div>
+                            <iframe class="w-full h-full" src="${item.videoUrl}" title="${item.title}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showTab('warisan-detail');
+        }
+
+        // Render Kearifan Lokal
+        function initKearifan() {
+            document.getElementById('kearifan-pengertian').innerText = `"${kearifanLokal.pengertian}"`;
+            const list = document.getElementById('jatim-list');
+            list.innerHTML = kearifanLokal.jawaTimur.map(item => `
+                <div class="group bg-white/5 border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all border-b-4 border-b-transparent hover:border-b-blue-500">
+                    <h4 class="text-2xl font-black text-blue-300 mb-2">${item.nama}</h4>
+                    <p class="text-gray-400 leading-relaxed text-sm">${item.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        // Inisialisasi Saat Load
+        window.onload = () => {
+            initWarisanGrid();
+            initKearifan();
+        };
+    </script>
+</body>
+</html>

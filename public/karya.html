@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Galeri Karya - MediaKreatif</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans (Premium Modern) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --apple-blur: 40px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Apple Liquid Glass Style - Base */
+        .liquid-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--apple-blur)) saturate(180%);
+            -webkit-backdrop-filter: blur(var(--apple-blur)) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Hover for Cards */
+        .card-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2),
+                0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Hover for Navbar (Stable) */
+        .nav-glass {
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nav-glass:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Background Liquid Blobs */
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -2;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            background: #4f46e5;
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            background: #7c3aed;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .blob-3 {
+            background: #2563eb;
+            top: 40%;
+            left: 30%;
+            width: 300px;
+            height: 300px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-apple {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-apple:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .section-reveal {
+            opacity: 0;
+        }
+
+        /* Input Styles for Dark Theme */
+        .input-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-glass:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(99, 102, 241, 0.5);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-glass::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal-glass {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .type-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Liquid Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- ThreeJS Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav
+        class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-max px-8 py-3 rounded-full liquid-glass nav-glass flex justify-between md:justify-center items-center gap-12">
+        <div class="text-xl font-extrabold tracking-tighter">
+            Media<span class="text-indigo-400">Kreatif</span>
+        </div>
+        <div class="hidden md:flex gap-10 font-medium text-sm text-white/70">
+            <a href="index.html" class="hover:text-white transition-colors duration-300">Beranda</a>
+            <a href="kelas_interaktif.html" class="hover:text-white transition-colors duration-300">Kelas Interaktif</a>
+            <a href="karya.html" class="text-white font-bold">Karya</a>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="relative min-h-screen pt-32 pb-20 px-6">
+
+        <!-- Header Page -->
+        <div class="text-center mb-16 page-header section-reveal">
+            <div
+                class="inline-block py-1 px-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white/60 text-[10px] font-bold mb-6 tracking-[0.2em] uppercase">
+                Showcase Digital
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+                Galeri <span class="text-gradient">Karya Guru</span>
+            </h1>
+            <p class="text-white/50 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
+                Kumpulan media pembelajaran interaktif karya guru-guru kreatif SD Anak Saleh.
+            </p>
+        </div>
+
+        <!-- Controls -->
+        <div
+            class="flex flex-wrap justify-center md:justify-end items-center gap-3 mb-10 stagger-card section-reveal max-w-7xl mx-auto">
+            <button onclick="openRegisterModal()"
+                class="bg-indigo-500 text-white px-8 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl shadow-indigo-500/30 hover:bg-indigo-600 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 text-sm">
+                <span>+</span> Registrasi Karya Baru (Admin Only)
+            </button>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <!-- Cards will be populated here -->
+            <div class="col-span-full text-center py-20 text-white/40">
+                Memuat galeri karya...
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 pt-16 pb-8 bg-black/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-white/20 text-sm">
+                &copy; 2026 SD Anak Saleh. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Register Modal -->
+    <div id="registerModal"
+        class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="modal-glass rounded-3xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300 border border-white/10"
+            id="registerContent">
+            <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <h3 class="font-bold text-lg text-white">Registrasi Karya</h3>
+                <button onclick="closeRegisterModal()"
+                    class="text-white/40 hover:text-red-400 transition-colors text-2xl">✕</button>
+            </div>
+
+            <div class="p-6 bg-indigo-500/10 border-b border-white/5">
+                <p class="text-xs text-indigo-300 leading-relaxed">
+                    <strong>PENTING:</strong> Pastikan Anda sudah memindahkan file HTML hasil download ke folder <code
+                        class="bg-black/30 px-1 py-0.5 rounded text-white">public/upload</code> di komputer server
+                    sebelum mendaftarkannya di sini.
+                </p>
+            </div>
+
+            <form onsubmit="event.preventDefault(); saveRegistration();" class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Nama Guru</label>
+                        <input type="text" id="regGuru" required placeholder="Nama Anda"
+                            class="input-glass w-full px-4 py-2.5 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Mata Pelajaran</label>
+                        <input type="text" id="regMapel" required placeholder="Contoh: IPA"
+                            class="input-glass w-full px-4 py-2.5 rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Kelas</label>
+                        <input type="text" id="regKelas" required placeholder="Contoh: 6"
+                            class="input-glass w-full px-4 py-2.5 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Judul Karya</label>
+                        <input type="text" id="regTitle" required placeholder="Judul yang tampil di galeri"
+                            class="input-glass w-full px-4 py-2.5 rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Jenis Karya</label>
+                        <select id="regType" required class="input-glass w-full px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="Website Interaktif" class="bg-gray-900">Website Interaktif</option>
+                            <option value="Game Edukasi" class="bg-gray-900">Game Edukasi</option>
+                            <option value="Simulasi" class="bg-gray-900">Simulasi</option>
+                            <option value="E-Book" class="bg-gray-900">E-Book</option>
+                            <option value="Video" class="bg-gray-900">Video</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Nama File (di folder
+                            upload)</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="regFilename" required placeholder="contoh: game.html"
+                                class="input-glass w-full px-4 py-2.5 rounded-xl font-mono text-sm text-indigo-300">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeRegisterModal()"
+                        class="px-5 py-2.5 rounded-xl font-bold text-white/60 hover:bg-white/10 transition-colors">Batal</button>
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-xl font-bold bg-indigo-500 text-white hover:bg-indigo-600 transition-colors shadow-lg shadow-indigo-500/30 hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95">Simpan
+                        & Daftar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts (Compat) -->
+    <script defer src="/__/firebase/12.7.0/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/12.7.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/12.7.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <script>
+        // --- THREE.JS BACKGROUND (Shared Code) ---
+        let scene, camera, renderer, particles;
+        function initThree() { scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1e3); renderer = new THREE.WebGLRenderer({ canvas: document.querySelector("#bg-canvas"), alpha: !0, antialias: !0 }); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); const e = new THREE.BufferGeometry(), t = 800, n = new Float32Array(3 * t); for (let e = 0; e < 3 * t; e++)n[e] = 25 * (Math.random() - .5); e.setAttribute("position", new THREE.BufferAttribute(n, 3)); const a = new THREE.PointsMaterial({ size: .03, color: "#ffffff", transparent: !0, opacity: .15, sizeAttenuation: !0 }); particles = new THREE.Points(e, a); scene.add(particles); camera.position.z = 5; window.addEventListener("resize", () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight) }) } function animateThree() { requestAnimationFrame(animateThree); particles.rotation.y += 4e-4; renderer.render(scene, camera) }
+
+        // --- ANIMATIONS ---
+        function animateBlobs() { anime({ targets: ".blob-1", translateX: [0, 100, -50, 0], translateY: [0, -50, 100, 0], duration: 2e4, easing: "easeInOutSine", loop: !0 }); anime({ targets: ".blob-2", translateX: [0, -150, 50, 0], translateY: [0, 100, -100, 0], duration: 25e3, easing: "easeInOutSine", loop: !0 }); anime({ targets: ".blob-3", scale: [1, 1.2, .9, 1], translateX: [0, 50, -50, 0], duration: 15e3, easing: "easeInOutSine", loop: !0 }) }
+
+        // --- GALLERY LOGIC ---
+        let artworks = [];
+
+        async function loadArtworks() {
+            try {
+                // Try to load from public/data/karya.json
+                const response = await fetch('data/karya.json');
+                if (response.ok) {
+                    artworks = await response.json();
+                } else {
+                    // Fallback to localStorage
+                    const local = localStorage.getItem('mk_artworks');
+                    if (local) artworks = JSON.parse(local);
+                }
+            } catch (e) {
+                console.warn('Failed to load JSON, checking local storage', e);
+                const local = localStorage.getItem('mk_artworks');
+                if (local) artworks = JSON.parse(local);
+            }
+            renderGallery();
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            if (artworks.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-white/40">Belum ada karya terdaftar.</div>';
+                return;
+            }
+
+            grid.innerHTML = artworks.map((item, index) => `
+                <div class="liquid-glass card-hover rounded-[32px] overflow-hidden group relative section-reveal" style="animation-delay: ${index * 100}ms">
+                    <div class="h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/10 relative flex items-center justify-center">
+                        <div class="text-white/20 group-hover:text-white/40 transition-colors transform group-hover:scale-110 duration-500">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        </div>
+                        <div class="absolute top-4 right-4 type-badge px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-white/70">
+                            ${item.type}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-indigo-400 font-bold mb-2 uppercase tracking-wide">${item.subject} (Kelas ${item.kelas})</div>
+                        <h3 class="text-xl font-bold mb-2 leading-tight">${item.title}</h3>
+                        <p class="text-white/40 text-sm mb-6">Oleh ${item.teacher}</p>
+                        
+                        <a href="upload/${item.filename}" target="_blank" 
+                           class="block w-full text-center bg-white/10 hover:bg-white text-white hover:text-black py-3 rounded-xl font-bold text-sm transition-all shadow-lg hover:shadow-white/20">
+                            Buka Karya ↗
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-trigger reveal animation for new items
+            // (Simplified for this snippet)
+            anime({
+                targets: '.section-reveal',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                easing: 'easeOutExpo'
+            });
+        }
+
+        // --- FILE SYSTEM API (EXPERIMENTAL) ---
+        async function uploadToLocalFolder() {
+            if (!('showOpenFilePicker' in window)) {
+                alert("Browser ini tidak mendukung File System Access API. Gunakan Chrome di Desktop.");
+                return;
+            }
+
+            try {
+                // 1. User picks source file
+                const [fileHandle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'HTML Files',
+                        accept: { 'text/html': ['.html', '.htm'] }
+                    }],
+                });
+                const file = await fileHandle.getFile();
+
+                // 2. User picks destination directory
+                alert(`File terpilih: ${file.name}\n\nLangkah selanjutnya: Pilih folder 'mediakreatif-sdanaksaleh/public/upload' untuk menyimpan file ini.`);
+                const dirHandle = await window.showDirectoryPicker();
+
+                // 3. Write file
+                const newFileHandle = await dirHandle.getFileHandle(file.name, { create: true });
+                const writable = await newFileHandle.createWritable();
+                await writable.write(file);
+                await writable.close();
+
+                // 4. Update UI
+                document.getElementById('regFilename').value = file.name;
+                alert(`SUKSES!\nFile ${file.name} berhasil disalin ke folder tujuan secara otomatis.`);
+
+            } catch (err) {
+                console.error(err);
+                if (err.name !== 'AbortError') {
+                    alert("Terjadi kesalahan saat menyalin file: " + err.message);
+                }
+            }
+        }
+
+        // --- REGISTER MODAL LOGIC ---
+        const modal = document.getElementById('registerModal');
+        const content = document.getElementById('registerContent');
+
+        function openRegisterModal() {
+            modal.classList.remove('hidden');
+            anime({ targets: modal, opacity: [0, 1], duration: 300, easing: 'easeOutQuad' });
+            anime({ targets: content, scale: [0.9, 1], translateY: [30, 0], duration: 400, easing: 'easeOutBack' });
+        }
+
+        function closeRegisterModal() {
+            anime({ targets: content, scale: [1, 0.9], translateY: [0, 30], duration: 300, easing: 'easeInQuad' });
+            anime({
+                targets: modal,
+                opacity: [1, 0],
+                duration: 300,
+                easing: 'easeInQuad',
+                complete: () => modal.classList.add('hidden')
+            });
+        }
+
+        function saveRegistration() {
+            const newItem = {
+                id: Date.now(),
+                teacher: document.getElementById('regGuru').value,
+                subject: document.getElementById('regMapel').value,
+                title: document.getElementById('regTitle').value,
+                kelas: document.getElementById('regKelas').value,
+                type: document.getElementById('regType').value,
+                filename: document.getElementById('regFilename').value,
+                date: new Date().toISOString()
+            };
+
+            artworks.unshift(newItem);
+
+            // Save to LocalStorage for persistence in this session
+            localStorage.setItem('mk_artworks', JSON.stringify(artworks));
+
+            renderGallery();
+            closeRegisterModal();
+
+            // Prompt download to update the JSON file
+            downloadJSON();
+        }
+
+        // --- JSON IMPORT/EXPORT ---
+        function downloadJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(artworks, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "karya.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            alert("Data JSON telah didownload. Silahkan replace file di public/data/karya.json untuk menyimpan perubahan secara permanen.");
+        }
+
+        function importJSON(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    artworks = JSON.parse(e.target.result);
+                    localStorage.setItem('mk_artworks', JSON.stringify(artworks)); // Sync local
+                    renderGallery();
+                    alert("Database berhasil dimuat!");
+                } catch (err) {
+                    alert("Error parsing JSON");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        window.onload = () => {
+            initThree();
+            animateThree();
+            animateBlobs();
+
+            loadArtworks();
+
+            // Mobile Menu
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    if (menu.classList.contains('hidden')) {
+                        menu.classList.remove('hidden');
+                        anime({ targets: menu, opacity: [0, 1], translateY: [-10, 0], duration: 300, easing: 'easeOutQuad' });
+                    } else {
+                        anime({ targets: menu, opacity: [1, 0], translateY: [0, -10], duration: 200, easing: 'easeInQuad', complete: () => menu.classList.add('hidden') });
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+
+</html>

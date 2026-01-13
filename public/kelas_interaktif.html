@@ -4,212 +4,239 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Jurnal Kelas Interaktif - Media Kreatif</title>
+    <title>Jurnal Kelas Interaktif - MediaKreatif</title>
 
-    <!-- Google Fonts: Outfit (Modern) & Fredoka (Cheerful/School) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;500;700&display=swap"
+    <!-- Google Fonts: Plus Jakarta Sans (Premium Modern) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                        friendly: ['Fredoka', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            blue: '#4FACFE',
-                            cyan: '#00F2FE',
-                            yellow: '#FFD200',
-                            orange: '#F7971E',
-                            purple: '#A855F7',
-                            pink: '#EC4899'
-                        }
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <style>
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --apple-blur: 40px;
         }
 
-        .blob {
-            position: absolute;
-            background-size: cover;
-            opacity: 0.6;
-            filter: blur(40px);
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
             z-index: -1;
+        }
+
+        /* Apple Liquid Glass Style - Base */
+        .liquid-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--apple-blur)) saturate(180%);
+            -webkit-backdrop-filter: blur(var(--apple-blur)) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Hover for Cards */
+        .card-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2),
+                0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Hover for Navbar (Stable) */
+        .nav-glass {
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nav-glass:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Background Liquid Blobs */
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -2;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            background: #4f46e5;
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            background: #7c3aed;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .blob-3 {
+            background: #2563eb;
+            top: 40%;
+            left: 30%;
+            width: 300px;
+            height: 300px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-apple {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-apple:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .section-reveal {
+            opacity: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Table Styles for Dark Theme */
+        .table-glass {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .table-row {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Input Styles for Dark Theme */
+        .input-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-glass:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(99, 102, 241, 0.5);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-glass::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal-glass {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
+<body>
 
-    <!-- Background Elements -->
-    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <div class="blob w-96 h-96 rounded-full bg-brand-blue/10 top-0 left-[-100px] animate-float"
-            style="animation-delay: 0s;"></div>
-        <div class="blob w-[30rem] h-[30rem] rounded-full bg-brand-pink/10 bottom-[-100px] right-[-100px] animate-float"
-            style="animation-delay: 2s;"></div>
-    </div>
+    <!-- Liquid Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- ThreeJS Canvas -->
+    <canvas id="bg-canvas"></canvas>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 px-4 pt-6 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto relative">
-            <div
-                class="glass-panel rounded-2xl px-4 py-3 md:px-6 md:py-4 flex justify-between items-center shadow-lg/5 border border-white/40 relative z-50">
-
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <div
-                        class="w-10 h-10 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-blue/30 group-hover:scale-110 transition-transform duration-300">
-                        M
-                    </div>
-                    <span
-                        class="font-friendly font-semibold text-xl tracking-tight text-slate-700 group-hover:text-brand-blue transition-colors">
-                        Media<span class="text-brand-blue group-hover:text-slate-700 transition-colors">Kreatif</span>
-                    </span>
-                </a>
-
-                <!-- Desktop Menu -->
-                <div
-                    class="hidden md:flex items-center gap-1 bg-white/60 p-1.5 rounded-xl border border-white/50 backdrop-blur-md shadow-inner">
-                    <a href="index.html"
-                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Beranda</a>
-                    <!-- <a href="index.html#kategori"
-                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Kategori</a> -->
-                    <a href="#"
-                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-brand-blue bg-white shadow-md transition-all">Kelas
-                        Interaktif</a>
-                    <a href="media.html"
-                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Terbaru</a>
-                </div>
-
-                <!-- Right Side -->
-                <div class="flex items-center gap-4">
-                    <button
-                        class="login-btn hidden md:flex bg-slate-900 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 items-center gap-2">
-                        <span>Masuk Guru</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
-                            </path>
-                        </svg>
-                    </button>
-
-                    <!-- Mobile Hamburger -->
-                    <button id="mobile-menu-btn"
-                        class="md:hidden p-2 text-slate-600 hover:text-brand-blue transition-colors bg-white/50 rounded-lg hover:bg-white">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile Menu Dropdown -->
-            <div id="mobile-menu" class="hidden absolute top-full left-0 w-full mt-3 z-40 origin-top">
-                <div
-                    class="glass-panel rounded-2xl p-4 flex flex-col gap-2 shadow-2xl border border-white/50 bg-white/90 backdrop-blur-xl">
-                    <a href="index.html"
-                        class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-                        Beranda
-                        <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                    </a>
-                    <a href="index.html#kategori"
-                        class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-                        Kategori
-                        <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                    </a>
-                    <a href="#"
-                        class="px-4 py-3 rounded-xl text-brand-blue bg-brand-blue/5 font-bold flex items-center justify-between group">
-                        Kelas Interaktif
-                        <span class="text-brand-blue opacity-100 transition-opacity">→</span>
-                    </a>
-                    <a href="media.html"
-                        class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-                        Terbaru
-                        <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                    </a>
-                    <div class="h-px bg-slate-200 my-2"></div>
-                    <button
-                        class="login-btn w-full bg-slate-900 text-white px-5 py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg flex items-center justify-center gap-2">
-                        <span>Masuk Portal Guru</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+    <nav
+        class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-max px-8 py-3 rounded-full liquid-glass nav-glass flex justify-between md:justify-center items-center gap-12">
+        <div class="text-xl font-extrabold tracking-tighter">
+            Media<span class="text-indigo-400">Kreatif</span>
+        </div>
+        <div class="hidden md:flex gap-10 font-medium text-sm text-white/70">
+            <a href="index.html" class="hover:text-white transition-colors duration-300">Beranda</a>
+            <a href="kelas_interaktif.html" class="text-white font-bold">Kelas Interaktif</a>
+            <a href="karya.html" class="hover:text-white transition-colors duration-300">Karya</a>
         </div>
     </nav>
 
     <!-- Page Content -->
-    <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <main class="relative min-h-screen pt-32 pb-20 px-6">
 
         <!-- Header Page -->
-        <div class="text-center mb-12 page-header">
-            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4 font-friendly">Jurnal Kelas Interaktif</h1>
-            <p class="text-slate-500 max-w-2xl mx-auto">Catat penggunaan Interactive Flat Panel di sini untuk menunjang
-                pembelajaran yang lebih efektif.</p>
+        <div class="text-center mb-16 page-header section-reveal">
+            <div
+                class="inline-block py-1 px-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white/60 text-[10px] font-bold mb-6 tracking-[0.2em] uppercase">
+                Platform Jurnal Digital
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight">
+                Jurnal <span class="text-gradient">Kelas Interaktif</span>
+            </h1>
+            <p class="text-white/50 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
+                Catat penggunaan Interactive Flat Panel di sini untuk menunjang pembelajaran yang lebih efektif.
+            </p>
         </div>
 
         <!-- Controls -->
-        <div class="flex justify-end items-center gap-3 mb-8 stagger-card">
-            <button onclick="downloadJSON()"
-                class="bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl font-bold hover:bg-slate-50 hover:text-brand-blue hover:border-brand-blue transition-all flex items-center gap-2 shadow-sm">
-                <span>⬇️</span> <span class="hidden sm:inline">Download JSON</span>
-            </button>
-
-            <!-- Hidden file input for import -->
-            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importJSON(this)">
-            <button onclick="document.getElementById('importFile').click()"
-                class="bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl font-bold hover:bg-slate-50 hover:text-brand-blue hover:border-brand-blue transition-all flex items-center gap-2 shadow-sm">
-                <span>⬆️</span> <span class="hidden sm:inline">Upload JSON</span>
-            </button>
-
+        <div class="flex justify-end items-center gap-3 mb-8 stagger-card section-reveal">
             <button onclick="openModal()"
-                class="bg-brand-blue text-white px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl shadow-brand-blue/30 hover:bg-blue-600 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+                class="bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl shadow-indigo-500/30 hover:bg-indigo-600 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
                 <span>+</span> Catat Baru
             </button>
         </div>
 
         <!-- Table -->
-        <div class="glass-panel rounded-3xl p-1 overflow-hidden shadow-sm stagger-card">
-            <div class="bg-white rounded-[1.25rem] overflow-hidden">
+        <div class="liquid-glass rounded-3xl p-1 overflow-hidden shadow-sm stagger-card section-reveal">
+            <div class="table-glass rounded-[1.25rem] overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="journalTable">
                         <thead
-                            class="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase font-bold tracking-wider">
+                            class="bg-white/5 border-b border-white/10 text-white/50 text-xs uppercase font-bold tracking-wider">
                             <tr>
                                 <th class="px-6 py-5">Tanggal & Jam</th>
                                 <th class="px-6 py-5">Nama Guru</th>
@@ -220,10 +247,10 @@
                                 <th class="px-6 py-5 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm" id="tableBody">
+                        <tbody class="divide-y divide-white/5 text-sm" id="tableBody">
                             <!-- Data will be populated here by JS -->
                             <tr class="text-center py-12">
-                                <td colspan="7" class="text-slate-400 py-12">
+                                <td colspan="7" class="text-white/40 py-12">
                                     <div class="flex flex-col items-center gap-2">
                                         <span class="text-3xl opacity-50">📂</span>
                                         <p>Sedang memuat data...</p>
@@ -239,46 +266,16 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8 mb-12">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div
-                            class="w-8 h-8 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                            M
-                        </div>
-                        <span class="font-friendly font-bold text-xl text-slate-700">MediaKreatif</span>
-                    </div>
-                    <p class="text-slate-500 leading-relaxed max-w-sm">
-                        Platform berbagi media pembelajaran digital untuk mendukung kegiatan belajar mengajar di SD Anak
-                        Saleh yang
-                        lebih interaktif dan menyenangkan.
-                    </p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-800 mb-6">Tautan</h4>
-                    <ul class="space-y-4 text-slate-500">
-                        <li><a href="index.html" class="hover:text-brand-blue transition-colors">Beranda</a></li>
-                        <li><a href="#" class="hover:text-brand-blue transition-colors">Tentang Kami</a></li>
-                        <li><a href="#" class="hover:text-brand-blue transition-colors">Panduan Guru</a></li>
-                        <li><a href="#" class="hover:text-brand-blue transition-colors">Hubungi Admin</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-800 mb-6">Hubungi Kami</h4>
-                    <ul class="space-y-4 text-slate-500">
-                        <li class="flex items-center gap-3">
-                            <span>📧</span> operator@sekolahanaksaleh.sch.id
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <span>🏫</span> Malang, Jawa Timur
-                        </li>
-                    </ul>
-                </div>
+    <footer class="py-20 px-6 border-t border-white/5">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div class="text-2xl font-bold">MediaKreatif</div>
+            <div class="flex gap-10 text-white/40 text-sm">
+                <a href="#" class="hover:text-white transition">Instagram</a>
+                <a href="#" class="hover:text-white transition">Twitter</a>
+                <a href="#" class="hover:text-white transition">Discord</a>
             </div>
-            <div class="border-t border-slate-100 pt-8 text-center text-slate-400 text-sm">
-                &copy; 2026 SD Anak Saleh. All rights reserved.
+            <div class="text-white/20 text-xs">
+                &copy; 2026 MediaKreatif SD Anak Saleh. Didesain untuk kemajuan pendidikan.
             </div>
         </div>
     </footer>
@@ -286,38 +283,36 @@
     <!-- Modal Form (Input Entry) -->
     <div id="entryModal"
         class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300"
+        <div class="modal-glass rounded-3xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300 border border-white/10"
             id="modalContent">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-lg text-slate-800">Catat Penggunaan</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 transition-colors">✕</button>
+            <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <h3 class="font-bold text-lg text-white">Catat Penggunaan</h3>
+                <button onclick="closeModal()"
+                    class="text-white/40 hover:text-red-400 transition-colors text-2xl">✕</button>
             </div>
             <div class="p-6 space-y-4">
                 <input type="hidden" id="entryId">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tanggal</label>
-                        <input type="date" id="date"
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Tanggal</label>
+                        <input type="date" id="date" class="input-glass w-full px-4 py-2.5 rounded-xl">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Jam</label>
-                        <input type="time" id="time"
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Jam</label>
+                        <input type="time" id="time" class="input-glass w-full px-4 py-2.5 rounded-xl">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Guru</label>
+                    <label class="block text-xs font-bold text-white/60 uppercase mb-2">Nama Guru</label>
                     <input type="text" id="teacherName" placeholder="Nama Guru..."
-                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                        class="input-glass w-full px-4 py-2.5 rounded-xl">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kelas</label>
-                        <select id="className"
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Kelas</label>
+                        <select id="className" class="input-glass w-full px-4 py-2.5 rounded-xl">
                             <option value="">Pilih Kelas</option>
                             <option value="1A">Kelas 1A</option>
                             <option value="1B">Kelas 1B</option>
@@ -346,39 +341,39 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Mata Pelajaran</label>
+                        <label class="block text-xs font-bold text-white/60 uppercase mb-2">Mata Pelajaran</label>
                         <input type="text" id="subject" placeholder="Mapel..."
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                            class="input-glass w-full px-4 py-2.5 rounded-xl">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Materi</label>
+                    <label class="block text-xs font-bold text-white/60 uppercase mb-2">Materi</label>
                     <textarea id="topic" rows="2" placeholder="Topik materi yang diajarkan..."
-                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"></textarea>
+                        class="input-glass w-full px-4 py-2.5 rounded-xl"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Keterangan (Opsional)</label>
+                    <label class="block text-xs font-bold text-white/60 uppercase mb-2">Keterangan (Opsional)</label>
                     <input type="text" id="notes" placeholder="Catatan tambahan..."
-                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all">
+                        class="input-glass w-full px-4 py-2.5 rounded-xl">
                 </div>
             </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div class="px-6 py-4 bg-white/5 border-t border-white/10 flex justify-end gap-3">
                 <button onclick="closeModal()"
-                    class="px-4 py-2 rounded-xl font-bold text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
+                    class="px-5 py-2.5 rounded-xl font-bold text-white/60 hover:bg-white/10 transition-colors">Batal</button>
                 <button onclick="saveEntry()"
-                    class="px-5 py-2 rounded-xl font-bold bg-brand-blue text-white hover:bg-blue-600 transition-colors shadow-lg shadow-brand-blue/30 hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95">Simpan</button>
+                    class="px-6 py-2.5 rounded-xl font-bold bg-indigo-500 text-white hover:bg-indigo-600 transition-colors shadow-lg shadow-indigo-500/30 hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- Login Modal (Same as media/index) -->
-    <div id="login-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+    <!-- Login Modal -->
+    <div id="login-modal"
+        class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
         <div
-            class="modal-content glass-panel bg-white/95 rounded-3xl w-full max-w-md p-8 relative shadow-2xl border border-white/50">
-            <button id="close-login"
-                class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+            class="modal-content modal-glass rounded-3xl w-full max-w-md p-8 relative shadow-2xl border border-white/10">
+            <button id="close-login" class="absolute top-4 right-4 text-white/40 hover:text-white/60 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
@@ -387,43 +382,42 @@
 
             <div class="text-center mb-8">
                 <div
-                    class="w-16 h-16 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-lg shadow-brand-blue/30 mx-auto mb-4">
+                    class="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-lg shadow-indigo-500/30 mx-auto mb-4">
                     M
                 </div>
-                <h2 class="text-2xl font-bold text-slate-800 font-friendly">Selamat Datang Guru!</h2>
-                <p class="text-slate-500 text-sm mt-2">Silahkan login untuk mengelola media pembelajaran.</p>
+                <h2 class="text-2xl font-bold text-white">Selamat Datang Guru!</h2>
+                <p class="text-white/50 text-sm mt-2">Silahkan login untuk mengelola media pembelajaran.</p>
             </div>
 
             <form class="space-y-4" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Email Sekolah</label>
-                    <input type="email"
-                        class="w-full px-5 py-3 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all placeholder:text-slate-300"
+                    <label class="block text-sm font-bold text-white/80 mb-2">Email Sekolah</label>
+                    <input type="email" class="input-glass w-full px-5 py-3 rounded-xl"
                         placeholder="nama@sdanaksaleh.sch.id" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Kata Sandi</label>
-                    <input type="password"
-                        class="w-full px-5 py-3 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all placeholder:text-slate-300"
-                        placeholder="••••••••" required>
+                    <label class="block text-sm font-bold text-white/80 mb-2">Kata Sandi</label>
+                    <input type="password" class="input-glass w-full px-5 py-3 rounded-xl" placeholder="••••••••"
+                        required>
                 </div>
 
                 <div class="flex items-center justify-between text-sm">
-                    <label class="flex items-center gap-2 text-slate-500 cursor-pointer">
-                        <input type="checkbox" class="rounded border-slate-300 text-brand-blue focus:ring-brand-blue">
+                    <label class="flex items-center gap-2 text-white/50 cursor-pointer">
+                        <input type="checkbox"
+                            class="rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500">
                         <span>Ingat saya</span>
                     </label>
-                    <a href="#" class="text-brand-blue font-bold hover:underline">Lupa sandi?</a>
+                    <a href="#" class="text-indigo-400 font-bold hover:underline">Lupa sandi?</a>
                 </div>
 
                 <button type="submit"
-                    class="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:shadow-brand-blue/30 hover:-translate-y-1 transition-all active:scale-95 mt-4">
+                    class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 transition-all active:scale-95 mt-4">
                     Masuk Sekarang
                 </button>
             </form>
 
-            <div class="mt-8 text-center text-sm text-slate-400">
-                Belum punya akun? <a href="#" class="text-brand-blue font-bold hover:underline">Hubungi Admin</a>
+            <div class="mt-8 text-center text-sm text-white/40">
+                Belum punya akun? <a href="#" class="text-indigo-400 font-bold hover:underline">Hubungi Admin</a>
             </div>
         </div>
     </div>
@@ -438,105 +432,239 @@
     <!-- Scripts -->
     <script src="kelas_interaktif.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- THREE.JS BACKGROUND ---
+        let scene, camera, renderer, particles;
 
-            // Navbar & Animations Logic (Similar to media.html)
-
-            // GSAP Animations
-            gsap.from(".page-header", {
-                y: -30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power3.out"
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.querySelector('#bg-canvas'),
+                alpha: true,
+                antialias: true
             });
 
-            gsap.from(".stagger-card", {
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.15,
-                ease: "power2.out",
-                delay: 0.2
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const count = 800;
+            const positions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 25;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.03,
+                color: '#ffffff',
+                transparent: true,
+                opacity: 0.15,
+                sizeAttenuation: true
             });
 
-            // Mobile Menu
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
 
-            if (btn && menu) {
-                btn.addEventListener('click', () => {
-                    const isHidden = menu.classList.contains('hidden');
-                    if (isHidden) {
-                        menu.classList.remove('hidden');
-                        gsap.fromTo(menu,
-                            { opacity: 0, scaleY: 0.8, y: -20 },
-                            { opacity: 1, scaleY: 1, y: 0, duration: 0.4, ease: "back.out(1.7)" }
-                        );
-                    } else {
-                        gsap.to(menu, {
-                            opacity: 0,
-                            y: -20,
-                            scaleY: 0.9,
-                            duration: 0.2,
-                            ease: "power2.in",
-                            onComplete: () => menu.classList.add('hidden')
+            camera.position.z = 5;
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            particles.rotation.y += 0.0004;
+            renderer.render(scene, camera);
+        }
+
+        // --- LIQUID BLOBS ANIMATION ---
+        function animateBlobs() {
+            anime({
+                targets: '.blob-1',
+                translateX: [0, 100, -50, 0],
+                translateY: [0, -50, 100, 0],
+                duration: 20000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+            anime({
+                targets: '.blob-2',
+                translateX: [0, -150, 50, 0],
+                translateY: [0, 100, -100, 0],
+                duration: 25000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+            anime({
+                targets: '.blob-3',
+                scale: [1, 1.2, 0.9, 1],
+                translateX: [0, 50, -50, 0],
+                duration: 15000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+        }
+
+        // --- PAGE ANIMATIONS ---
+        function initAnimations() {
+            // Hero Content
+            anime({
+                targets: '.page-header > *',
+                translateY: [40, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(150),
+                easing: 'easeOutExpo',
+                duration: 1500
+            });
+
+            // Stagger Cards
+            anime({
+                targets: '.stagger-card',
+                translateY: [60, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(200, { start: 500 }),
+                easing: 'easeOutExpo',
+                duration: 1500
+            });
+
+            // Section Reveal on Scroll
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            translateY: [60, 0],
+                            opacity: [0, 1],
+                            easing: 'easeOutExpo',
+                            duration: 1500
                         });
+                        revealObserver.unobserve(entry.target);
                     }
                 });
+            }, { threshold: 0.1 });
 
-                // Close menu when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!btn.contains(e.target) && !menu.contains(e.target) && !menu.classList.contains('hidden')) {
-                        gsap.to(menu, {
-                            opacity: 0,
-                            y: -20,
-                            scaleY: 0.9,
-                            duration: 0.2,
-                            ease: "power2.in",
-                            onComplete: () => menu.classList.add('hidden')
-                        });
-                    }
-                });
-            }
+            document.querySelectorAll('.section-reveal').forEach(el => revealObserver.observe(el));
+        }
 
-            // Login Modal Logic
-            const loginBtns = document.querySelectorAll('.login-btn');
-            const loginModal = document.getElementById('login-modal');
-            const closeLoginBtn = document.getElementById('close-login');
+        // Parallax Effect on Mouse Move
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5);
+            const y = (e.clientY / window.innerHeight - 0.5);
 
-            if (loginModal) {
-                function openLogin() {
-                    loginModal.classList.remove('hidden');
-                    gsap.fromTo(loginModal.querySelector('.modal-content'),
-                        { opacity: 0, scale: 0.8, y: 50 },
-                        { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
-                    );
-                    gsap.fromTo(loginModal, { backgroundColor: "rgba(0,0,0,0)" }, { backgroundColor: "rgba(0,0,0,0.5)", duration: 0.3 });
-                }
+            anime({
+                targets: '#bg-canvas',
+                translateX: x * 30,
+                translateY: y * 30,
+                duration: 1000,
+                easing: 'easeOutQuad'
+            });
 
-                function closeLogin() {
-                    gsap.to(loginModal.querySelector('.modal-content'), {
-                        opacity: 0,
-                        scale: 0.8,
-                        y: 50,
-                        duration: 0.3,
-                        ease: "power2.in"
-                    });
-                    gsap.to(loginModal, {
-                        backgroundColor: "rgba(0,0,0,0)",
-                        duration: 0.3,
-                        onComplete: () => loginModal.classList.add('hidden')
-                    });
-                }
-
-                loginBtns.forEach(b => b.addEventListener('click', openLogin));
-                if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLogin);
-
-                loginModal.addEventListener('click', (e) => {
-                    if (e.target === loginModal) closeLogin();
-                });
-            }
+            anime({
+                targets: '.blob',
+                translateX: x * 50,
+                translateY: y * 50,
+                duration: 1500,
+                easing: 'easeOutQuad'
+            });
         });
+
+        // --- MOBILE MENU ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener('click', () => {
+                const isHidden = mobileMenu.classList.contains('hidden');
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden');
+                    anime({
+                        targets: mobileMenu,
+                        opacity: [0, 1],
+                        scaleY: [0.8, 1],
+                        translateY: [-20, 0],
+                        duration: 400,
+                        easing: 'easeOutBack'
+                    });
+                } else {
+                    anime({
+                        targets: mobileMenu,
+                        opacity: [1, 0],
+                        translateY: [0, -20],
+                        scaleY: [1, 0.9],
+                        duration: 200,
+                        easing: 'easeInQuad',
+                        complete: () => mobileMenu.classList.add('hidden')
+                    });
+                }
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileBtn.contains(e.target) && !mobileMenu.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
+                    anime({
+                        targets: mobileMenu,
+                        opacity: [1, 0],
+                        translateY: [0, -20],
+                        scaleY: [1, 0.9],
+                        duration: 200,
+                        easing: 'easeInQuad',
+                        complete: () => mobileMenu.classList.add('hidden')
+                    });
+                }
+            });
+        }
+
+        // --- LOGIN MODAL ---
+        const loginBtns = document.querySelectorAll('.login-btn');
+        const loginModal = document.getElementById('login-modal');
+        const closeLoginBtn = document.getElementById('close-login');
+
+        if (loginModal) {
+            function openLogin() {
+                loginModal.classList.remove('hidden');
+                anime({
+                    targets: loginModal.querySelector('.modal-content'),
+                    opacity: [0, 1],
+                    scale: [0.8, 1],
+                    translateY: [50, 0],
+                    duration: 500,
+                    easing: 'easeOutBack'
+                });
+            }
+
+            function closeLogin() {
+                anime({
+                    targets: loginModal.querySelector('.modal-content'),
+                    opacity: [1, 0],
+                    scale: [1, 0.8],
+                    translateY: [0, 50],
+                    duration: 300,
+                    easing: 'easeInQuad',
+                    complete: () => loginModal.classList.add('hidden')
+                });
+            }
+
+            loginBtns.forEach(b => b.addEventListener('click', openLogin));
+            if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLogin);
+
+            loginModal.addEventListener('click', (e) => {
+                if (e.target === loginModal) closeLogin();
+            });
+        }
+
+        // --- INITIALIZE ON LOAD ---
+        window.onload = () => {
+            initThree();
+            animateThree();
+            animateBlobs();
+            initAnimations();
+        };
     </script>
 </body>
 

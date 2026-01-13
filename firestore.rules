@@ -9,8 +9,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
     
+    match /hasil_karya_siswa/{document=**} {
+      allow read, write: if true;
+    }
+
     // Aturan default: tolak akses ke koleksi lain jika tidak didefinisikan
-    // (Anda mungkin perlu menggabungkan ini dengan aturan yang sudah ada di Console)
     match /{document=**} {
       allow read, write: if false;
     }

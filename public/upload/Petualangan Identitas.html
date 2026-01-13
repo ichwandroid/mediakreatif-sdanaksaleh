@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Petualangan Identitas - Kelas 1 SD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -14,10 +16,11 @@
             --accent-pink: #FCE7F3;
             --primary-blue: #3B82F6;
         }
+
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: var(--bg-main);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 10% 20%, rgba(254, 243, 199, 0.5) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(252, 231, 243, 0.5) 0%, transparent 20%),
                 radial-gradient(circle at 50% 50%, rgba(224, 242, 254, 1) 0%, rgba(186, 230, 253, 0.5) 100%);
@@ -38,6 +41,7 @@
             opacity: 0.4;
             animation: float 10s infinite ease-in-out;
         }
+
         body::after {
             content: "☁️";
             position: fixed;
@@ -49,11 +53,21 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            50% { transform: translateY(-20px) translateX(10px); }
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(-20px) translateX(10px);
+            }
         }
 
-        h1, h2, h3, .font-kids {
+        h1,
+        h2,
+        h3,
+        .font-kids {
             font-family: 'Fredoka One', cursive;
             letter-spacing: 0.5px;
         }
@@ -116,53 +130,71 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
-        .custom-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
         .custom-scroll::-webkit-scrollbar-thumb {
             background: #BFDBFE;
             border-radius: 10px;
         }
     </style>
 </head>
+
 <body class="p-4 md:p-8">
 
     <div id="app" class="max-w-4xl mx-auto">
-        
+
         <!-- SECTION 1: BERANDA -->
         <div id="screen-home" class="max-w-2xl mx-auto glass-card p-12 text-center fade-in">
             <div class="flex justify-between items-center mb-8">
                 <div class="flex items-center gap-2">
                     <span class="text-2xl">🇮🇩</span>
-                    <span class="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Kelas 1 SD</span>
+                    <span
+                        class="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Kelas
+                        1 SD</span>
                 </div>
-                <button onclick="openGuruMode()" class="p-2 bg-white/50 hover:bg-blue-100 rounded-2xl transition flex items-center gap-2 group border-2 border-dashed border-blue-200">
+                <button onclick="openGuruMode()"
+                    class="p-2 bg-white/50 hover:bg-blue-100 rounded-2xl transition flex items-center gap-2 group border-2 border-dashed border-blue-200">
                     <span class="text-[10px] font-bold text-blue-400">GURU</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </button>
             </div>
-            
+
             <div class="relative inline-block mb-8">
                 <div class="absolute -top-4 -right-4 text-4xl animate-bounce">✨</div>
-                <div class="p-8 bg-gradient-to-tr from-blue-100 to-white rounded-full shadow-inner border-4 border-white">
+                <div
+                    class="p-8 bg-gradient-to-tr from-blue-100 to-white rounded-full shadow-inner border-4 border-white">
                     <span class="text-8xl">👦🏻</span>
                 </div>
             </div>
-            
+
             <h1 class="text-4xl md:text-5xl text-blue-600 mb-4 drop-shadow-sm">Halo Sahabat!</h1>
             <p class="text-slate-500 mb-12 text-xl font-medium">Ayo buat kartu identitasmu sendiri!</p>
-            
+
             <div class="space-y-8 text-left mb-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="group">
                         <label class="block text-sm font-bold text-blue-400 mb-3 ml-2 flex items-center gap-2">
                             <span>🏫</span> KELAS KAMU
                         </label>
-                        <select id="input-kelas" class="w-full p-5 rounded-[24px] border-4 border-slate-50 bg-slate-50 focus:bg-white focus:border-blue-300 outline-none transition-all text-lg font-bold text-slate-700 appearance-none shadow-sm">
+                        <select id="input-kelas"
+                            class="w-full p-5 rounded-[24px] border-4 border-slate-50 bg-slate-50 focus:bg-white focus:border-blue-300 outline-none transition-all text-lg font-bold text-slate-700 appearance-none shadow-sm">
                             <option value="1A">Kelas 1 - A</option>
                             <option value="1B">Kelas 1 - B</option>
                             <option value="1C">Kelas 1 - C</option>
@@ -173,18 +205,21 @@
                         <label class="block text-sm font-bold text-blue-400 mb-3 ml-2 flex items-center gap-2">
                             <span>📛</span> NAMA PANGGILAN
                         </label>
-                        <input type="text" id="input-nama" placeholder="Tulis namamu..." class="w-full p-5 rounded-[24px] border-4 border-slate-50 bg-slate-50 focus:bg-white focus:border-blue-300 outline-none transition-all text-lg font-bold shadow-sm">
+                        <input type="text" id="input-nama" placeholder="Tulis namamu..."
+                            class="w-full p-5 rounded-[24px] border-4 border-slate-50 bg-slate-50 focus:bg-white focus:border-blue-300 outline-none transition-all text-lg font-bold shadow-sm">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-blue-400 mb-3 ml-2 flex items-center gap-2">
                         <span>📍</span> ASAL SEKOLAH
                     </label>
-                    <input type="text" id="input-sekolah" placeholder="Nama SD tempat kamu belajar..." class="w-full p-5 rounded-[24px] border-4 border-slate-50 bg-slate-50 focus:bg-white focus:border-blue-300 outline-none transition-all text-lg font-bold shadow-sm">
+                    <input type="text" id="input-sekolah" placeholder="Nama SD tempat kamu belajar..."
+                        class="w-full p-5 rounded-[24px] border-4 border-slate-50 bg-slate-50 focus:bg-white focus:border-blue-300 outline-none transition-all text-lg font-bold shadow-sm">
                 </div>
             </div>
 
-            <button onclick="goToMenu()" class="w-full btn-main text-white font-bold py-6 rounded-[30px] shadow-2xl shadow-blue-300 text-2xl tracking-widest uppercase">
+            <button onclick="goToMenu()"
+                class="w-full btn-main text-white font-bold py-6 rounded-[30px] shadow-2xl shadow-blue-300 text-2xl tracking-widest uppercase">
                 MULAI SEKARANG 🚀
             </button>
         </div>
@@ -192,37 +227,51 @@
         <!-- SECTION 2: MENU UTAMA -->
         <div id="screen-menu" class="max-w-2xl mx-auto hidden glass-card p-12 text-center fade-in">
             <h2 class="text-4xl text-slate-800 mb-4">Pilih Misi Seru</h2>
-            <div id="welcome-msg" class="mb-12 py-3 px-8 bg-blue-500 text-white font-bold rounded-full inline-block shadow-lg shadow-blue-100"></div>
+            <div id="welcome-msg"
+                class="mb-12 py-3 px-8 bg-blue-500 text-white font-bold rounded-full inline-block shadow-lg shadow-blue-100">
+            </div>
 
             <div class="grid grid-cols-1 gap-6 text-left">
-                <div onclick="showScreen('materi')" class="group flex items-center p-8 glass-card border-b-8 border-yellow-400 hover:scale-[1.02] cursor-pointer transition-all">
-                    <div class="w-20 h-20 bg-yellow-100 rounded-[28px] flex items-center justify-center text-4xl mr-8 group-hover:rotate-12 transition">📚</div>
+                <div onclick="showScreen('materi')"
+                    class="group flex items-center p-8 glass-card border-b-8 border-yellow-400 hover:scale-[1.02] cursor-pointer transition-all">
+                    <div
+                        class="w-20 h-20 bg-yellow-100 rounded-[28px] flex items-center justify-center text-4xl mr-8 group-hover:rotate-12 transition">
+                        📚</div>
                     <div>
                         <h3 class="text-2xl font-bold text-slate-700">Ayo Belajar</h3>
                         <p class="text-slate-400 font-bold">Mengenal diriku dan teman</p>
                     </div>
                 </div>
 
-                <div onclick="startQuiz1()" class="group flex items-center p-8 glass-card border-b-8 border-emerald-400 hover:scale-[1.02] cursor-pointer transition-all">
-                    <div class="w-20 h-20 bg-emerald-100 rounded-[28px] flex items-center justify-center text-4xl mr-8 group-hover:rotate-12 transition">⭐</div>
+                <div onclick="startQuiz1()"
+                    class="group flex items-center p-8 glass-card border-b-8 border-emerald-400 hover:scale-[1.02] cursor-pointer transition-all">
+                    <div
+                        class="w-20 h-20 bg-emerald-100 rounded-[28px] flex items-center justify-center text-4xl mr-8 group-hover:rotate-12 transition">
+                        ⭐</div>
                     <div>
                         <h3 class="text-2xl font-bold text-slate-700">Kuis Pintar</h3>
                         <p class="text-slate-400 font-bold">Uji kemampuanmu di sini</p>
                     </div>
                 </div>
 
-                <div onclick="showScreen('kuis2')" class="group flex items-center p-8 glass-card border-b-8 border-purple-400 hover:scale-[1.02] cursor-pointer transition-all">
-                    <div class="w-20 h-20 bg-purple-100 rounded-[28px] flex items-center justify-center text-4xl mr-8 group-hover:rotate-12 transition">🖍️</div>
+                <div onclick="showScreen('kuis2')"
+                    class="group flex items-center p-8 glass-card border-b-8 border-purple-400 hover:scale-[1.02] cursor-pointer transition-all">
+                    <div
+                        class="w-20 h-20 bg-purple-100 rounded-[28px] flex items-center justify-center text-4xl mr-8 group-hover:rotate-12 transition">
+                        🖍️</div>
                     <div>
                         <h3 class="text-2xl font-bold text-slate-700">Tantangan Menulis</h3>
                         <p class="text-slate-400 font-bold">Lengkapi data profilmu</p>
                     </div>
                 </div>
             </div>
-            
-            <button onclick="showScreen('home')" class="mt-12 text-sm text-slate-400 font-bold hover:text-red-500 transition-colors flex items-center justify-center gap-2 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+
+            <button onclick="showScreen('home')"
+                class="mt-12 text-sm text-slate-400 font-bold hover:text-red-500 transition-colors flex items-center justify-center gap-2 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
                 GANTI SISWA
             </button>
@@ -236,13 +285,17 @@
                     <p class="text-slate-500 font-bold">Pantau prestasi siswa di sini</p>
                 </div>
                 <div class="flex gap-4">
-                    <button onclick="exportData()" class="bg-white text-blue-600 px-6 py-4 rounded-[24px] font-bold shadow-xl shadow-blue-100 border-2 border-blue-50 hover:bg-blue-50 transition flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    <button onclick="exportData()"
+                        class="bg-white text-blue-600 px-6 py-4 rounded-[24px] font-bold shadow-xl shadow-blue-100 border-2 border-blue-50 hover:bg-blue-50 transition flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
                         UNDUH DATA (CSV)
                     </button>
-                    <button onclick="showScreen('home')" class="bg-slate-900 text-white px-8 py-4 rounded-[24px] font-bold shadow-2xl hover:bg-slate-800 transition">
+                    <button onclick="showScreen('home')"
+                        class="bg-slate-900 text-white px-8 py-4 rounded-[24px] font-bold shadow-2xl hover:bg-slate-800 transition">
                         KELUAR
                     </button>
                 </div>
@@ -273,11 +326,13 @@
             </div>
 
             <div class="glass-card overflow-hidden">
-                <div class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 bg-white/50">
+                <div
+                    class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 bg-white/50">
                     <h3 class="text-2xl font-bold text-slate-700">Daftar Nilai Siswa</h3>
                     <div class="flex items-center gap-4 bg-white p-2 rounded-2xl border-2 border-slate-100 shadow-sm">
                         <span class="text-xs font-black text-slate-400 ml-2 uppercase">Kelas:</span>
-                        <select id="filter-kelas" onchange="renderBankNilai()" class="bg-transparent font-bold text-blue-600 outline-none pr-4">
+                        <select id="filter-kelas" onchange="renderBankNilai()"
+                            class="bg-transparent font-bold text-blue-600 outline-none pr-4">
                             <option value="ALL">Semua Kelas</option>
                             <option value="1A">Kelas 1A</option>
                             <option value="1B">Kelas 1B</option>
@@ -310,43 +365,56 @@
         <!-- MATERI SECTION -->
         <div id="screen-materi" class="max-w-2xl mx-auto hidden glass-card p-12 fade-in">
             <div class="flex items-center mb-10">
-                <button onclick="showScreen('menu')" class="mr-6 p-4 bg-blue-50 hover:bg-blue-100 rounded-[20px] transition-colors border-2 border-blue-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <button onclick="showScreen('menu')"
+                    class="mr-6 p-4 bg-blue-50 hover:bg-blue-100 rounded-[20px] transition-colors border-2 border-blue-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </button>
                 <h2 class="text-3xl font-bold text-slate-800">Ruang Belajar</h2>
             </div>
-            
+
             <div class="space-y-8">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-10 rounded-[40px] text-white shadow-xl relative overflow-hidden">
+                <div
+                    class="bg-gradient-to-br from-blue-500 to-blue-700 p-10 rounded-[40px] text-white shadow-xl relative overflow-hidden">
                     <div class="absolute -right-4 -bottom-4 text-8xl opacity-20">📖</div>
                     <p class="text-2xl leading-relaxed font-bold mb-4">Apa itu Identitas Diri?</p>
                     <p class="text-lg opacity-90 leading-relaxed font-medium">
-                        Identitas diri adalah "KTP" kecilmu! Ini caramu memberitahu orang lain namamu, di mana kamu tinggal, dan apa yang kamu sukai.
+                        Identitas diri adalah "KTP" kecilmu! Ini caramu memberitahu orang lain namamu, di mana kamu
+                        tinggal, dan apa yang kamu sukai.
                     </p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 gap-6">
-                    <div class="flex items-center p-6 bg-white border-4 border-yellow-50 rounded-[30px] shadow-sm hover:border-yellow-200 transition">
-                        <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-3xl mr-6">🏷️</div>
+                    <div
+                        class="flex items-center p-6 bg-white border-4 border-yellow-50 rounded-[30px] shadow-sm hover:border-yellow-200 transition">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-3xl mr-6">
+                            🏷️</div>
                         <div class="text-slate-700 font-bold text-xl">Nama & Panggilan</div>
                     </div>
-                    <div class="flex items-center p-6 bg-white border-4 border-blue-50 rounded-[30px] shadow-sm hover:border-blue-200 transition">
-                        <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mr-6">🏠</div>
+                    <div
+                        class="flex items-center p-6 bg-white border-4 border-blue-50 rounded-[30px] shadow-sm hover:border-blue-200 transition">
+                        <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mr-6">🏠
+                        </div>
                         <div class="text-slate-700 font-bold text-xl">Rumah & Keluarga</div>
                     </div>
                 </div>
             </div>
-            <button onclick="showScreen('menu')" class="mt-12 w-full btn-main text-white font-bold py-6 rounded-[30px] shadow-xl text-xl uppercase tracking-widest">SAYA SUDAH PINTAR! 🌟</button>
+            <button onclick="showScreen('menu')"
+                class="mt-12 w-full btn-main text-white font-bold py-6 rounded-[30px] shadow-xl text-xl uppercase tracking-widest">SAYA
+                SUDAH PINTAR! 🌟</button>
         </div>
 
         <!-- KUIS SECTION -->
-        <div id="screen-kuis1" class="max-w-2xl mx-auto hidden glass-card p-10 fade-in overflow-hidden border-t-[12px] border-emerald-400">
+        <div id="screen-kuis1"
+            class="max-w-2xl mx-auto hidden glass-card p-10 fade-in overflow-hidden border-t-[12px] border-emerald-400">
             <div class="mb-12">
                 <div class="flex justify-between items-end mb-4">
                     <div>
-                        <h4 class="text-emerald-500 font-black text-xs tracking-[0.2em] uppercase" id="quiz-progress-text">SOAL 1 DARI 10</h4>
+                        <h4 class="text-emerald-500 font-black text-xs tracking-[0.2em] uppercase"
+                            id="quiz-progress-text">SOAL 1 DARI 10</h4>
                         <div class="text-slate-400 font-bold">Pilih jawaban yang paling benar ya!</div>
                     </div>
                     <div class="text-3xl font-black text-emerald-500" id="quiz-percentage">10%</div>
@@ -355,45 +423,58 @@
                     <div id="quiz-progress-fill" class="progress-bar-fill"></div>
                 </div>
             </div>
-            
+
             <div id="quiz1-content" class="min-h-[400px]"></div>
-            
+
             <div class="flex gap-6 mt-12">
-                <button id="btn-prev" onclick="prevQuestion()" class="flex-1 bg-slate-100 text-slate-400 font-bold py-5 rounded-[28px] hover:bg-slate-200 transition-colors disabled:opacity-30">KEMBALI</button>
-                <button id="btn-next" onclick="nextQuestion()" class="flex-1 bg-emerald-500 text-white font-bold py-5 rounded-[28px] shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-colors">LANJUTKAN</button>
+                <button id="btn-prev" onclick="prevQuestion()"
+                    class="flex-1 bg-slate-100 text-slate-400 font-bold py-5 rounded-[28px] hover:bg-slate-200 transition-colors disabled:opacity-30">KEMBALI</button>
+                <button id="btn-next" onclick="nextQuestion()"
+                    class="flex-1 bg-emerald-500 text-white font-bold py-5 rounded-[28px] shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-colors">LANJUTKAN</button>
             </div>
         </div>
 
         <!-- TANTANGAN MENULIS SECTION -->
-        <div id="screen-kuis2" class="max-w-2xl mx-auto hidden glass-card p-12 fade-in border-t-[12px] border-purple-400">
+        <div id="screen-kuis2"
+            class="max-w-2xl mx-auto hidden glass-card p-12 fade-in border-t-[12px] border-purple-400">
             <h2 class="text-4xl text-center text-slate-800 mb-4">Tantangan Menulis</h2>
             <p class="text-center text-slate-400 font-bold mb-12">Ayo belajar mengetik di keyboard!</p>
-            
+
             <div class="space-y-10">
                 <div>
-                    <label class="block text-xs font-black text-purple-400 mb-4 tracking-[0.2em] uppercase">1. Tulis Nama Lengkap Kamu:</label>
-                    <input type="text" id="ans-1" placeholder="Ketik di sini..." class="w-full p-6 rounded-[30px] border-4 border-purple-50 bg-purple-50/50 focus:bg-white focus:border-purple-300 outline-none transition-all text-xl font-bold shadow-inner">
+                    <label class="block text-xs font-black text-purple-400 mb-4 tracking-[0.2em] uppercase">1. Tulis
+                        Nama Lengkap Kamu:</label>
+                    <input type="text" id="ans-1" placeholder="Ketik di sini..."
+                        class="w-full p-6 rounded-[30px] border-4 border-purple-50 bg-purple-50/50 focus:bg-white focus:border-purple-300 outline-none transition-all text-xl font-bold shadow-inner">
                 </div>
                 <div>
-                    <label class="block text-xs font-black text-purple-400 mb-4 tracking-[0.2em] uppercase">2. Apa Hobi Kesukaanmu?</label>
-                    <input type="text" id="ans-2" placeholder="Main bola, menggambar, dll..." class="w-full p-6 rounded-[30px] border-4 border-purple-50 bg-purple-50/50 focus:bg-white focus:border-purple-300 outline-none transition-all text-xl font-bold shadow-inner">
+                    <label class="block text-xs font-black text-purple-400 mb-4 tracking-[0.2em] uppercase">2. Apa Hobi
+                        Kesukaanmu?</label>
+                    <input type="text" id="ans-2" placeholder="Main bola, menggambar, dll..."
+                        class="w-full p-6 rounded-[30px] border-4 border-purple-50 bg-purple-50/50 focus:bg-white focus:border-purple-300 outline-none transition-all text-xl font-bold shadow-inner">
                 </div>
             </div>
-            <button onclick="submitWriting()" class="mt-16 w-full bg-purple-600 text-white font-bold py-6 rounded-[30px] shadow-2xl shadow-purple-200 hover:bg-purple-700 transition-colors text-xl uppercase tracking-widest">SIMPAN PROFILKU ✨</button>
-            <button onclick="showScreen('menu')" class="mt-6 block w-full text-center text-slate-400 font-bold hover:text-slate-600">BATALKAN</button>
+            <button onclick="submitWriting()"
+                class="mt-16 w-full bg-purple-600 text-white font-bold py-6 rounded-[30px] shadow-2xl shadow-purple-200 hover:bg-purple-700 transition-colors text-xl uppercase tracking-widest">SIMPAN
+                PROFILKU ✨</button>
+            <button onclick="showScreen('menu')"
+                class="mt-6 block w-full text-center text-slate-400 font-bold hover:text-slate-600">BATALKAN</button>
         </div>
 
         <!-- HASIL KUIS SECTION -->
         <div id="screen-result" class="max-w-2xl mx-auto hidden glass-card p-16 text-center fade-in">
             <div id="result-icon" class="text-9xl mb-8">🏆</div>
             <h2 id="result-title" class="text-5xl font-bold text-slate-800 mb-4">Hebat Sekali!</h2>
-            <p id="result-desc" class="text-slate-400 font-bold mb-12 text-xl">Kamu sudah menyelesaikan tantangan ini!</p>
-            
+            <p id="result-desc" class="text-slate-400 font-bold mb-12 text-xl">Kamu sudah menyelesaikan tantangan ini!
+            </p>
+
             <div class="flex justify-center mb-16">
                 <div class="relative w-56 h-56 flex items-center justify-center">
                     <svg class="absolute inset-0 w-full h-full transform -rotate-90">
                         <circle cx="112" cy="112" r="100" stroke="#F1F5F9" stroke-width="20" fill="transparent" />
-                        <circle id="result-circle" cx="112" cy="112" r="100" stroke="#10B981" stroke-width="20" fill="transparent" stroke-dasharray="628.3" stroke-dashoffset="628.3" style="transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1); stroke-linecap: round;" />
+                        <circle id="result-circle" cx="112" cy="112" r="100" stroke="#10B981" stroke-width="20"
+                            fill="transparent" stroke-dasharray="628.3" stroke-dashoffset="628.3"
+                            style="transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1); stroke-linecap: round;" />
                     </svg>
                     <div class="text-center z-10">
                         <span id="result-score" class="text-7xl font-bold text-slate-800">0</span>
@@ -401,26 +482,45 @@
                     </div>
                 </div>
             </div>
-            
-            <button onclick="showScreen('menu')" class="w-full btn-main text-white font-bold py-6 rounded-[30px] shadow-2xl text-2xl uppercase tracking-widest">KEMBALI KE MENU</button>
+
+            <button onclick="showScreen('menu')"
+                class="w-full btn-main text-white font-bold py-6 rounded-[30px] shadow-2xl text-2xl uppercase tracking-widest">KEMBALI
+                KE MENU</button>
         </div>
 
         <!-- MODAL FEEDBACK -->
-        <div id="modal-msg" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-6 z-50">
-            <div class="bg-white p-12 rounded-[50px] text-center max-w-sm w-full shadow-2xl scale-110 border-8 border-blue-50">
+        <div id="modal-msg"
+            class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-6 z-50">
+            <div
+                class="bg-white p-12 rounded-[50px] text-center max-w-sm w-full shadow-2xl scale-110 border-8 border-blue-50">
                 <div id="modal-icon" class="text-8xl mb-6">🎈</div>
                 <h3 id="modal-title" class="text-3xl font-bold mb-4">Hore!</h3>
                 <p id="modal-text" class="text-slate-500 mb-10 text-lg font-medium"></p>
-                <button onclick="closeModal()" class="w-full btn-main text-white py-5 rounded-[24px] font-bold text-xl uppercase tracking-widest shadow-lg">LANJUT!</button>
+                <button onclick="closeModal()"
+                    class="w-full btn-main text-white py-5 rounded-[24px] font-bold text-xl uppercase tracking-widest shadow-lg">LANJUT!</button>
             </div>
         </div>
 
     </div>
 
+    <script defer src="/__/firebase/10.7.0/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/10.7.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
     <script>
+        let db;
+        window.addEventListener('load', function () {
+            try {
+                if (window.firebase) {
+                    db = firebase.firestore();
+                    console.log("Firebase initialized");
+                }
+            } catch (e) {
+                console.error("Firebase init error", e);
+            }
+        });
         let userData = {};
-        let teacherData = JSON.parse(localStorage.getItem('bank_nilai_v4')) || [];
-        
+        let teacherData = [];
+
         const quiz1Questions = [
             { q: "Apa sebutan untuk keterangan tentang diri kita sendiri?", a: "Identitas Diri", b: "Identitas Hewan", c: "Identitas Benda", correct: "a" },
             { q: "Nama panggilan gunanya supaya teman lebih mudah...", a: "Melupakan kita", b: "Memanggil kita", c: "Menyakiti kita", correct: "b" },
@@ -440,14 +540,14 @@
         function showScreen(screenId) {
             document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
             document.getElementById(`screen-${screenId}`).classList.remove('hidden');
-            
+
             // Adjust container width
-            if(['home', 'menu', 'materi', 'kuis1', 'kuis2', 'result'].includes(screenId)) {
+            if (['home', 'menu', 'materi', 'kuis1', 'kuis2', 'result'].includes(screenId)) {
                 document.getElementById('app').classList.replace('max-w-4xl', 'max-w-2xl');
             } else {
                 document.getElementById('app').classList.replace('max-w-2xl', 'max-w-4xl');
             }
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showModal(title, text, icon, colorClass = "text-blue-500") {
@@ -470,12 +570,14 @@
                 showModal("Halo!", "Jangan lupa isi namamu dan sekolahmu dulu ya, Sahabat!", "👦🏻", "text-blue-500");
                 return;
             }
-            userData = { 
-                nama, 
-                kelas: document.getElementById('input-kelas').value, 
-                sekolah, 
+            userData = {
+                nama,
+                kelas: document.getElementById('input-kelas').value,
+                sekolah,
                 skorPG: 0,
-                isian: ""
+                isian: "",
+                judul_karya: "Petualangan Identitas - Kelas 1 SD",
+                tanggal: new Date().toISOString()
             };
             document.getElementById('welcome-msg').innerText = `Halo, ${userData.nama}!`;
             showScreen('menu');
@@ -548,9 +650,9 @@
             const score = Math.round((correctCount / quiz1Questions.length) * 100);
             userData.skorPG = score;
             document.getElementById('result-score').innerText = score;
-            const circleLength = 628.3; 
+            const circleLength = 628.3;
             const offset = circleLength - (circleLength * score / 100);
-            
+
             if (score >= 80) {
                 document.getElementById('result-title').innerText = "Hebat Sekali!";
                 document.getElementById('result-icon').innerText = "🥇";
@@ -577,40 +679,60 @@
             setTimeout(() => showScreen('menu'), 2000);
         }
 
-        function saveToBank() {
-            const index = teacherData.findIndex(d => d.nama === userData.nama && d.kelas === userData.kelas);
-            if (index > -1) teacherData[index] = {...userData};
-            else teacherData.push({...userData});
-            localStorage.setItem('bank_nilai_v4', JSON.stringify(teacherData));
+        async function saveToBank() {
+            userData.tanggal = new Date().toISOString();
+            if (db) {
+                try {
+                    await db.collection('hasil_karya_siswa').add(userData);
+                    console.log("Data saved successfully");
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    alert("Gagal menyimpan data ke database online! Error: " + e.message);
+                }
+            }
         }
 
         function openGuruMode() {
-            const pin = prompt("🔐 Kode Rahasia Guru (PIN: 1234):");
+            const pin = prompt("🔐 Kode Rahasia Guru");
             if (pin === "1234") {
                 renderBankNilai();
                 showScreen('guru');
-            } else if(pin !== null) {
+            } else if (pin !== null) {
                 alert("Kode Salah!");
             }
         }
 
-        function renderBankNilai() {
+        async function renderBankNilai() {
             const filter = document.getElementById('filter-kelas').value;
             const tbody = document.getElementById('table-nilai');
             const emptyState = document.getElementById('empty-state');
-            
-            const filteredData = filter === 'ALL' 
-                ? teacherData 
-                : teacherData.filter(d => d.kelas === filter);
+
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-blue-400 font-bold">Sedang mengambil data...</td></tr>';
+
+            if (db) {
+                try {
+                    let query = db.collection('hasil_karya_siswa')
+                        .where('judul_karya', '==', 'Petualangan Identitas - Kelas 1 SD');
+
+                    if (filter !== 'ALL') {
+                        query = query.where('kelas', '==', filter);
+                    }
+
+                    const snapshot = await query.get();
+                    teacherData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    teacherData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+                } catch (e) {
+                    console.error("Error fetching data:", e);
+                }
+            }
 
             tbody.innerHTML = "";
-            
-            if (filteredData.length === 0) {
+
+            if (teacherData.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
-                filteredData.forEach((data, idx) => {
-                    const originalIdx = teacherData.indexOf(data);
+                teacherData.forEach((data, idx) => {
                     tbody.innerHTML += `
                         <tr class="hover:bg-blue-50/30 transition group">
                             <td class="py-6 px-8">
@@ -629,7 +751,7 @@
                                 <div class="text-sm text-slate-500 line-clamp-2 font-medium italic bg-slate-50 p-3 rounded-2xl border border-slate-100">${data.isian || '---'}</div>
                             </td>
                             <td class="py-6 px-8 text-right">
-                                <button onclick="deleteNilai(${originalIdx})" class="opacity-0 group-hover:opacity-100 bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 p-3 rounded-2xl transition shadow-sm">
+                                <button onclick="deleteNilai('${data.id}')" class="opacity-0 group-hover:opacity-100 bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 p-3 rounded-2xl transition shadow-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
@@ -639,7 +761,7 @@
                     `;
                 });
             }
-            updateStats(filteredData);
+            updateStats(teacherData);
         }
 
         function updateStats(data) {
@@ -655,20 +777,25 @@
             }
         }
 
-        function deleteNilai(idx) {
-            if(confirm("Hapus data nilai siswa ini?")) {
-                teacherData.splice(idx, 1);
-                localStorage.setItem('bank_nilai_v4', JSON.stringify(teacherData));
-                renderBankNilai();
+        async function deleteNilai(docId) {
+            if (confirm("Hapus data nilai siswa ini?")) {
+                if (db) {
+                    try {
+                        await db.collection('hasil_karya_siswa').doc(docId).delete();
+                        renderBankNilai();
+                    } catch (e) {
+                        alert("Gagal menghapus: " + e.message);
+                    }
+                }
             }
         }
-        
+
         function exportData() {
             if (teacherData.length === 0) {
                 alert("Tidak ada data untuk diekspor!");
                 return;
             }
-            const csvContent = "data:text/csv;charset=utf-8,Nama,Kelas,Sekolah,Skor PG,Isian\n" 
+            const csvContent = "data:text/csv;charset=utf-8,Nama,Kelas,Sekolah,Skor PG,Isian\n"
                 + teacherData.map(d => `"${d.nama}","${d.kelas}","${d.sekolah}",${d.skorPG},"${d.isian}"`).join("\n");
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -680,4 +807,5 @@
         }
     </script>
 </body>
+
 </html>

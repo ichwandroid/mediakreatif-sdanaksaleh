@@ -2,615 +2,435 @@
 <html lang="id">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Media Kreatif - SD Anak Saleh</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaKreatif - Liquid Glass Experience</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
 
-  <!-- Google Fonts: Outfit (Modern) & Fredoka (Cheerful/School) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;500;700&display=swap"
-    rel="stylesheet">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Outfit', 'sans-serif'],
-            friendly: ['Fredoka', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              blue: '#4FACFE',
-              cyan: '#00F2FE',
-              yellow: '#FFD200',
-              orange: '#F7971E',
-              purple: '#A855F7',
-              pink: '#EC4899'
-            }
-          },
-          animation: {
-            'float': 'float 6s ease-in-out infinite',
-          },
-          keyframes: {
-            float: {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-20px)' },
-            }
-          }
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --apple-blur: 40px;
         }
-      }
-    }
-  </script>
 
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <!-- GSAP ScrollTrigger (Optional but good, though not strictly used in current basic script, included for future) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
 
-  <style>
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-    }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
 
-    .blob {
-      position: absolute;
-      background-size: cover;
-      opacity: 0.6;
-      filter: blur(40px);
-      z-index: -1;
-    }
+        /* Apple Liquid Glass Style - Base */
+        .liquid-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--apple-blur)) saturate(180%);
+            -webkit-backdrop-filter: blur(var(--apple-blur)) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
+        /* Hover khusus untuk Kartu (Bergerak) */
+        .card-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2),
+                0 30px 60px rgba(0, 0, 0, 0.6);
+        }
 
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
+        /* Hover khusus Navbar (Stabil) */
+        .nav-glass {
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
 
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 5px;
-    }
+        .nav-glass:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-  </style>
+        /* Background Liquid Blobs */
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -2;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            background: #4f46e5;
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            background: #7c3aed;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .blob-3 {
+            background: #2563eb;
+            top: 40%;
+            left: 30%;
+            width: 300px;
+            height: 300px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-apple {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-apple:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .section-reveal {
+            opacity: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+    </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
+<body>
 
-  <!-- Background Elements -->
-  <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-    <div class="blob w-96 h-96 rounded-full bg-brand-blue/30 top-0 left-[-100px] animate-float"
-      style="animation-delay: 0s;"></div>
-    <div class="blob w-[30rem] h-[30rem] rounded-full bg-brand-pink/20 bottom-[-100px] right-[-100px] animate-float"
-      style="animation-delay: 2s;"></div>
-    <div class="blob w-80 h-80 rounded-full bg-brand-yellow/30 top-[20%] right-[10%] animate-float"
-      style="animation-delay: 4s;"></div>
-  </div>
+    <!-- Liquid Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
 
-  <!-- Navigation -->
-  <nav class="fixed top-0 left-0 right-0 z-50 px-4 pt-6 transition-all duration-300" id="navbar">
-    <div class="max-w-7xl mx-auto relative">
-      <div
-        class="glass-panel rounded-2xl px-4 py-3 md:px-6 md:py-4 flex justify-between items-center shadow-lg/5 border border-white/40 relative z-50">
+    <!-- ThreeJS Canvas -->
+    <canvas id="bg-canvas"></canvas>
 
-        <!-- Logo -->
-        <a href="#" class="flex items-center gap-3 group">
-          <div
-            class="w-10 h-10 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-blue/30 group-hover:scale-110 transition-transform duration-300">
-            M
-          </div>
-          <span
-            class="font-friendly font-semibold text-xl tracking-tight text-slate-700 group-hover:text-brand-blue transition-colors">
-            Media<span class="text-brand-blue group-hover:text-slate-700 transition-colors">Kreatif</span>
-          </span>
-        </a>
-
-        <!-- Desktop Menu (Floating Dock Style) -->
-        <div
-          class="hidden md:flex items-center gap-1 bg-white/60 p-1.5 rounded-xl border border-white/50 backdrop-blur-md shadow-inner">
-          <a href="#"
-            class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Beranda</a>
-          <!-- <a href="#"
-            class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Kategori</a> -->
-          <a href="kelas_interaktif.html"
-            class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Kelas
-            Interaktif</a>
-          <a href="media.html"
-            class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:text-brand-blue hover:bg-white transition-all hover:shadow-md">Terbaru</a>
+    <!-- Navigation (Fixed Hover Issue) -->
+    <nav
+        class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-max px-8 py-3 rounded-full liquid-glass nav-glass flex justify-between md:justify-center items-center gap-12">
+        <div class="text-xl font-extrabold tracking-tighter">
+            Media<span class="text-indigo-400">Kreatif</span>
         </div>
-
-        <!-- Right Side -->
-        <div class="flex items-center gap-4">
-          <button
-            class="login-btn hidden md:flex bg-slate-900 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 items-center gap-2">
-            <span>Masuk Guru</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-            </svg>
-          </button>
-
-          <!-- Mobile Hamburger -->
-          <button id="mobile-menu-btn"
-            class="md:hidden p-2 text-slate-600 hover:text-brand-blue transition-colors bg-white/50 rounded-lg hover:bg-white">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-          </button>
+        <div class="hidden md:flex gap-10 font-medium text-sm text-white/70">
+            <a href="index.html" class="hover:text-white transition-colors duration-300">Beranda</a>
+            <a href="kelas_interaktif.html" class="hover:text-white transition-colors duration-300">Kelas Interaktif</a>
+            <a href="karya.html" class="hover:text-white transition-colors duration-300">Karya</a>
         </div>
-      </div>
+    </nav>
 
-      <!-- Mobile Menu Dropdown -->
-      <div id="mobile-menu" class="hidden absolute top-full left-0 w-full mt-3 z-40 origin-top">
-        <div
-          class="glass-panel rounded-2xl p-4 flex flex-col gap-2 shadow-2xl border border-white/50 bg-white/90 backdrop-blur-xl">
-          <a href="#"
-            class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-            Beranda
-            <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-          </a>
-          <a href="#kategori"
-            class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-            Kategori
-            <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-          </a>
-          <a href="kelas_interaktif.html"
-            class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-            Kelas Interaktif
-            <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-          </a>
-          <a href="media.html"
-            class="px-4 py-3 rounded-xl text-slate-600 font-bold hover:bg-brand-blue/10 hover:text-brand-blue transition-all flex items-center justify-between group">
-            Terbaru
-            <span class="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-          </a>
-          <div class="h-px bg-slate-200 my-2"></div>
-          <button
-            class="login-btn w-full bg-slate-900 text-white px-5 py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg flex items-center justify-center gap-2">
-            <span>Masuk Portal Guru</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
-      <!-- Text Content -->
-      <div class="space-y-8 relative z-10 hero-text">
-        <div
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-semibold">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-          </span>
-          Platform Media Pembelajaran SD Anak Saleh
-        </div>
-
-        <h1 class="text-5xl lg:text-7xl font-bold leading-tight tracking-tight text-slate-800">
-          Mengajar Lebih <br>
-          <span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-purple to-brand-pink animate-gradient-x">Menyenangkan</span>
-          <span class="inline-block animate-bounce">🚀</span>
-        </h1>
-
-        <p class="text-lg text-slate-600 leading-relaxed max-w-lg">
-          Akses ribuan media pembelajaran interaktif, video, dan materi visual yang dikurasi khusus untuk guru-guru
-          hebat SD Anak Saleh.
-        </p>
-
-        <div class="flex flex-wrap gap-4">
-          <a href="media.html"
-            class="bg-gradient-to-r from-brand-blue to-brand-cyan text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-brand-blue/30 hover:shadow-brand-blue/50 transition-all transform hover:-translate-y-1 hover:scale-105 active:scale-95 flex items-center gap-2">
-            <span>Mulai Jelajah</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </a>
-          <!-- <a href="#"
-            class="glass-panel text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-white/80 transition-all border-slate-200">
-            Upload Media
-          </a> -->
-        </div>
-      </div>
-
-      <!-- Hero Visual / 3D Composition -->
-      <div class="relative lg:h-[600px] flex items-center justify-center hero-visual">
-        <!-- Abstract Circle BG -->
-        <div
-          class="absolute w-[500px] h-[500px] bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl opacity-50">
-        </div>
-
-        <!-- Main Floating Card -->
-        <div
-          class="relative z-10 glass-panel p-6 rounded-3xl w-full max-w-md transform rotate-[-2deg] hover:rotate-0 transition-all duration-500 shadow-2xl floating-card">
-          <div class="flex justify-between items-center mb-6">
-            <div class="flex gap-2">
-              <div class="w-3 h-3 rounded-full bg-red-400"></div>
-              <div class="w-3 h-3 rounded-full bg-amber-400"></div>
-              <div class="w-3 h-3 rounded-full bg-green-400"></div>
-            </div>
-            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Preview</div>
-          </div>
-          <!-- Mockup Content -->
-          <div class="space-y-4">
+    <!-- Hero Section -->
+    <section id="beranda"
+        class="relative min-h-screen flex flex-col justify-center items-center px-6 pt-20 text-center">
+        <div class="hero-content max-w-5xl z-10">
             <div
-              class="h-40 rounded-xl bg-gradient-to-br from-brand-orange to-brand-yellow relative overflow-hidden group cursor-pointer">
-              <div
-                class="absolute inset-0 flex items-center justify-center text-white bg-black/10 group-hover:bg-black/0 transition-colors">
-                <span class="text-6xl transform group-hover:scale-110 transition-transform duration-300">🎨</span>
-              </div>
+                class="inline-block py-1 px-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white/60 text-[10px] font-bold mb-8 tracking-[0.2em] uppercase">
+                Platform Edukasi Digital Generasi Baru
             </div>
-            <div class="flex gap-3">
-              <div class="h-10 w-10 rounded-full bg-slate-200"></div>
-              <div class="flex-1 space-y-2 py-1">
-                <div class="h-4 bg-slate-200 rounded w-3/4"></div>
-                <div class="h-3 bg-slate-100 rounded w-5/6"></div>
-              </div>
+            <h1 class="text-5xl md:text-8xl font-extrabold mb-8 leading-[1.1] tracking-tight">
+                Simpan & Bagikan <br> <span class="text-gradient">Inovasi Digital</span> Guru
+            </h1>
+            <p class="text-white/50 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                Platform premium untuk mengelola media pembelajaran digital. Canggih, minimalis, dan dirancang untuk
+                guru masa depan.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <a href="karya.html" class="px-10 py-4 rounded-full font-bold text-lg liquid-glass card-hover">Jelajahi
+                    Karya</a>
             </div>
-          </div>
         </div>
+    </section>
 
-        <!-- Floating Ornaments (School Items) -->
-        <div class="absolute top-10 right-10 text-6xl drop-shadow-xl animate-float floating-item"
-          style="animation-duration: 4s;">
-          📚
-        </div>
-        <div class="absolute bottom-20 left-0 text-6xl drop-shadow-xl animate-float floating-item"
-          style="animation-duration: 5s; animation-delay: 1s;">
-          ✏️
-        </div>
-        <div class="absolute top-1/2 -right-4 text-5xl drop-shadow-xl animate-float floating-item"
-          style="animation-duration: 4.5s; animation-delay: 2s;">
-          🔬
-        </div>
-        <div class="absolute top-0 left-20 text-5xl drop-shadow-xl animate-float floating-item"
-          style="animation-duration: 6s; animation-delay: 0.5s;">
-          📐
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Stats / Quick Info -->
-    <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
-      <div class="glass-panel p-6 rounded-2xl text-center hover:bg-white/80 transition-colors stat-card">
-        <div class="text-4xl font-bold text-brand-blue mb-1">150+</div>
-        <div class="text-sm text-slate-500 font-medium">Video Edukasi</div>
-      </div>
-      <div class="glass-panel p-6 rounded-2xl text-center hover:bg-white/80 transition-colors stat-card">
-        <div class="text-4xl font-bold text-brand-purple mb-1">50+</div>
-        <div class="text-sm text-slate-500 font-medium">PowerPoint Interaktif</div>
-      </div>
-      <div class="glass-panel p-6 rounded-2xl text-center hover:bg-white/80 transition-colors stat-card">
-        <div class="text-4xl font-bold text-brand-orange mb-1">300+</div>
-        <div class="text-sm text-slate-500 font-medium">Lembar Kerja</div>
-      </div>
-      <div class="glass-panel p-6 rounded-2xl text-center hover:bg-white/80 transition-colors stat-card">
-        <div class="text-4xl font-bold text-brand-pink mb-1">24/7</div>
-        <div class="text-sm text-slate-500 font-medium">Akses Kapan Saja</div>
-      </div>
-    </div>
-
-    <!-- Section: Kategori -->
-    <div class="mt-32" id="kategori">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold text-slate-800 mb-4 font-friendly">Jelajahi Kategori</h2>
-        <div class="w-20 h-1.5 bg-brand-blue mx-auto rounded-full"></div>
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <!-- Card Kategori Template -->
-        <div class="group cursor-pointer">
-          <div
-            class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-brand-blue/30 text-center h-full flex flex-col items-center justify-center gap-4 group-hover:-translate-y-2">
-            <div
-              class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform bg-gradient-to-br from-blue-50 to-blue-100">
-              🔢
+    <!-- Stats Section -->
+    <!-- <section class="py-20 px-6 relative">
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="liquid-glass card-hover p-8 rounded-[32px] text-center">
+                <div class="text-4xl font-bold text-white count-up" data-value="1500">0</div>
+                <div class="text-white/40 text-xs uppercase tracking-widest mt-3">Karya Digital</div>
             </div>
-            <h3 class="font-bold text-slate-700 text-lg group-hover:text-brand-blue transition-colors">Matematika</h3>
-            <p class="text-sm text-slate-400">Aljabar, Geometri, Aritmatika</p>
-          </div>
-        </div>
-
-        <div class="group cursor-pointer">
-          <div
-            class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-brand-green/30 text-center h-full flex flex-col items-center justify-center gap-4 group-hover:-translate-y-2">
-            <div
-              class="w-16 h-16 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform bg-gradient-to-br from-green-50 to-green-100">
-              🌱
+            <div class="liquid-glass card-hover p-8 rounded-[32px] text-center">
+                <div class="text-4xl font-bold text-white count-up" data-value="850">0</div>
+                <div class="text-white/40 text-xs uppercase tracking-widest mt-3">Guru Kreatif</div>
             </div>
-            <h3 class="font-bold text-slate-700 text-lg group-hover:text-green-500 transition-colors">IPA</h3>
-            <p class="text-sm text-slate-400">Biologi, Fisika, Alam Sekitar</p>
-          </div>
-        </div>
-
-        <div class="group cursor-pointer">
-          <div
-            class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-red-500/30 text-center h-full flex flex-col items-center justify-center gap-4 group-hover:-translate-y-2">
-            <div
-              class="w-16 h-16 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform bg-gradient-to-br from-red-50 to-red-100">
-              🇮🇩
+            <div class="liquid-glass card-hover p-8 rounded-[32px] text-center">
+                <div class="text-4xl font-bold text-white count-up" data-value="250">0</div>
+                <div class="text-white/40 text-xs uppercase tracking-widest mt-3">Instansi Mitra</div>
             </div>
-            <h3 class="font-bold text-slate-700 text-lg group-hover:text-red-500 transition-colors">Bahasa Indonesia
-            </h3>
-            <p class="text-sm text-slate-400">Tata Bahasa, Sastra, Puisi</p>
-          </div>
-        </div>
-
-        <div class="group cursor-pointer">
-          <div
-            class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-yellow-500/30 text-center h-full flex flex-col items-center justify-center gap-4 group-hover:-translate-y-2">
-            <div
-              class="w-16 h-16 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform bg-gradient-to-br from-yellow-50 to-yellow-100">
-              🕌
+            <div class="liquid-glass card-hover p-8 rounded-[32px] text-center">
+                <div class="text-4xl font-bold text-white count-up" data-value="50000">0</div>
+                <div class="text-white/40 text-xs uppercase tracking-widest mt-3">Siswa Aktif</div>
             </div>
-            <h3 class="font-bold text-slate-700 text-lg group-hover:text-yellow-500 transition-colors">PAI</h3>
-            <p class="text-sm text-slate-400">Fiqih, Sejarah Islam, Aqidah</p>
-          </div>
         </div>
-      </div>
-    </div>
+    </section> -->
 
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-4 gap-8 mb-12">
-        <div class="col-span-1 md:col-span-2">
-          <div class="flex items-center gap-3 mb-6">
-            <div
-              class="w-8 h-8 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-lg flex items-center justify-center text-white font-bold text-sm">
-              M
+    <!-- Features Section -->
+    <section id="fitur" class="py-32 px-6 section-reveal">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Fitur Terintegrasi</h2>
+                <p class="text-white/40 max-w-xl mx-auto">Sederhana namun sangat kuat. Semua yang dibutuhkan guru dalam
+                    satu antarmuka kaca.</p>
             </div>
-            <span class="font-friendly font-bold text-xl text-slate-700">MediaKreatif</span>
-          </div>
-          <p class="text-slate-500 leading-relaxed max-w-sm">
-            Platform berbagi media pembelajaran digital untuk mendukung kegiatan belajar mengajar di SD Anak Saleh yang
-            lebih interaktif dan menyenangkan.
-          </p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="liquid-glass card-hover p-10 rounded-[40px]">
+                    <div
+                        class="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-8 text-indigo-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Awan Pintar</h3>
+                    <p class="text-white/50 leading-relaxed font-light">Penyimpanan multimedia otomatis yang
+                        dioptimalkan untuk akses cepat di perangkat apapun.</p>
+                </div>
+                <div class="liquid-glass card-hover p-10 rounded-[40px]">
+                    <div
+                        class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8 text-purple-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Analitik Real-time</h3>
+                    <p class="text-white/50 leading-relaxed font-light">Pantau performa materi ajar Anda dengan
+                        visualisasi data yang jernih dan informatif.</p>
+                </div>
+                <div class="liquid-glass card-hover p-10 rounded-[40px]">
+                    <div
+                        class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-8 text-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Ruang Kolaborasi</h3>
+                    <p class="text-white/50 leading-relaxed font-light">Berkolaborasi dengan sesama pendidik tanpa
+                        hambatan geografis dalam ekosistem digital.</p>
+                </div>
+            </div>
         </div>
-        <div>
-          <h4 class="font-bold text-slate-800 mb-6">Tautan</h4>
-          <ul class="space-y-4 text-slate-500">
-            <li><a href="#" class="hover:text-brand-blue transition-colors">Beranda</a></li>
-            <li><a href="#" class="hover:text-brand-blue transition-colors">Tentang Kami</a></li>
-            <li><a href="#" class="hover:text-brand-blue transition-colors">Panduan Guru</a></li>
-            <li><a href="#" class="hover:text-brand-blue transition-colors">Hubungi Admin</a></li>
-          </ul>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 border-t border-white/5">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div class="text-2xl font-bold">MediaKreatif</div>
+            <div class="flex gap-10 text-white/40 text-sm">
+                <a href="#" class="hover:text-white transition">Instagram</a>
+                <a href="#" class="hover:text-white transition">Twitter</a>
+                <a href="#" class="hover:text-white transition">Discord</a>
+            </div>
+            <div class="text-white/20 text-xs">
+                &copy; 2026 MediaKreatif SD Anak Saleh. Didesain untuk kemajuan pendidikan.
+            </div>
         </div>
-        <div>
-          <h4 class="font-bold text-slate-800 mb-6">Hubungi Kami</h4>
-          <ul class="space-y-4 text-slate-500">
-            <li class="flex items-center gap-3">
-              <span>📧</span> operator@sekolahanaksaleh.sch.id
-            </li>
-            <li class="flex items-center gap-3">
-              <span>🏫</span> Malang, Jawa Timur
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="border-t border-slate-100 pt-8 text-center text-slate-400 text-sm">
-        &copy; 2026 SD Anak Saleh. All rights reserved.
-      </div>
-    </div>
-  </footer>
+    </footer>
 
+    <script>
+        // --- THREE.JS BACKGROUND ---
+        let scene, camera, renderer, particles;
 
-  <!-- Firebase App, Auth, Firestore, Storage (Compat) -->
-  <script defer src="/__/firebase/12.7.0/firebase-app-compat.js"></script>
-  <script defer src="/__/firebase/12.7.0/firebase-auth-compat.js"></script>
-  <script defer src="/__/firebase/12.7.0/firebase-firestore-compat.js"></script>
-  <script defer src="/__/firebase/12.7.0/firebase-storage-compat.js"></script>
-  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-  <!-- Page Logic -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      gsap.registerPlugin(ScrollTrigger);
-
-      // GSAP Animations
-
-      // Hero Text Stagger
-      gsap.from(".hero-text > *", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.15,
-        ease: "power3.out",
-        delay: 0.5
-      });
-
-      // Hero Visual / Card Scale In
-      gsap.from(".hero-visual", {
-        scale: 0.8,
-        opacity: 0,
-        duration: 1.2,
-        ease: "elastic.out(1, 0.75)",
-        delay: 0.8
-      });
-
-      // Floating Items (Additional entrance)
-      gsap.from(".floating-item", {
-        scale: 0,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "back.out(1.7)",
-        delay: 1.2
-      });
-
-      // Stats Cards Stagger
-      gsap.from(".stat-card", {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power2.out",
-        // scrollTrigger: {
-        //   trigger: ".stat-card",
-        //   start: "top 80%"
-        // },
-        delay: 1.5
-      });
-
-      // Mobile Menu Logic
-      const btn = document.getElementById('mobile-menu-btn');
-      const menu = document.getElementById('mobile-menu');
-
-      if (btn && menu) {
-        btn.addEventListener('click', () => {
-          const isHidden = menu.classList.contains('hidden');
-          if (isHidden) {
-            menu.classList.remove('hidden');
-            gsap.fromTo(menu,
-              { opacity: 0, scaleY: 0.8, y: -20 },
-              { opacity: 1, scaleY: 1, y: 0, duration: 0.4, ease: "back.out(1.7)" }
-            );
-          } else {
-            gsap.to(menu, {
-              opacity: 0,
-              y: -20,
-              scaleY: 0.9,
-              duration: 0.2,
-              ease: "power2.in",
-              onComplete: () => menu.classList.add('hidden')
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.querySelector('#bg-canvas'),
+                alpha: true,
+                antialias: true
             });
-          }
-        });
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-          if (!btn.contains(e.target) && !menu.contains(e.target) && !menu.classList.contains('hidden')) {
-            gsap.to(menu, {
-              opacity: 0,
-              y: -20,
-              scaleY: 0.9,
-              duration: 0.2,
-              ease: "power2.in",
-              onComplete: () => menu.classList.add('hidden')
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const count = 800;
+            const positions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 25;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.03,
+                color: '#ffffff',
+                transparent: true,
+                opacity: 0.15,
+                sizeAttenuation: true
             });
-          }
-        });
-      }
 
-      // Login Modal Logic
-      const loginBtns = document.querySelectorAll('.login-btn'); // Add this class to login buttons
-      const loginModal = document.getElementById('login-modal');
-      const closeLoginBtn = document.getElementById('close-login');
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
 
-      if (loginModal) {
-        function openLogin() {
-          loginModal.classList.remove('hidden');
-          gsap.fromTo(loginModal.querySelector('.modal-content'),
-            { opacity: 0, scale: 0.8, y: 50 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
-          );
-          gsap.fromTo(loginModal, { backgroundColor: "rgba(0,0,0,0)" }, { backgroundColor: "rgba(0,0,0,0.5)", duration: 0.3 });
+            camera.position.z = 5;
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
         }
 
-        function closeLogin() {
-          gsap.to(loginModal.querySelector('.modal-content'), {
-            opacity: 0,
-            scale: 0.8,
-            y: 50,
-            duration: 0.3,
-            ease: "power2.in"
-          });
-          gsap.to(loginModal, {
-            backgroundColor: "rgba(0,0,0,0)",
-            duration: 0.3,
-            onComplete: () => loginModal.classList.add('hidden')
-          });
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            particles.rotation.y += 0.0004;
+            renderer.render(scene, camera);
         }
 
-        loginBtns.forEach(b => b.addEventListener('click', openLogin));
-        if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLogin);
+        // --- LIQUID BLOBS ANIMATION ---
+        function animateBlobs() {
+            anime({
+                targets: '.blob-1',
+                translateX: [0, 100, -50, 0],
+                translateY: [0, -50, 100, 0],
+                duration: 20000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+            anime({
+                targets: '.blob-2',
+                translateX: [0, -150, 50, 0],
+                translateY: [0, 100, -100, 0],
+                duration: 25000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+            anime({
+                targets: '.blob-3',
+                scale: [1, 1.2, 0.9, 1],
+                translateX: [0, 50, -50, 0],
+                duration: 15000,
+                easing: 'easeInOutSine',
+                loop: true
+            });
+        }
 
-        // Close on background click
-        loginModal.addEventListener('click', (e) => {
-          if (e.target === loginModal) closeLogin();
+        // --- INTERSECTION OBSERVER ---
+        function initAnimations() {
+            // Hero Content
+            anime({
+                targets: '.hero-content > *',
+                translateY: [40, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(150),
+                easing: 'easeOutExpo',
+                duration: 1500
+            });
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            translateY: [60, 0],
+                            opacity: [0, 1],
+                            easing: 'easeOutExpo',
+                            duration: 1500
+                        });
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section-reveal').forEach(el => revealObserver.observe(el));
+
+            // Count Up Numbers
+            const countObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const value = parseInt(target.getAttribute('data-value'));
+                        anime({
+                            targets: target,
+                            innerHTML: [0, value],
+                            round: 1,
+                            easing: 'easeInOutQuad',
+                            duration: 2500
+                        });
+                        countObserver.unobserve(target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.count-up').forEach(el => countObserver.observe(el));
+        }
+
+        // Parallax Effect on Mouse Move
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5);
+            const y = (e.clientY / window.innerHeight - 0.5);
+
+            anime({
+                targets: '#bg-canvas',
+                translateX: x * 30,
+                translateY: y * 30,
+                duration: 1000,
+                easing: 'easeOutQuad'
+            });
+
+            anime({
+                targets: '.blob',
+                translateX: x * 50,
+                translateY: y * 50,
+                duration: 1500,
+                easing: 'easeOutQuad'
+            });
         });
-      }
 
-    });
-  </script>
-
-  <!-- Login Modal -->
-  <div id="login-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
-    <!-- Modal Content -->
-    <div
-      class="modal-content glass-panel bg-white/95 rounded-3xl w-full max-w-md p-8 relative shadow-2xl border border-white/50">
-      <button id="close-login" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-
-      <div class="text-center mb-8">
-        <div
-          class="w-16 h-16 bg-gradient-to-tr from-brand-blue to-brand-cyan rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-lg shadow-brand-blue/30 mx-auto mb-4">
-          M
-        </div>
-        <h2 class="text-2xl font-bold text-slate-800 font-friendly">Selamat Datang Guru!</h2>
-        <p class="text-slate-500 text-sm mt-2">Silahkan login untuk mengelola media pembelajaran.</p>
-      </div>
-
-      <form class="space-y-4" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
-        <div>
-          <label class="block text-sm font-bold text-slate-700 mb-2">Email Sekolah</label>
-          <input type="email"
-            class="w-full px-5 py-3 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all placeholder:text-slate-300"
-            placeholder="nama@sdanaksaleh.sch.id" required>
-        </div>
-        <div>
-          <label class="block text-sm font-bold text-slate-700 mb-2">Kata Sandi</label>
-          <input type="password"
-            class="w-full px-5 py-3 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all placeholder:text-slate-300"
-            placeholder="••••••••" required>
-        </div>
-
-        <div class="flex items-center justify-between text-sm">
-          <label class="flex items-center gap-2 text-slate-500 cursor-pointer">
-            <input type="checkbox" class="rounded border-slate-300 text-brand-blue focus:ring-brand-blue">
-            <span>Ingat saya</span>
-          </label>
-          <a href="#" class="text-brand-blue font-bold hover:underline">Lupa sandi?</a>
-        </div>
-
-        <button type="submit"
-          class="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:shadow-brand-blue/30 hover:-translate-y-1 transition-all active:scale-95 mt-4">
-          Masuk Sekarang
-        </button>
-      </form>
-
-      <div class="mt-8 text-center text-sm text-slate-400">
-        Belum punya akun? <a href="#" class="text-brand-blue font-bold hover:underline">Hubungi Admin</a>
-      </div>
-    </div>
-  </div>
+        window.onload = () => {
+            initThree();
+            animateThree();
+            animateBlobs();
+            initAnimations();
+        };
+    </script>
 </body>
 
 </html>

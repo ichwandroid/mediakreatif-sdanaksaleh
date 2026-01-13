@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Phonics with Animal Vocabulary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;700&family=Satisfy&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #fdfcf0;
+            background-image: radial-gradient(#fbbf24 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            min-height: 100vh;
+        }
+
+        .header-font {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .cert-font {
+            font-family: 'Satisfy', cursive;
+        }
+
+        .animal-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .animal-card:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-bounce:active {
+            transform: scale(0.9);
+        }
+
+        .menu-btn {
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes star-pop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .star-anim {
+            animation: star-pop 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+
+        <!-- SCORE BAR -->
+        <div
+            class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-6 border-2 border-amber-200">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl">⭐</span>
+                <span id="star-count" class="text-2xl font-bold text-amber-500">0</span>
+                <span class="text-gray-400">/ 10 untuk Sertifikat</span>
+            </div>
+            <button id="claim-cert-btn" onclick="showCertificate()"
+                class="hidden bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-2 rounded-full font-bold shadow-lg animate-bounce">
+                🎓 Ambil Sertifikat!
+            </button>
+        </div>
+
+        <!-- MAIN MENU -->
+        <div id="view-menu" class="text-center py-6">
+            <h1 class="header-font text-5xl md:text-7xl text-emerald-600 drop-shadow-sm mb-12">🐾 Animal Fun Learning 🐾
+            </h1>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <button onclick="showView('material')"
+                    class="menu-btn p-8 bg-amber-400 rounded-[2rem] border-b-8 border-amber-600 text-white">
+                    <div class="text-6xl mb-4">📚</div>
+                    <div class="text-2xl font-bold">Material About Animals</div>
+                </button>
+                <button onclick="showView('quiz')"
+                    class="menu-btn p-8 bg-rose-400 rounded-[2rem] border-b-8 border-rose-600 text-white">
+                    <div class="text-6xl mb-4">🧠</div>
+                    <div class="text-2xl font-bold">Quiz Time</div>
+                </button>
+                <button onclick="showView('speaking')"
+                    class="menu-btn p-8 bg-sky-400 rounded-[2rem] border-b-8 border-sky-600 text-white">
+                    <div class="text-6xl mb-4">🗣️</div>
+                    <div class="text-2xl font-bold">Speaking Practice</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- MATERIAL VIEW -->
+        <div id="view-material" class="hidden">
+            <button onclick="showView('menu')" class="mb-6 font-bold text-emerald-600 flex items-center gap-2">⬅️ Menu
+                Utama</button>
+            <header class="text-center mb-10">
+                <h2 class="header-font text-4xl text-emerald-600 mb-2">Belajar Nama Hewan (20 Hewan)</h2>
+                <p class="text-orange-500 font-bold italic">"Learning is fun!"</p>
+            </header>
+            <div id="material-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
+
+        <!-- QUIZ VIEW -->
+        <div id="view-quiz"
+            class="hidden max-w-2xl mx-auto bg-white p-8 rounded-[3rem] border-4 border-rose-400 shadow-xl text-center">
+            <button onclick="showView('menu')" class="mb-6 font-bold text-rose-600 flex items-center gap-2 text-left">⬅️
+                Menu Utama</button>
+            <h2 class="header-font text-4xl text-rose-500 mb-6">Quiz: Listen & Guess!</h2>
+            <div id="quiz-container">
+                <button id="quiz-audio-btn"
+                    class="bg-rose-100 p-10 rounded-full text-6xl mb-8 border-4 border-rose-200 active:scale-90 transition">🔊</button>
+                <div id="quiz-options" class="grid grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- SPEAKING VIEW -->
+        <div id="view-speaking"
+            class="hidden max-w-2xl mx-auto bg-white p-8 rounded-[3rem] border-4 border-sky-400 shadow-xl text-center">
+            <button onclick="showView('menu')" class="mb-6 font-bold text-sky-600 flex items-center gap-2 text-left">⬅️
+                Menu Utama</button>
+            <h2 class="header-font text-4xl text-sky-500 mb-4">Speaking Practice</h2>
+            <p class="mb-8 text-gray-600 font-bold underline">Ucapkan nama hewan berikut:</p>
+            <div id="speaking-content" class="flex flex-col items-center">
+                <div id="speaking-emoji" class="text-9xl mb-4">🐶</div>
+                <div id="speaking-target" class="text-4xl font-bold text-gray-800 mb-8 underline decoration-sky-400">Dog
+                </div>
+                <button id="mic-btn" onclick="startRecognition()"
+                    class="w-24 h-24 bg-sky-500 rounded-full text-white text-4xl shadow-lg border-b-4 border-sky-700 active:scale-95 transition-all">🎤</button>
+                <p id="mic-status" class="mt-4 font-bold text-sky-600 italic">Siap?</p>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE OVERLAY -->
+        <div id="view-cert" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+            <div
+                class="bg-white max-w-2xl w-full p-1 rounded-lg shadow-2xl overflow-hidden relative border-[12px] border-amber-600">
+                <div class="border-4 border-amber-200 p-8 text-center bg-[#fffcf5]">
+                    <div class="absolute top-4 right-4 text-6xl opacity-20">🎓</div>
+                    <div class="absolute bottom-4 left-4 text-6xl opacity-20">🌟</div>
+
+                    <h2 class="header-font text-4xl text-amber-700 mb-2">CERTIFICATE</h2>
+                    <p class="text-lg font-bold text-amber-600 uppercase tracking-widest mb-6">OF ACHIEVEMENT</p>
+
+                    <p class="text-gray-600 mb-2">This is to certify that</p>
+                    <input id="cert-name-input" type="text" placeholder="TULIS NAMAMU DISINI"
+                        class="cert-font text-5xl text-center w-full bg-transparent border-b-2 border-dotted border-amber-400 focus:outline-none mb-6 text-blue-700">
+
+                    <p class="text-gray-600 mb-4">Has successfully completed the animal vocabulary program with</p>
+                    <div class="flex justify-center gap-1 mb-6 text-3xl">⭐⭐⭐⭐⭐</div>
+
+                    <div class="bg-amber-100 p-4 rounded-xl mb-8">
+                        <p class="text-xl font-bold text-amber-800 italic" id="motivation-text">"Believe in yourself!"
+                        </p>
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+                        <button onclick="window.print()"
+                            class="bg-amber-600 text-white px-6 py-2 rounded-lg font-bold">Print</button>
+                        <button onclick="location.reload()"
+                            class="bg-gray-400 text-white px-6 py-2 rounded-lg font-bold">Main Lagi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Message Box -->
+    <div id="message-box"
+        class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white border-4 border-emerald-400 px-8 py-4 rounded-full shadow-2xl hidden z-[60]">
+        <p id="message-text" class="text-2xl font-bold text-emerald-600"></p>
+    </div>
+
+    <script>
+        let stars = 0;
+        const animalData = [
+            { id: 1, letter: "B", emoji: "🐻", name: "Bear", trans: "Beruang", color: "bg-amber-100", border: "border-amber-400" },
+            { id: 2, letter: "B", emoji: "🐦", name: "Bird", trans: "Burung", color: "bg-sky-100", border: "border-sky-400" },
+            { id: 3, letter: "C", emoji: "🐱", name: "Cat", trans: "Kucing", color: "bg-orange-100", border: "border-orange-400" },
+            { id: 4, letter: "C", emoji: "🐮", name: "Cow", trans: "Sapi", color: "bg-neutral-100", border: "border-neutral-400" },
+            { id: 5, letter: "C", emoji: "🐊", name: "Crocodile", trans: "Buaya", color: "bg-green-100", border: "border-green-400" },
+            { id: 6, letter: "D", emoji: "🐶", name: "Dog", trans: "Anjing", color: "bg-yellow-100", border: "border-yellow-400" },
+            { id: 7, letter: "E", emoji: "🐘", name: "Elephant", trans: "Gajah", color: "bg-slate-200", border: "border-slate-400" },
+            { id: 8, letter: "F", emoji: "🐸", name: "Frog", trans: "Katak", color: "bg-emerald-100", border: "border-emerald-400" },
+            { id: 9, letter: "G", emoji: "🐐", name: "Goat", trans: "Kambing", color: "bg-yellow-50", border: "border-yellow-500" },
+            { id: 10, letter: "G", emoji: "🦒", name: "Giraffe", trans: "Jerapah", color: "bg-yellow-50", border: "border-yellow-500" },
+            { id: 11, letter: "H", emoji: "🐓", name: "Hen", trans: "Induk Ayam", color: "bg-yellow-50", border: "border-yellow-500" },
+            { id: 12, letter: "H", emoji: "🐴", name: "Horse", trans: "Kuda", color: "bg-orange-50", border: "border-orange-600" },
+            { id: 13, letter: "L", emoji: "🦁", name: "Lion", trans: "Singa", color: "bg-yellow-200", border: "border-yellow-600" },
+            { id: 14, letter: "M", emoji: "🐒", name: "Monkey", trans: "Monyet", color: "bg-amber-200", border: "border-amber-700" },
+            { id: 15, letter: "M", emoji: "🐀", name: "Mouse", trans: "Tikus", color: "bg-amber-200", border: "border-amber-700" },
+            { id: 16, letter: "M", emoji: "🐁", name: "Mice", trans: "Anak Tikus", color: "bg-amber-200", border: "border-amber-700" },
+            { id: 16, letter: "R", emoji: "🐰", name: "Rabbit", trans: "Kelinci", color: "bg-pink-100", border: "border-pink-400" },
+            { id: 17, letter: "T", emoji: "🐢", name: "Turtle", trans: "Kura-kura", color: "bg-teal-100", border: "border-teal-600" },
+            { id: 18, letter: "T", emoji: "🐯", name: "Tiger", trans: "Harimau", color: "bg-orange-100", border: "border-orange-500" },
+            { id: 19, letter: "Z", emoji: "🦓", name: "Zebra", trans: "Zebra", color: "bg-gray-100", border: "border-gray-500" },
+            { id: 20, letter: "S", emoji: "🐍", name: "Snake", trans: "Ular", color: "bg-gray-100", border: "border-gray-500" },
+            { id: 21, letter: "S", emoji: "🕷", name: "Spider", trans: "Laba-laba", color: "bg-gray-100", border: "border-gray-500" },
+            { id: 22, letter: "S", emoji: "🦈", name: "Shark", trans: "Hiu", color: "bg-blue-100", border: "border-blue-400" },
+            { id: 23, letter: "W", emoji: "🐋", name: "Whale", trans: "Paus", color: "bg-indigo-100", border: "border-indigo-400" },
+            { id: 24, letter: "B", emoji: "🦋", name: "Butterfly", trans: "Kupu-kupu", color: "bg-purple-100", border: "border-purple-400" },
+            { id: 25, letter: "P", emoji: "🐼", name: "Panda", trans: "Panda", color: "bg-white", border: "border-black" }
+        ];
+
+        const motivations = [
+            "Believe in yourself!",
+            "Never give up!",
+            "You are a star!",
+            "Keep learning, keep growing!",
+            "Excellence is a habit!",
+            "You are doing great!",
+            "Super student!"
+        ];
+
+        function addStar() {
+            stars++;
+            document.getElementById('star-count').innerText = stars;
+            const starEl = document.getElementById('star-count');
+            starEl.classList.remove('star-anim');
+            void starEl.offsetWidth;
+            starEl.classList.add('star-anim');
+
+            if (stars >= 10) {
+                document.getElementById('claim-cert-btn').classList.remove('hidden');
+            }
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+            if (viewId === 'quiz') startNewQuiz();
+            if (viewId === 'speaking') startNewSpeaking();
+        }
+
+        // Voice loading strategy
+        let voicesCache = [];
+        function loadVoices() {
+            voicesCache = window.speechSynthesis.getVoices();
+        }
+        if (window.speechSynthesis) {
+            loadVoices();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = loadVoices;
+            }
+        }
+
+        function speak(text, lang, onEndCallback = null) {
+            // Ensure voices are loaded if cache is empty
+            if (voicesCache.length === 0) loadVoices();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 0.9;
+            if (onEndCallback) utterance.onend = onEndCallback;
+
+            if (voicesCache.length > 0) {
+                let selectedVoice = null;
+
+                if (lang === 'id-ID') {
+                    // 1. Google Bahasa Indonesia (Best Female)
+                    selectedVoice = voicesCache.find(v => v.name.includes("Google Bahasa Indonesia"));
+
+                    // 2. Any Female Indonesian
+                    if (!selectedVoice) {
+                        selectedVoice = voicesCache.find(v => v.lang.includes('id') && (v.name.includes("Female") || v.name.includes("Gadis")));
+                    }
+
+                    // 3. ANY Indonesian (Fixes accent issue)
+                    if (!selectedVoice) {
+                        selectedVoice = voicesCache.find(v => v.lang.includes('id'));
+                    }
+                } else if (lang.includes('en')) {
+                    // English fallback
+                    selectedVoice = voicesCache.find(v => v.lang.includes('en') && (v.name.includes("Google") || v.name.includes("Female")));
+                }
+
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                    utterance.lang = selectedVoice.lang; // Sync lang
+                }
+            }
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showMessage(text, isError = false) {
+            const box = document.getElementById('message-box');
+            const txt = document.getElementById('message-text');
+            txt.innerText = text;
+            txt.className = isError ? "text-2xl font-bold text-red-600" : "text-2xl font-bold text-emerald-600";
+            box.className = isError ? "fixed bottom-10 left-1/2 -translate-x-1/2 bg-white border-4 border-red-400 px-8 py-4 rounded-full shadow-2xl z-[60]" : "fixed bottom-10 left-1/2 -translate-x-1/2 bg-white border-4 border-emerald-400 px-8 py-4 rounded-full shadow-2xl z-[60]";
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 2500);
+        }
+
+        // MATERIAL RENDER
+        const materialGrid = document.getElementById('material-grid');
+        animalData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = `animal-card p-6 rounded-[2rem] border-4 ${item.border} ${item.color} shadow-lg flex flex-col items-center`;
+            card.innerHTML = `
+                <div class="text-6xl mb-4">${item.emoji}</div>
+                <h3 class="text-2xl font-bold mb-4">${item.name}</h3>
+                <div class="flex flex-col w-full gap-2">
+                    <button onclick="speak('${item.name}', 'en-GB')" class="bg-white border-2 border-emerald-500 py-2 rounded-xl font-bold text-emerald-600 transition hover:bg-emerald-50">🇬🇧 Say Name</button>
+                    <button onclick="speak('${item.trans}', 'id-ID'); showMessage('Ini adalah ${item.trans}')" class="bg-emerald-500 py-2 rounded-xl font-bold text-white transition hover:bg-emerald-600">🇮🇩 Artinya</button>
+                </div>
+            `;
+            materialGrid.appendChild(card);
+        });
+
+        // QUIZ LOGIC
+        let currentQuizAnswer = null;
+        function startNewQuiz() {
+            const randomAnimal = animalData[Math.floor(Math.random() * animalData.length)];
+            currentQuizAnswer = randomAnimal;
+            document.getElementById('quiz-audio-btn').onclick = () => speak(randomAnimal.name, 'en-GB');
+
+            let options = [randomAnimal];
+            while (options.length < 4) {
+                let r = animalData[Math.floor(Math.random() * animalData.length)];
+                if (!options.find(o => o.id === r.id)) options.push(r);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-white border-4 border-gray-200 rounded-2xl text-4xl hover:border-rose-400 transition-all active:scale-90";
+                btn.innerHTML = opt.emoji;
+                btn.onclick = () => checkQuiz(opt.id);
+                optionsContainer.appendChild(btn);
+            });
+            speak(randomAnimal.name, 'en-GB');
+        }
+
+        function checkQuiz(id) {
+            if (id === currentQuizAnswer.id) {
+                speak("Excellent! You are right!", 'en-GB');
+                showMessage("HEBAT! Kamu Benar! 🎉");
+                addStar();
+                setTimeout(startNewQuiz, 2000);
+            } else {
+                speak("Try again!", 'en-GB');
+                showMessage("Ayo coba lagi ya... ❌", true);
+            }
+        }
+
+        // SPEAKING LOGIC
+        let currentSpeakingTarget = null;
+        function startNewSpeaking() {
+            currentSpeakingTarget = animalData[Math.floor(Math.random() * animalData.length)];
+            document.getElementById('speaking-emoji').innerText = currentSpeakingTarget.emoji;
+            document.getElementById('speaking-target').innerText = currentSpeakingTarget.name;
+            document.getElementById('mic-status').innerText = "Klik tombol Mic";
+        }
+
+        function startRecognition() {
+            const status = document.getElementById('mic-status');
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                status.innerText = "Mendengarkan...";
+                document.getElementById('mic-btn').classList.add('animate-pulse');
+            };
+
+            recognition.onresult = (event) => {
+                const result = event.results[0][0].transcript.toLowerCase();
+                document.getElementById('mic-btn').classList.remove('animate-pulse');
+
+                if (result.includes(currentSpeakingTarget.name.toLowerCase())) {
+                    status.innerText = `Kamu bilang: "${result}"`;
+                    speak("Great job! That's correct!", 'en-GB');
+                    showMessage("Wow! Pengucapanmu Bagus!");
+                    addStar();
+                    setTimeout(startNewSpeaking, 2500);
+                } else {
+                    status.innerText = `Kamu bilang: "${result}"`;
+                    speak("Try again, you can do it!", 'en-GB');
+                    showMessage("Hampir tepat! Coba lagi", true);
+                }
+            };
+
+            recognition.onerror = () => {
+                status.innerText = "Ulangi lagi...";
+                document.getElementById('mic-btn').classList.remove('animate-pulse');
+            };
+
+            recognition.start();
+        }
+
+        function showCertificate() {
+            document.getElementById('view-cert').classList.remove('hidden');
+            document.getElementById('motivation-text').innerText = `"${motivations[Math.floor(Math.random() * motivations.length)]}"`;
+            speak("Congratulations! You earned your certificate. Well done!", 'en-GB');
+        }
+    </script>
+</body>
+
+</html>

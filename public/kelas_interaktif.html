@@ -19,6 +19,9 @@
     <!-- Anime.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
             --glass-bg: rgba(255, 255, 255, 0.03);
@@ -226,7 +229,7 @@
         <div class="flex justify-end items-center gap-3 mb-8 stagger-card section-reveal">
             <button onclick="openModal()"
                 class="bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl shadow-indigo-500/30 hover:bg-indigo-600 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
-                <span>+</span> Catat Baru
+                <i class="fas fa-plus"></i> Catat Baru
             </button>
         </div>
 
@@ -252,7 +255,7 @@
                             <tr class="text-center py-12">
                                 <td colspan="7" class="text-white/40 py-12">
                                     <div class="flex flex-col items-center gap-2">
-                                        <span class="text-3xl opacity-50">📂</span>
+                                        <i class="fas fa-folder-open text-3xl opacity-50"></i>
                                         <p>Sedang memuat data...</p>
                                     </div>
                                 </td>
@@ -269,10 +272,13 @@
     <footer class="py-20 px-6 border-t border-white/5">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
             <div class="text-2xl font-bold">MediaKreatif</div>
-            <div class="flex gap-10 text-white/40 text-sm">
-                <a href="#" class="hover:text-white transition">Instagram</a>
-                <a href="#" class="hover:text-white transition">Twitter</a>
-                <a href="#" class="hover:text-white transition">Discord</a>
+            <div class="flex gap-6 text-white/40 text-xl">
+                <a href="#" class="hover:text-pink-500 transition-colors transform hover:scale-110"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-blue-400 transition-colors transform hover:scale-110"><i
+                        class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-indigo-500 transition-colors transform hover:scale-110"><i
+                        class="fab fa-discord"></i></a>
             </div>
             <div class="text-white/20 text-xs">
                 &copy; 2026 MediaKreatif SD Anak Saleh. Didesain untuk kemajuan pendidikan.
@@ -287,8 +293,8 @@
             id="modalContent">
             <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                 <h3 class="font-bold text-lg text-white">Catat Penggunaan</h3>
-                <button onclick="closeModal()"
-                    class="text-white/40 hover:text-red-400 transition-colors text-2xl">✕</button>
+                <button onclick="closeModal()" class="text-white/40 hover:text-red-400 transition-colors text-xl"><i
+                        class="fas fa-times"></i></button>
             </div>
             <div class="p-6 space-y-4">
                 <input type="hidden" id="entryId">
@@ -312,32 +318,32 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-white/60 uppercase mb-2">Kelas</label>
-                        <select id="className" class="input-glass w-full px-4 py-2.5 rounded-xl">
-                            <option value="">Pilih Kelas</option>
-                            <option value="1A">Kelas 1A</option>
-                            <option value="1B">Kelas 1B</option>
-                            <option value="1C">Kelas 1C</option>
-                            <option value="1D">Kelas 1D</option>
-                            <option value="2A">Kelas 2A</option>
-                            <option value="2B">Kelas 2B</option>
-                            <option value="2C">Kelas 2C</option>
-                            <option value="2D">Kelas 2D</option>
-                            <option value="3A">Kelas 3A</option>
-                            <option value="3B">Kelas 3B</option>
-                            <option value="3C">Kelas 3C</option>
-                            <option value="3D">Kelas 3D</option>
-                            <option value="4A">Kelas 4A</option>
-                            <option value="4B">Kelas 4B</option>
-                            <option value="4C">Kelas 4C</option>
-                            <option value="4D">Kelas 4D</option>
-                            <option value="5A">Kelas 5A</option>
-                            <option value="5B">Kelas 5B</option>
-                            <option value="5C">Kelas 5C</option>
-                            <option value="5D">Kelas 5D</option>
-                            <option value="6A">Kelas 6A</option>
-                            <option value="6B">Kelas 6B</option>
-                            <option value="6C">Kelas 6C</option>
-                            <option value="6D">Kelas 6D</option>
+                        <select id="className" class="input-glass w-full px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="" class="bg-gray-900">Pilih Kelas</option>
+                            <option value="1A" class="bg-gray-900">Kelas 1A</option>
+                            <option value="1B" class="bg-gray-900">Kelas 1B</option>
+                            <option value="1C" class="bg-gray-900">Kelas 1C</option>
+                            <option value="1D" class="bg-gray-900">Kelas 1D</option>
+                            <option value="2A" class="bg-gray-900">Kelas 2A</option>
+                            <option value="2B" class="bg-gray-900">Kelas 2B</option>
+                            <option value="2C" class="bg-gray-900">Kelas 2C</option>
+                            <option value="2D" class="bg-gray-900">Kelas 2D</option>
+                            <option value="3A" class="bg-gray-900">Kelas 3A</option>
+                            <option value="3B" class="bg-gray-900">Kelas 3B</option>
+                            <option value="3C" class="bg-gray-900">Kelas 3C</option>
+                            <option value="3D" class="bg-gray-900">Kelas 3D</option>
+                            <option value="4A" class="bg-gray-900">Kelas 4A</option>
+                            <option value="4B" class="bg-gray-900">Kelas 4B</option>
+                            <option value="4C" class="bg-gray-900">Kelas 4C</option>
+                            <option value="4D" class="bg-gray-900">Kelas 4D</option>
+                            <option value="5A" class="bg-gray-900">Kelas 5A</option>
+                            <option value="5B" class="bg-gray-900">Kelas 5B</option>
+                            <option value="5C" class="bg-gray-900">Kelas 5C</option>
+                            <option value="5D" class="bg-gray-900">Kelas 5D</option>
+                            <option value="6A" class="bg-gray-900">Kelas 6A</option>
+                            <option value="6B" class="bg-gray-900">Kelas 6B</option>
+                            <option value="6C" class="bg-gray-900">Kelas 6C</option>
+                            <option value="6D" class="bg-gray-900">Kelas 6D</option>
                         </select>
                     </div>
                     <div>
@@ -374,10 +380,7 @@
         <div
             class="modal-content modal-glass rounded-3xl w-full max-w-md p-8 relative shadow-2xl border border-white/10">
             <button id="close-login" class="absolute top-4 right-4 text-white/40 hover:text-white/60 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
+                <i class="fas fa-times text-xl"></i>
             </button>
 
             <div class="text-center mb-8">

@@ -30,7 +30,7 @@ function loadData() {
         <tr class="text-center">
             <td colspan="7" class="text-slate-400 py-12">
                 <div class="flex flex-col items-center gap-2">
-                    <span class="animate-spin text-3xl">⏳</span>
+                    <span class="text-3xl text-indigo-400"><i class="fas fa-circle-notch fa-spin"></i></span>
                     <p>Menghubungkan ke server...</p>
                 </div>
             </td>
@@ -67,7 +67,7 @@ function renderTable() {
             <tr class="text-center">
                 <td colspan="7" class="text-slate-400 py-8">
                     <div class="flex flex-col items-center gap-2">
-                        <span class="text-2xl">📝</span>
+                        <span class="text-4xl text-slate-300 mb-2"><i class="fas fa-clipboard-list"></i></span>
                         <p>Belum ada data jurnal.<br>Klik tombol "Catat Baru" untuk memulai.</p>
                     </div>
                 </td>
@@ -101,8 +101,8 @@ function renderTable() {
             </td>
             <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
-                   <div class="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold text-xs uppercase">
-                        ${entry.teacherName ? entry.teacherName.charAt(0) : '?'}
+                   <div class="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
+                        ${entry.teacherName ? entry.teacherName.charAt(0) : '<i class="fas fa-user"></i>'}
                    </div>
                    <span class="font-medium text-slate-700">${entry.teacherName}</span>
                 </div>
@@ -120,10 +120,10 @@ function renderTable() {
             <td class="px-6 py-4 text-right">
                 <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onclick="editEntry('${entry.id}')" class="p-2 text-slate-400 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all" title="Edit">
-                        ✏️
+                        <i class="fas fa-edit"></i>
                     </button>
                     <button onclick="deleteEntry('${entry.id}')" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
-                        🗑️
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>

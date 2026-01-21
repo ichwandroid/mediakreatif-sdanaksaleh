@@ -7,6 +7,11 @@
     <title>Jago Perkalian - Belajar Matematika Seru</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <style>
         body {
             font-family: 'Quicksand', sans-serif;
@@ -94,19 +99,24 @@
                 <h1 class="text-xl md:text-2xl font-bold text-sky-600">Jago Perkalian</h1>
             </div>
 
-            <div id="score-container"
-                class="hidden flex items-center gap-3 bg-sky-50 px-4 py-2 rounded-full border border-sky-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="text-yellow-500">
-                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                    <path d="M4 22h16" />
-                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-                </svg>
-                <span id="score-text" class="font-bold text-sky-700">0 Poin</span>
+            <div class="flex items-center gap-3">
+                <div id="student-info" class="hidden bg-green-50 px-4 py-2 rounded-full border border-green-200">
+                    <span class="text-sm font-semibold text-green-700" id="student-name-display"></span>
+                </div>
+                <div id="score-container"
+                    class="hidden flex items-center gap-3 bg-sky-50 px-4 py-2 rounded-full border border-sky-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-yellow-500">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                    </svg>
+                    <span id="score-text" class="font-bold text-sky-700">0 Poin</span>
+                </div>
             </div>
         </div>
     </header>
@@ -116,13 +126,37 @@
     </main>
 
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSaIEF3LjVkNE_RTbAjIBi_gHzwJDqh7I",
+            authDomain: "mediakreatif-sdanaksaleh.firebaseapp.com",
+            databaseURL: "https://mediakreatif-sdanaksaleh-default-rtdb.firebaseio.com",
+            projectId: "mediakreatif-sdanaksaleh",
+            storageBucket: "mediakreatif-sdanaksaleh.firebasestorage.app",
+            messagingSenderId: "635675085881",
+            appId: "1:635675085881:web:f8e8d8b8f8e8d8b8f8e8d8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         // State Management
-        let view = 'home';
+        let view = 'login';
         let score = 0;
         let questionCount = 0;
         let currentQuestion = null;
         let isFeedbackActive = false;
         const TOTAL_QUESTIONS = 30;
+
+        // Student Data
+        let studentData = {
+            id: null,
+            name: '',
+            class: '',
+            sessionId: null,
+            answers: []
+        };
 
         const praiseMessages = ["Luar Biasa!", "Hebat Sekali!", "Kamu Cerdas!", "Kerja Bagus!", "Mantap Jiwa!", "Sempurna!", "Keren Abis!", "Jempolan!", "Wow, Benar!"];
         const motivationMessages = ["Jangan Menyerah!", "Ayo Coba Lagi!", "Tetap Semangat!", "Belajar dari Kesalahan!", "Kamu Pasti Bisa!", "Hampir Benar!", "Jangan Putus Asa!", "Coba Fokus Lagi!"];
@@ -140,16 +174,70 @@
             const main = document.getElementById('main-content');
             const scoreContainer = document.getElementById('score-container');
             const scoreText = document.getElementById('score-text');
+            const studentInfo = document.getElementById('student-info');
+            const studentNameDisplay = document.getElementById('student-name-display');
 
             // Handle Header Score Visibility
-            if (view === 'home' || view === 'materi' || view === 'finished') {
+            if (view === 'login' || view === 'home' || view === 'materi' || view === 'finished') {
                 scoreContainer.classList.add('hidden');
             } else {
                 scoreContainer.classList.remove('hidden');
                 scoreText.innerText = `${score} Poin`;
             }
 
-            if (view === 'home') {
+            // Handle Student Info Visibility
+            if (view === 'login') {
+                studentInfo.classList.add('hidden');
+            } else {
+                studentInfo.classList.remove('hidden');
+                studentNameDisplay.innerText = `${studentData.name} - ${studentData.class}`;
+            }
+
+            if (view === 'login') {
+                main.innerHTML = `
+                    <div class="animate-scale-in max-w-md mx-auto mt-10">
+                        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border-t-8 border-sky-400">
+                            <div class="text-center mb-8">
+                                <div class="text-6xl mb-4">📚</div>
+                                <h2 class="text-3xl font-bold text-slate-800 mb-2">Selamat Datang!</h2>
+                                <p class="text-slate-500">Silakan isi data diri kamu terlebih dahulu</p>
+                            </div>
+                            <form onsubmit="handleLogin(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-slate-700 font-semibold mb-2">Nama Lengkap</label>
+                                    <input 
+                                        type="text" 
+                                        id="student-name" 
+                                        required
+                                        class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all"
+                                        placeholder="Masukkan nama lengkap"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-semibold mb-2">Kelas</label>
+                                    <select 
+                                        id="student-class" 
+                                        required
+                                        class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all"
+                                    >
+                                        <option value="">Pilih Kelas</option>
+                                        <option value="2A">2A</option>
+                                        <option value="2B">2B</option>
+                                        <option value="2C">2C</option>
+                                        <option value="2D">2D</option>
+                                    </select>
+                                </div>
+                                <button 
+                                    type="submit"
+                                    class="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg transform hover:scale-105 transition-all"
+                                >
+                                    Mulai Belajar 🚀
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            } else if (view === 'home') {
                 main.innerHTML = `
                     <div class="flex flex-col items-center animate-fade-in">
                         <div class="text-center mb-10 mt-4">
@@ -289,6 +377,27 @@
             }
         }
 
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('student-name').value;
+            const studentClass = document.getElementById('student-class').value;
+
+            studentData.name = name;
+            studentData.class = studentClass;
+            studentData.id = `${name.replace(/\s+/g, '_')}_${Date.now()}`;
+            studentData.sessionId = Date.now();
+
+            // Save student to Firebase
+            database.ref('jago-perkalian/students/' + studentData.id).set({
+                name: name,
+                class: studentClass,
+                createdAt: new Date().toISOString()
+            });
+
+            view = 'home';
+            render();
+        }
+
         function renderMenuCard(targetView, color, title, subtitle, icon) {
             const colors = {
                 emerald: 'border-emerald-500 bg-emerald-100 text-emerald-600',
@@ -362,6 +471,8 @@
             view = mode;
             score = 0;
             questionCount = 1;
+            studentData.answers = [];
+            studentData.sessionId = Date.now();
             generateQuestion(mode);
             render();
         }
@@ -428,6 +539,20 @@
             const content = document.getElementById('feedback-content');
             const isCorrect = answer === currentQuestion.correctAnswer;
 
+            // Save answer to array
+            const answerData = {
+                questionNumber: questionCount,
+                question: `${currentQuestion.num1} × ${currentQuestion.num2}`,
+                correctAnswer: currentQuestion.correctAnswer,
+                userAnswer: answer,
+                isCorrect: isCorrect,
+                timestamp: new Date().toISOString()
+            };
+            studentData.answers.push(answerData);
+
+            // Save to Firebase
+            database.ref(`jago-perkalian/sessions/${studentData.id}/${studentData.sessionId}/answers/${questionCount}`).set(answerData);
+
             if (isCorrect) {
                 score += 10;
                 content.innerHTML = `
@@ -452,6 +577,8 @@
                 overlay.classList.add('hidden');
                 isFeedbackActive = false;
                 if (questionCount >= TOTAL_QUESTIONS) {
+                    // Save final score
+                    saveSessionSummary();
                     view = 'finished';
                 } else {
                     questionCount++;
@@ -459,6 +586,22 @@
                 }
                 render();
             }, 1800);
+        }
+
+        function saveSessionSummary() {
+            const correctAnswers = studentData.answers.filter(a => a.isCorrect).length;
+            const summary = {
+                studentName: studentData.name,
+                studentClass: studentData.class,
+                quizType: currentQuestion.mode,
+                totalQuestions: TOTAL_QUESTIONS,
+                correctAnswers: correctAnswers,
+                wrongAnswers: TOTAL_QUESTIONS - correctAnswers,
+                finalScore: score,
+                completedAt: new Date().toISOString()
+            };
+
+            database.ref(`jago-perkalian/sessions/${studentData.id}/${studentData.sessionId}/summary`).set(summary);
         }
 
         // Jalankan render pertama kali

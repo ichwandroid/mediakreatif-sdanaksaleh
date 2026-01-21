@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jago Perkalian - Belajar Matematika Seru</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Quicksand', sans-serif; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-scale-in { animation: scaleIn 0.3s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen bg-sky-100 selection:bg-yellow-300">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-md p-4 sticky top-0 z-20">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
+                <div class="bg-yellow-400 p-2 rounded-lg text-white font-bold transform -rotate-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-sky-600">Jago Perkalian</h1>
+            </div>
+            
+            <div id="score-container" class="hidden flex items-center gap-3 bg-sky-50 px-4 py-2 rounded-full border border-sky-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                <span id="score-text" class="font-bold text-sky-700">0 Poin</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <!-- Views akan di-render di sini oleh JavaScript -->
+    </main>
+
+    <script>
+        // State Management
+        let view = 'home';
+        let score = 0;
+        let questionCount = 0;
+        let currentQuestion = null;
+        let isFeedbackActive = false;
+        const TOTAL_QUESTIONS = 30;
+
+        const praiseMessages = ["Luar Biasa!", "Hebat Sekali!", "Kamu Cerdas!", "Kerja Bagus!", "Mantap Jiwa!", "Sempurna!", "Keren Abis!", "Jempolan!", "Wow, Benar!"];
+        const motivationMessages = ["Jangan Menyerah!", "Ayo Coba Lagi!", "Tetap Semangat!", "Belajar dari Kesalahan!", "Kamu Pasti Bisa!", "Hampir Benar!", "Jangan Putus Asa!", "Coba Fokus Lagi!"];
+
+        const storyTemplates = [
+            { text: "Ibu membeli {num1} keranjang buah. Setiap keranjang berisi {num2} apel. Berapa jumlah apel seluruhnya?", icon: '🍎' },
+            { text: "Di garasi ada {num1} mobil mainan. Setiap mobil memiliki {num2} roda. Berapa jumlah roda seluruhnya?", icon: '🚗' },
+            { text: "Budi punya {num1} kotak kue. Satu kotak isinya {num2} kue. Berapa total kue Budi?", icon: '🍪' },
+            { text: "Seekor kucing punya {num2} kaki. Jika ada {num1} kucing, berapa jumlah kakinya?", icon: '🐈' },
+            { text: "Setiap hari Ani menabung {num2} ribu. Berapa tabungan Ani selama {num1} hari? (dalam ribu)", icon: '💰' },
+            { text: "Ada {num1} vas bunga. Setiap vas diisi {num2} bunga mawar. Berapa total bunga mawar?", icon: '🌹' }
+        ];
+
+        function render() {
+            const main = document.getElementById('main-content');
+            const scoreContainer = document.getElementById('score-container');
+            const scoreText = document.getElementById('score-text');
+
+            // Handle Header Score Visibility
+            if (view === 'home' || view === 'materi' || view === 'finished') {
+                scoreContainer.classList.add('hidden');
+            } else {
+                scoreContainer.classList.remove('hidden');
+                scoreText.innerText = `${score} Poin`;
+            }
+
+            if (view === 'home') {
+                main.innerHTML = `
+                    <div class="flex flex-col items-center animate-fade-in">
+                        <div class="text-center mb-10 mt-4">
+                            <h2 class="text-3xl md:text-4xl font-bold text-slate-700 mb-3">Mau belajar apa hari ini?</h2>
+                            <p class="text-slate-500 text-lg">Pilih menu di bawah ini untuk memulai petualanganmu!</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                            ${renderMenuCard('materi', 'emerald', 'Materi & Video', 'Tonton video dan hafalan', '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>')}
+                            ${renderMenuCard('quiz-easy', 'blue', 'Latihan Dasar', '30 Soal Angka 1-5', '<span class="text-xl font-bold">1-5</span>')}
+                            ${renderMenuCard('quiz-hard', 'purple', 'Tantangan Pro', '30 Soal Angka 6-10', '<span class="text-xl font-bold">6-10</span>')}
+                            ${renderMenuCard('quiz-image', 'orange', 'Latihan Gambar', 'Belajar dengan visual seru', '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>')}
+                            ${renderMenuCard('quiz-story', 'pink', 'Soal Cerita', 'Pecahkan teka-teki cerita', '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>')}
+                        </div>
+                    </div>
+                `;
+            } else if (view === 'materi') {
+                main.innerHTML = `
+                    <div class="animate-fade-in">
+                        <div class="flex items-center gap-4 mb-6">
+                            <button onclick="goHome()" class="bg-white p-2 rounded-full hover:bg-slate-100 shadow text-slate-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                            </button>
+                            <h2 class="text-2xl font-bold text-slate-700">Materi & Hafalan</h2>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border-l-4 border-pink-500">
+                            <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                <div class="bg-pink-500 text-white p-1.5 rounded-lg">▶</div>
+                                Video Belajar Perkalian Ceria
+                            </h3>
+                            <div class="aspect-video w-full rounded-lg overflow-hidden bg-slate-900 shadow-inner">
+                                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/bmDiv18-V34" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => `
+                                <div class="bg-white rounded-xl shadow p-4 border-t-4 border-sky-400">
+                                    <h3 class="text-center font-bold text-sky-600 mb-2 border-b pb-2">Perkalian ${num}</h3>
+                                    <div class="space-y-1 text-slate-600 font-mono text-sm text-center">
+                                        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(m => `<div class="flex justify-between px-2"><span>${num}x${m}</span><b>=${num*m}</b></div>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (view.startsWith('quiz')) {
+                const progress = (questionCount / TOTAL_QUESTIONS) * 100;
+                main.innerHTML = `
+                    <div class="animate-scale-in max-w-2xl mx-auto">
+                        <div class="flex items-center gap-4 mb-8">
+                            <button onclick="goHome()" class="bg-white p-2 rounded-full hover:bg-slate-100 shadow text-slate-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                            </button>
+                            <div class="flex-1">
+                                <div class="flex justify-between text-sm font-bold text-slate-600 mb-1">
+                                    <span>Progres</span>
+                                    <span>${questionCount} / ${TOTAL_QUESTIONS} Soal</span>
+                                </div>
+                                <div class="h-3 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500 transition-all duration-500 rounded-full" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-center relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+                            <div class="mb-8">
+                                <p class="text-slate-400 font-medium mb-4">Soal Nomor ${questionCount}</p>
+                                ${renderQuizContent()}
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                ${currentQuestion.options.map(opt => `
+                                    <button onclick="handleAnswer(${opt})" 
+                                        class="option-btn p-6 rounded-xl text-2xl font-bold border-2 border-slate-100 text-slate-600 hover:border-sky-400 hover:text-sky-600 shadow-sm transition-all transform hover:scale-105"
+                                        id="opt-${opt}"
+                                    >
+                                        ${opt}
+                                    </button>
+                                `).join('')}
+                            </div>
+
+                            <div id="feedback-overlay" class="hidden absolute inset-0 flex items-center justify-center bg-white/95 backdrop-blur-sm animate-fade-in z-20">
+                                <div id="feedback-content" class="text-center p-6"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (view === 'finished') {
+                main.innerHTML = `
+                    <div class="animate-scale-in max-w-lg mx-auto text-center mt-10">
+                        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border-t-8 border-yellow-400">
+                            <div class="text-6xl mb-6 animate-bounce">🏆</div>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-2">Latihan Selesai!</h2>
+                            <p class="text-slate-500 mb-8">Kamu telah menyelesaikan 30 soal.</p>
+                            <div class="bg-sky-50 rounded-2xl p-6 mb-8 border border-sky-100">
+                                <p class="text-sm text-sky-600 font-bold uppercase mb-2">Skor Akhir</p>
+                                <p class="text-6xl font-black text-sky-600">${score}</p>
+                                <p class="text-sm text-slate-400 mt-2">Maksimal Skor: 300</p>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <button onclick="startQuiz('${currentQuestion.mode}')" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg flex justify-center items-center gap-2">
+                                    Ulangi Latihan Ini
+                                </button>
+                                <button onclick="goHome()" class="w-full py-4 bg-white border-2 border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl font-bold">
+                                    Kembali ke Menu Utama
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderMenuCard(targetView, color, title, subtitle, icon) {
+            const colors = {
+                emerald: 'border-emerald-500 bg-emerald-100 text-emerald-600',
+                blue: 'border-blue-500 bg-blue-100 text-blue-600',
+                purple: 'border-purple-500 bg-purple-100 text-purple-600',
+                orange: 'border-orange-500 bg-orange-100 text-orange-600',
+                pink: 'border-pink-500 bg-pink-100 text-pink-600'
+            };
+            const c = colors[color];
+            return `
+                <button onclick="${targetView === 'materi' ? "setView('materi')" : `startQuiz('${targetView}')`}" 
+                    class="group relative overflow-hidden bg-white border-b-4 ${c.split(' ')[0]} p-6 rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-300 text-center"
+                >
+                    <div class="${c.split(' ')[1]} w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${c.split(' ')[2]}">
+                        ${icon}
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-700 mb-1">${title}</h3>
+                    <p class="text-slate-500 text-sm">${subtitle}</p>
+                </button>
+            `;
+        }
+
+        function renderQuizContent() {
+            if (view === 'quiz-image') {
+                let groupsHtml = '';
+                for(let i=0; i<currentQuestion.num1; i++) {
+                    let itemsHtml = '';
+                    for(let j=0; j<currentQuestion.num2; j++) {
+                        itemsHtml += '<span class="text-2xl">🍎</span>';
+                    }
+                    groupsHtml += `<div class="bg-orange-50 border-2 border-orange-200 rounded-xl p-3 flex flex-wrap gap-1 justify-center w-28 shadow-sm">${itemsHtml}</div>`;
+                }
+                return `
+                    <div class="mb-6">
+                        <div class="flex flex-wrap justify-center gap-4 mb-4">${groupsHtml}</div>
+                        <p class="text-slate-500 text-lg">Ada <span class="font-bold text-orange-600">${currentQuestion.num1}</span> kotak. Setiap kotak berisi <span class="font-bold text-red-600">${currentQuestion.num2}</span> apel.</p>
+                        <p class="text-2xl font-bold text-slate-700 mt-2">Berapa jumlah semua apel?</p>
+                    </div>
+                `;
+            } else if (view === 'quiz-story') {
+                return `
+                    <div class="mb-6 bg-pink-50 p-6 rounded-2xl border-2 border-pink-100">
+                        <div class="text-4xl mb-4">${currentQuestion.story.icon}</div>
+                        <p class="text-xl md:text-2xl font-medium text-slate-700 leading-relaxed italic">"${currentQuestion.story.text}"</p>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="text-5xl md:text-7xl font-bold text-slate-800 flex justify-center items-center gap-4">
+                        <span>${currentQuestion.num1}</span>
+                        <span class="text-yellow-500">×</span>
+                        <span>${currentQuestion.num2}</span>
+                        <span class="text-slate-300">=</span>
+                        <span class="text-slate-400 w-20 h-20 md:w-24 md:h-24 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300">?</span>
+                    </div>
+                `;
+            }
+        }
+
+        function setView(v) {
+            view = v;
+            render();
+        }
+
+        function goHome() {
+            view = 'home';
+            render();
+        }
+
+        function startQuiz(mode) {
+            view = mode;
+            score = 0;
+            questionCount = 1;
+            generateQuestion(mode);
+            render();
+        }
+
+        function generateQuestion(mode) {
+            let n1, n2, story = null;
+            if (mode === 'quiz-easy') {
+                n1 = Math.floor(Math.random() * 5) + 1;
+                n2 = Math.floor(Math.random() * 10) + 1;
+            } else if (mode === 'quiz-hard') {
+                n1 = Math.floor(Math.random() * 5) + 6;
+                n2 = Math.floor(Math.random() * 10) + 1;
+            } else if (mode === 'quiz-image') {
+                n1 = Math.floor(Math.random() * 4) + 1;
+                n2 = Math.floor(Math.random() * 5) + 1;
+            } else if (mode === 'quiz-story') {
+                n1 = Math.floor(Math.random() * 9) + 2;
+                n2 = Math.floor(Math.random() * 9) + 2;
+                const template = storyTemplates[Math.floor(Math.random() * storyTemplates.length)];
+                story = {
+                    text: template.text.replace('{num1}', n1).replace('{num2}', n2),
+                    icon: template.icon
+                };
+            }
+
+            const correct = n1 * n2;
+            let options = new Set([correct]);
+            while (options.size < 4) {
+                const offset = Math.floor(Math.random() * 5) + 1;
+                const fake = Math.random() > 0.5 ? correct + offset : correct - offset;
+                if (fake > 0) options.add(fake);
+            }
+
+            currentQuestion = {
+                mode, num1: n1, num2: n2, 
+                correctAnswer: correct, 
+                story, 
+                options: Array.from(options).sort(() => Math.random() - 0.5)
+            };
+        }
+
+        function handleAnswer(answer) {
+            if (isFeedbackActive) return;
+            isFeedbackActive = true;
+
+            const overlay = document.getElementById('feedback-overlay');
+            const content = document.getElementById('feedback-content');
+            const isCorrect = answer === currentQuestion.correctAnswer;
+
+            if (isCorrect) {
+                score += 10;
+                content.innerHTML = `
+                    <div class="text-6xl mb-4 animate-bounce">✅</div>
+                    <h3 class="text-3xl font-bold text-green-600 mb-2">${praiseMessages[Math.floor(Math.random()*praiseMessages.length)]}</h3>
+                    <p class="text-green-500 text-xl font-semibold">+10 Poin</p>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="text-6xl mb-4 animate-shake">❌</div>
+                    <h3 class="text-3xl font-bold text-orange-600 mb-2">${motivationMessages[Math.floor(Math.random()*motivationMessages.length)]}</h3>
+                    <div class="mt-4 bg-slate-100 p-4 rounded-xl">
+                        <p class="text-slate-500 mb-1">Jawaban yang benar:</p>
+                        <p class="text-2xl font-bold text-slate-800">${currentQuestion.num1} × ${currentQuestion.num2} = <span class="text-green-600">${currentQuestion.correctAnswer}</span></p>
+                    </div>
+                `;
+            }
+
+            overlay.classList.remove('hidden');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                isFeedbackActive = false;
+                if (questionCount >= TOTAL_QUESTIONS) {
+                    view = 'finished';
+                } else {
+                    questionCount++;
+                    generateQuestion(view);
+                }
+                render();
+            }, 1800);
+        }
+
+        // Jalankan render pertama kali
+        window.onload = render;
+    </script>
+</body>
+</html>

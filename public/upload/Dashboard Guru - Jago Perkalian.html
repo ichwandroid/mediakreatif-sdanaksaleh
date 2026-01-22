@@ -36,61 +36,32 @@
         .hidden {
             display: none;
         }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+<body class="min-h-screen bg-slate-50 selection:bg-purple-200">
 
-    <!-- HEADER -->
-    <header class="bg-white shadow-md p-4 sticky top-0 z-20">
-        <div class="container mx-auto flex justify-between items-center">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-xl text-white">
+                <div class="bg-purple-600 p-2 rounded-lg text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                     </svg>
                 </div>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-bold text-slate-800">Dashboard Guru</h1>
-                    <p class="text-sm text-slate-500">Jago Perkalian - Monitoring Nilai Siswa</p>
-                </div>
+                <h1 class="text-xl font-bold text-slate-800">Dashboard Guru</h1>
             </div>
-
-            <button onclick="refreshData()"
-                class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                </svg>
-                Refresh
-            </button>
+            <div class="text-sm font-medium text-slate-500">
+                Jago Perkalian
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
-        <!-- Statistics Cards -->
+    <main class="container mx-auto p-6 max-w-7xl">
+        <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-fade-in">
             <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500">
                 <div class="flex items-center justify-between">
@@ -200,95 +171,75 @@
                     </svg>
                     Export CSV
                 </button>
+                <button onclick="refreshData()"
+                    class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6" />
+                        <path d="M1 20v-6h6" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                    </svg>
+                    Refresh
+                </button>
             </div>
         </div>
 
-        <!-- Sessions Table -->
+        <!-- Table -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in">
-            <div class="p-6 bg-gradient-to-r from-purple-500 to-pink-500">
-                <h2 class="text-2xl font-bold text-white">Daftar Nilai Siswa</h2>
-                <p class="text-purple-100 mt-1">Klik pada baris untuk melihat detail jawaban</p>
-            </div>
-
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-slate-50 border-b-2 border-slate-200">
+                    <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                No</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Nama Siswa</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Kelas</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Jenis Quiz</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Benar</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Salah</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Nilai</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Waktu</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                Aksi</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">No</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">Nama Siswa</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">Kelas</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">Jenis Quiz</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">Status Belajar</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">Benar</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">Salah</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">Nilai</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">Waktu</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="sessions-table-body" class="divide-y divide-slate-200">
-                        <tr>
-                            <td colspan="9" class="px-6 py-12 text-center text-slate-500">
-                                <div class="flex flex-col items-center gap-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="text-slate-300">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <line x1="12" x2="12" y1="8" y2="12" />
-                                        <line x1="12" x2="12.01" y1="16" y2="16" />
-                                    </svg>
-                                    <p class="font-semibold">Memuat data...</p>
-                                </div>
-                            </td>
-                        </tr>
+                    <tbody id="table-body">
+                        <!-- Data will be rendered here -->
                     </tbody>
                 </table>
             </div>
         </div>
+    </main>
 
-        <!-- Detail Modal -->
-        <div id="detail-modal"
-            class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden animate-fade-in">
-                <div class="p-6 bg-gradient-to-r from-purple-500 to-pink-500 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-2xl font-bold text-white" id="modal-title">Detail Jawaban</h3>
-                        <p class="text-purple-100 mt-1" id="modal-subtitle"></p>
-                    </div>
-                    <button onclick="closeModal()"
-                        class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" x2="6" y1="6" y2="18" />
-                            <line x1="6" x2="18" y1="6" y2="18" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]" id="modal-content">
-                    <!-- Content will be inserted here -->
-                </div>
+    <!-- Detail Modal -->
+    <div id="detail-modal"
+        class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-xl font-bold text-slate-800">Detail Jawaban</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto" id="modal-content">
+                <!-- Modal content will be rendered here -->
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
         // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDSaIEF3LjVkNE_RTbAjIBi_gHzwJDqh7I",
+            apiKey: "AIzaSyAEMyJQDtwoeAPQHr1SduLeHuA4Hu-lDdU",
             authDomain: "mediakreatif-sdanaksaleh.firebaseapp.com",
-            databaseURL: "https://mediakreatif-sdanaksaleh-default-rtdb.firebaseio.com",
+            databaseURL: "https://mediakreatif-sdanaksaleh-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "mediakreatif-sdanaksaleh",
             storageBucket: "mediakreatif-sdanaksaleh.firebasestorage.app",
-            messagingSenderId: "635675085881",
-            appId: "1:635675085881:web:f8e8d8b8f8e8d8b8f8e8d8"
+            messagingSenderId: "1096718379968",
+            appId: "1:1096718379968:web:9ba2a4dfc2a4343a2ef625"
         };
 
         // Initialize Firebase
@@ -299,167 +250,164 @@
         let filteredSessions = [];
 
         const quizTypeNames = {
-            'quiz-easy': 'Latihan Dasar (1-5)',
-            'quiz-hard': 'Tantangan Pro (6-10)',
+            'quiz-easy': 'Latihan Dasar',
+            'quiz-hard': 'Tantangan Pro',
             'quiz-image': 'Latihan Gambar',
             'quiz-story': 'Soal Cerita'
         };
 
-        // Load data from Firebase
         function loadData() {
-            database.ref('jago-perkalian/sessions').once('value', (snapshot) => {
-                allSessions = [];
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-500">Memuat data...</td></tr>';
+
+            database.ref('jago-perkalian/sessions').on('value', (snapshot) => {
                 const data = snapshot.val();
+                allSessions = [];
 
                 if (data) {
                     Object.keys(data).forEach(studentId => {
-                        Object.keys(data[studentId]).forEach(sessionId => {
-                            const session = data[studentId][sessionId];
-                            if (session.summary) {
-                                allSessions.push({
-                                    studentId,
-                                    sessionId,
-                                    ...session.summary,
-                                    answers: session.answers || {}
-                                });
+                        const studentSessions = data[studentId];
+                        Object.keys(studentSessions).forEach(sessionId => {
+                            const session = studentSessions[sessionId];
+                            // Handle cases where only 'studied' exists or 'summary' exists or both
+                            if (session.summary || session.studied) {
+                                const entry = {
+                                    id: sessionId,
+                                    studentId: studentId,
+                                    ...session.summary, // Spread summary properties if they exist
+                                    studied: session.studied ? session.studied.verified : false,
+                                    answers: session.answers // Include answers for detail view
+                                };
+
+                                // If summary is missing (only studied), fill with defaults
+                                if (!session.summary) {
+                                    entry.studentName = studentId.split('_')[0].replace(/_/g, ' '); // Fallback name
+                                    entry.studentClass = '-';
+                                    entry.quizType = '-';
+                                    entry.correctAnswers = 0;
+                                    entry.wrongAnswers = 0;
+                                    entry.finalScore = 0;
+                                    entry.completedAt = session.studied.timestamp;
+                                }
+
+                                allSessions.push(entry);
                             }
                         });
                     });
+
+                    // Sort by latest
+                    allSessions.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
                 }
 
-                filteredSessions = [...allSessions];
-                updateStatistics();
-                renderTable();
+                filterData();
             });
         }
 
-        // Update statistics
-        function updateStatistics() {
-            const uniqueStudents = new Set(allSessions.map(s => s.studentId)).size;
-            const totalSessions = allSessions.length;
-            const scores = allSessions.map(s => s.finalScore);
-            const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-            const maxScore = scores.length > 0 ? Math.max(...scores) : 0;
-
-            document.getElementById('total-students').textContent = uniqueStudents;
-            document.getElementById('total-sessions').textContent = totalSessions;
-            document.getElementById('average-score').textContent = avgScore;
-            document.getElementById('highest-score').textContent = maxScore;
-        }
-
-        // Render table
-        function renderTable() {
-            const tbody = document.getElementById('sessions-table-body');
-
-            if (filteredSessions.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="px-6 py-12 text-center text-slate-500">
-                            <div class="flex flex-col items-center gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="12" x2="12" y1="8" y2="12"/>
-                                    <line x1="12" x2="12.01" y1="16" y2="16"/>
-                                </svg>
-                                <p class="font-semibold">Tidak ada data</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = filteredSessions.map((session, index) => {
-                const date = new Date(session.completedAt);
-                const formattedDate = date.toLocaleDateString('id-ID', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                const scorePercentage = (session.finalScore / 300) * 100;
-                let scoreColor = 'text-red-600';
-                if (scorePercentage >= 80) scoreColor = 'text-green-600';
-                else if (scorePercentage >= 60) scoreColor = 'text-yellow-600';
-
-                return `
-                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="showDetail('${session.studentId}', '${session.sessionId}')">
-                        <td class="px-6 py-4 text-sm text-slate-600">${index + 1}</td>
-                        <td class="px-6 py-4">
-                            <div class="font-semibold text-slate-800">${session.studentName}</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">${session.studentClass}</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-slate-600">${quizTypeNames[session.quizType] || session.quizType}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">${session.correctAnswers}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-semibold">${session.wrongAnswers}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-lg font-bold ${scoreColor}">${session.finalScore}</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-slate-500">${formattedDate}</td>
-                        <td class="px-6 py-4">
-                            <button onclick="event.stopPropagation(); showDetail('${session.studentId}', '${session.sessionId}')" class="text-purple-600 hover:text-purple-800 font-semibold">
-                                Detail →
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // Filter data
         function filterData() {
             const classFilter = document.getElementById('filter-class').value;
             const quizFilter = document.getElementById('filter-quiz').value;
 
             filteredSessions = allSessions.filter(session => {
-                const matchClass = !classFilter || session.studentClass === classFilter;
-                const matchQuiz = !quizFilter || session.quizType === quizFilter;
+                const matchClass = classFilter === '' || session.studentClass === classFilter;
+                const matchQuiz = quizFilter === '' || session.quizType === quizFilter;
                 return matchClass && matchQuiz;
             });
 
             renderTable();
+            calculateStats();
         }
 
-        // Show detail modal
-        function showDetail(studentId, sessionId) {
-            const session = allSessions.find(s => s.studentId === studentId && s.sessionId === sessionId);
-            if (!session) return;
+        function renderTable() {
+            const tableBody = document.getElementById('table-body');
 
-            document.getElementById('modal-title').textContent = `Detail Jawaban - ${session.studentName}`;
-            document.getElementById('modal-subtitle').textContent = `${session.studentClass} | ${quizTypeNames[session.quizType]} | Nilai: ${session.finalScore}`;
+            if (filteredSessions.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-500">Belum ada data siswa</td></tr>';
+                return;
+            }
 
-            const answers = session.answers;
-            const answersArray = Object.values(answers).sort((a, b) => a.questionNumber - b.questionNumber);
+            tableBody.innerHTML = filteredSessions.map((session, index) => `
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="p-4 text-slate-500 font-medium">${index + 1}</td>
+                    <td class="p-4 font-semibold text-slate-700">${session.studentName}</td>
+                    <td class="p-4">
+                        <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-bold">${session.studentClass}</span>
+                    </td>
+                    <td class="p-4">
+                        ${session.quizType !== '-' ? `
+                            <span class="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm font-medium">
+                                ${quizTypeNames[session.quizType] || session.quizType}
+                            </span>
+                        ` : '-'}
+                    </td>
+                    <td class="p-4">
+                        ${session.studied ?
+                    '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex w-fit items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sudah Belajar</span>' :
+                    '<span class="text-slate-300 font-bold">-</span>'}
+                    </td>
+                    <td class="p-4 text-center font-bold text-green-600">${session.correctAnswers}</td>
+                    <td class="p-4 text-center font-bold text-red-500">${session.wrongAnswers}</td>
+                    <td class="p-4 text-center">
+                        <span class="text-lg font-black ${session.finalScore >= 80 ? 'text-blue-600' : 'text-orange-500'}">
+                            ${session.finalScore}
+                        </span>
+                    </td>
+                    <td class="p-4 text-sm text-slate-500">
+                        ${new Date(session.completedAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                    </td>
+                    <td class="p-4 text-center">
+                        ${session.answers ? `
+                            <button onclick="showDetail('${session.id}')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        ` : '<span class="text-slate-300">-</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function calculateStats() {
+            const totalStudents = new Set(filteredSessions.map(s => s.studentName)).size;
+            const totalSessions = filteredSessions.length;
+
+            // Filter out sessions that have no score (only studied)
+            const scoredSessions = filteredSessions.filter(s => s.finalScore !== undefined);
+
+            const avgScore = scoredSessions.length > 0
+                ? Math.round(scoredSessions.reduce((acc, curr) => acc + curr.finalScore, 0) / scoredSessions.length)
+                : 0;
+
+            const maxScore = scoredSessions.length > 0
+                ? Math.max(...scoredSessions.map(s => s.finalScore))
+                : 0;
+
+            document.getElementById('total-students').innerText = totalStudents;
+            document.getElementById('total-sessions').innerText = totalSessions;
+            document.getElementById('average-score').innerText = avgScore;
+            document.getElementById('highest-score').innerText = maxScore;
+        }
+
+        function showDetail(sessionId) {
+            const session = allSessions.find(s => s.id === sessionId);
+            if (!session || !session.answers) return;
 
             const content = `
-                <div class="space-y-3">
-                    ${answersArray.map(answer => `
-                        <div class="flex items-center justify-between p-4 rounded-xl ${answer.isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'}">
-                            <div class="flex items-center gap-4">
-                                <div class="text-2xl font-bold ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}">
-                                    ${answer.questionNumber}
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-slate-700">${answer.question} = ?</p>
-                                    <p class="text-sm text-slate-500 mt-1">
-                                        Jawaban: <span class="font-bold ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}">${answer.userAnswer}</span>
-                                        ${!answer.isCorrect ? `<span class="text-slate-400">| Benar: <span class="text-green-600 font-bold">${answer.correctAnswer}</span></span>` : ''}
-                                    </p>
+                <div class="grid gap-4">
+                    ${session.answers.map((answer, idx) => answer ? `
+                        <div class="bg-slate-50 p-4 rounded-xl border ${answer.isCorrect ? 'border-green-200' : 'border-red-200'} flex justify-between items-center">
+                            <div>
+                                <p class="text-xs text-slate-500 font-bold mb-1">Soal ${idx}</p>
+                                <p class="text-lg font-bold text-slate-700">${answer.question}</p>
+                                <div class="mt-2 text-sm">
+                                    <span class="text-slate-500">Jawaban kamu: </span>
+                                    <span class="font-bold ${answer.isCorrect ? 'text-green-600' : 'text-red-500'}">${answer.userAnswer}</span>
+                                    ${!answer.isCorrect ? `<span class="text-slate-400 mx-2">|</span> <span class="text-slate-500">Benar: </span><span class="font-bold text-green-600">${answer.correctAnswer}</span>` : ''}
                                 </div>
                             </div>
                             <div class="text-3xl">
                                 ${answer.isCorrect ? '✅' : '❌'}
                             </div>
                         </div>
-                    `).join('')}
+                    ` : '').join('')}
                 </div>
             `;
 
@@ -467,23 +415,22 @@
             document.getElementById('detail-modal').classList.remove('hidden');
         }
 
-        // Close modal
         function closeModal() {
             document.getElementById('detail-modal').classList.add('hidden');
         }
 
-        // Export to CSV
         function exportToCSV() {
             if (filteredSessions.length === 0) {
                 alert('Tidak ada data untuk di-export');
                 return;
             }
 
-            let csv = 'No,Nama Siswa,Kelas,Jenis Quiz,Benar,Salah,Nilai,Waktu\n';
+            let csv = 'No,Nama Siswa,Kelas,Jenis Quiz,Status Belajar,Benar,Salah,Nilai,Waktu\n';
 
             filteredSessions.forEach((session, index) => {
                 const date = new Date(session.completedAt).toLocaleString('id-ID');
-                csv += `${index + 1},"${session.studentName}","${session.studentClass}","${quizTypeNames[session.quizType]}",${session.correctAnswers},${session.wrongAnswers},${session.finalScore},"${date}"\n`;
+                const statusBelajar = session.studied ? 'Sudah Belajar' : 'Belum';
+                csv += `${index + 1},"${session.studentName}","${session.studentClass}","${quizTypeNames[session.quizType] || session.quizType}","${statusBelajar}",${session.correctAnswers},${session.wrongAnswers},${session.finalScore},"${date}"\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -497,12 +444,10 @@
             document.body.removeChild(link);
         }
 
-        // Refresh data
         function refreshData() {
             loadData();
         }
 
-        // Initial load
         window.onload = loadData;
     </script>
 </body>

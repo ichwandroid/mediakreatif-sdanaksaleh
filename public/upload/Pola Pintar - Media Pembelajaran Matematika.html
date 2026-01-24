@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pola Pintar - Media Pembelajaran Matematika</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --biru: #4FC3F7;
+            --kuning: #FFD700;
+            --hijau: #81C784;
+            --oranye: #FF8A65;
+            --pink: #F06292;
+            --putih: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Fredoka One', cursive;
+            background: #E0F7FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            touch-action: manipulation;
+            /* Mencegah zoom saat tap cepat */
+        }
+
+        .container {
+            width: 98%;
+            max-width: 650px;
+            padding: 10px;
+        }
+
+        .screen {
+            display: none;
+            background: var(--putih);
+            padding: 40px 20px;
+            border-radius: 40px;
+            box-shadow: 0 20px 0 rgba(0, 0, 0, 0.05);
+            position: relative;
+            text-align: center;
+        }
+
+        .active {
+            display: block;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #0288d1;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+        }
+
+        /* Tombol 3D Besar */
+        .btn-3d {
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.6rem;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.1s;
+            font-family: 'Fredoka One';
+            text-shadow: 2px 2px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .btn-biru {
+            background: var(--biru);
+            box-shadow: 0 10px 0 #0288d1;
+        }
+
+        .btn-kuning {
+            background: var(--kuning);
+            box-shadow: 0 10px 0 #ccae00;
+        }
+
+        .btn-hijau {
+            background: var(--hijau);
+            box-shadow: 0 10px 0 #388e3c;
+        }
+
+        .btn-pink {
+            background: var(--pink);
+            box-shadow: 0 10px 0 #c2185b;
+        }
+
+        .btn-3d:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* Game Elements - UKURAN DIUBAH DI SINI */
+        .pola-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            padding: 25px;
+            background: #F0F4F8;
+            border-radius: 30px;
+            min-height: 120px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .item {
+            width: 85px;
+            height: 85px;
+            font-size: 3.5rem;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 0 #ddd;
+        }
+
+        .slot-target {
+            width: 95px;
+            height: 95px;
+            border: 4px dashed var(--biru);
+            border-radius: 20px;
+            background: #E3F2FD;
+            color: var(--biru);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .choice-box {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 35px;
+        }
+
+        .btn-choice {
+            width: 110px;
+            height: 110px;
+            font-size: 4rem;
+            border-radius: 25px;
+            border: 3px solid #eee;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #ddd;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-choice:hover {
+            transform: translateY(-5px);
+            border-color: var(--biru);
+        }
+
+        .btn-choice:active {
+            transform: scale(0.9);
+        }
+
+        .desc-box {
+            background: #E1F5FE;
+            padding: 25px;
+            border-radius: 25px;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            border-left: 8px solid var(--biru);
+            text-align: left;
+        }
+
+        .feedback-msg {
+            font-size: 1.5rem;
+            font-weight: bold;
+            height: 30px;
+            margin-top: 10px;
+        }
+
+        /* Khusus Animasi Feedback */
+        .wrong {
+            animation: shake 0.4s;
+            border-color: #ff8a65 !important;
+            background:
+                #FFEBEE !important;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-15px);
+            }
+
+            75% {
+                transform: translateX(15px);
+            }
+        }
+
+        /* Skor Bintang */
+        .stars {
+            font-size: 5rem;
+            margin: 20px 0;
+            color: var(--kuning);
+        }
+
+        .trophy {
+            font-size: 7rem;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <!-- Menu Utama -->
+        <section id="menu" class="screen active">
+            <h1>POLA PINTAR 🌟</h1>
+            <nav>
+                <button class="btn-3d btn-kuning" onclick="showScreen('menu-belajar')">📖
+                    BELAJAR POLA</button>
+                <button class="btn-3d btn-hijau" onclick="showLevelMenu()">🎮 MAIN
+                    YUK!</button>
+            </nav>
+        </section>
+        <!-- Menu Belajar -->
+        <section id="menu-belajar" class="screen">
+            <h2>Pilih Materi</h2>
+            <button class="btn-3d btn-pink" onclick="showScreen('belajar-ab')">POLA AB</button>
+            <button class="btn-3d btn-biru" onclick="showScreen('belajar-aab')">POLA
+                AAB</button>
+            <button class="btn-3d btn-kuning" onclick="showScreen('menu')" style="margin-top:20px">KEMBALI</button>
+        </section>
+        <!-- Materi AB -->
+        <section id="belajar-ab" class="screen">
+            <h3>Pola AB</h3>
+            <div class="desc-box">Benda bergantian satu-satu. <br>Contoh: <b>Apel - Pisang -
+                    Apel - Pisang.</b></div>
+            <div class="pola-row">
+                <div class="item">🍎</div>
+                <div class="item">🍌</div>
+                <div class="item">🍎</div>
+                <div class="item">🍌</div>
+            </div>
+            <button class="btn-3d btn-biru" onclick="showScreen('menu-belajar')">MENGERTI!</button>
+        </section>
+        <!-- Materi AAB -->
+        <section id="belajar-aab" class="screen">
+            <h3>Pola AAB</h3>
+            <div class="desc-box">Ada dua benda sama, baru satu benda beda. <br>Contoh:
+                <b>Kucing - Kucing - Gajah.</b>
+            </div>
+            <div class="pola-row">
+                <div class="item">🐱</div>
+                <div class="item">🐱</div>
+                <div class="item">🐘</div>
+                <div class="item">🐱</div>
+            </div>
+            <button class="btn-3d btn-biru" onclick="showScreen('menu-belajar')">MENGERTI!</button>
+        </section>
+        <!-- Level Menu -->
+        <section id="menu-latihan" class="screen">
+            <h2>Pilih Level</h2>
+            <button class="btn-3d btn-hijau" onclick="startLevel(1)">LEVEL 1 (MUDAH)</button>
+            <button class="btn-3d btn-kuning" onclick="startLevel(2)">LEVEL 2
+                (SEDANG)</button>
+            <button class="btn-3d btn-pink" onclick="startLevel(3)">LEVEL 3 (SULIT)</button>
+            <button class="btn-3d btn-biru" onclick="showScreen('menu')">KEMBALI</button>
+        </section>
+        <!-- Game Screen -->
+        <section id="game-screen" class="screen">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size:
+1.5rem;">
+                <span id="lvl-title" style="color: var(--biru);">Level 1</span>
+                <span id="prog-txt">1/3</span>
+            </div>
+            <div id="pola-display" class="pola-row"></div>
+            <p style="font-weight: bold; margin-bottom: 0;">Pilih gambar yang benar:</p>
+            <div id="choices-display" class="choice-box"></div>
+            <div id="feedback" class="feedback-msg"></div>
+            <button class="btn-3d btn-pink" onclick="showScreen('menu-latihan')" style="margin-top:40px; font-size: 1.1rem; width: auto; padding: 10px 30px; margin-inline:
+auto;">BERHENTI</button>
+        </section>
+        <!-- Score Screen -->
+        <section id="score-screen" class="screen">
+            <h1 style="color:var(--kuning)">LUAR BIASA!</h1>
+            <div class="stars">⭐⭐⭐</div>
+            <div class="trophy">🏆</div>
+            <p>Hebat! Kamu sudah menyelesaikan level ini!</p>
+            <button class="btn-3d btn-hijau" onclick="showScreen('menu')">SELESAI</button>
+        </section>
+    </main>
+    <script>
+        const databaseSoal = {
+            1: [
+                { pola: ["🍎", "🍌", "🍎"], jwb: "🍌", opsi: ["🍌", "🍇"] },
+                { pola: ["🚗", "🚲", "🚗"], jwb: "🚲", opsi: ["🚲", "✈️"] },
+                { pola: ["🌞", "☁️", "🌞"], jwb: "☁️", opsi: ["🌙", "☁️"] }
+            ],
+            2: [
+                { pola: ["🐱", "🐶", "🐱", "🐶"], jwb: "🐱", opsi: ["🐱", "🐰"] },
+                { pola: ["🔴", "🔵", "🔴", "🔵"], jwb: "🔴", opsi: ["🔴", "🟢"] },
+                { pola: ["🍪", "🥛", "🍪", "🥛"], jwb: "🍪", opsi: ["🍪", "🍩"] }
+            ],
+            3: [
+                { pola: ["🦋", "🦋", "🌻", "🦋", "🦋"], jwb: "🌻", opsi: ["🌻", "🦋"] },
+                { pola: ["🦁", "🦁", "🐵", "🦁", "🦁"], jwb: "🐵", opsi: ["🐵", "🐘"] },
+                { pola: ["🟦", "🟦", "🔺", "🟦", "🟦"], jwb: "🔺", opsi: ["🟢", "🔺"] }
+            ]
+        };
+        let curLvl = 1;
+        let curIdx = 0;
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        function showLevelMenu() {
+            showScreen('menu-latihan');
+        }
+        function startLevel(lvl) {
+            curLvl = lvl;
+            curIdx = 0;
+            showScreen('game-screen');
+            renderGame();
+        }
+        function renderGame() {
+            const data = databaseSoal[curLvl][curIdx];
+            document.getElementById('lvl-title').innerText = `Level ${curLvl}`;
+            document.getElementById('prog-txt').innerText = `${curIdx + 1}/3`;
+            document.getElementById('feedback').innerText = "";
+            const disp = document.getElementById('pola-display');
+            const choices = document.getElementById('choices-display');
+            disp.innerHTML = "";
+            choices.innerHTML = "";
+            // Tampilkan soal dengan transisi halus
+            data.pola.forEach(item => {
+                disp.innerHTML += `<div class="item">${item}</div>`;
+            });
+            // Slot kosong besar
+            disp.innerHTML += `<div class="slot-target" id="target-box">?</div>`;
+            // Tampilkan pilihan besar
+            data.opsi.forEach(o => {
+                choices.innerHTML += `<button class="btn-choice" onclick="cekJawaban('${o}',
+this)">${o}</button>`;
+            });
+        }
+        function cekJawaban(val, btn) {
+            const targetBox = document.getElementById('target-box');
+            const feedback = document.getElementById('feedback');
+            if (val === databaseSoal[curLvl][curIdx].jwb) {
+                targetBox.innerText = val;
+                targetBox.style.background = "#C8E6C9";
+                targetBox.style.borderColor = "#4CAF50";
+                targetBox.style.color = "black";
+                feedback.innerText = "HEBAT! 🎉";
+                feedback.style.color = "#4CAF50";
+                // Nonaktifkan tombol agar tidak klik ganda
+                document.querySelectorAll('.btn-choice').forEach(b => b.disabled = true);
+                setTimeout(() => {
+                    curIdx++;
+                    if (curIdx < 3) {
+                        renderGame();
+                    } else {
+                        showScreen('score-screen');
+                    }
+                }, 1000);
+            } else {
+                btn.classList.add('wrong');
+                feedback.innerText = "COBA LAGI 😊";
+                feedback.style.color = "#FF8A65";
+                setTimeout(() => {
+                    btn.classList.remove('wrong');
+                }, 400);
+            }
+        }
+    </script>
+</body>
+
+</html>

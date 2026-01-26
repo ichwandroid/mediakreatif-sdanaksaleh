@@ -1,0 +1,434 @@
+[
+    {
+        "2A": [
+            {
+                "name": "Adeeva Aisyah Puerdinka",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Afnan Husna Salsabila",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Ahmad Zhafran Arsya Robbi",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Ali Ulul Ilmi",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Alicia Calista Geraldinee Praworo Putri",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Althaff Benjamin Dzakiandra Susanto",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Aretha Billah Nazafarin",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Arsyila Hilda Fauzia",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Arzan Kinza Ravindra",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Asy Syam Hannan Azwar",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Devanka Daffi Maulana Asyari",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Dzeroun Novero Putra",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Ezekiel Barraq Alkas",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Kanaya Layla Ferhanadya",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Muhammad Abrisam Manaf",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Muhammad Faiz Darojad",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Muhammad Fayyad Ghassan Hermawan",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Nafis Syakir Alfatih",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Namira Mysha Almahyra",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Nayaka Syazana Andriyanto",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Rafif Rizqullah Altamis",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Sarah Kafkamadina Dipasanta",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Sidnan Muqaddam Fadhli",
+                "homebase": "Merah"
+            }
+        ]
+    },
+    {
+        "2B": [
+            {
+                "name": "Abdurrahman Arrasyiid",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Abyaz Athaya Mahardika",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Adeeva Aila Varisha",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Adinda Kirana Kamania",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Aisa Nurdiana Fazaalloh",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Akhtar Xaquille Anas",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Arvino Shakeel Ibrahim",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Ayra Nur Hafizah",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Diana Almahira Nuura Ramadhani",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Elfathan Ripki Ramdan",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Hafizah Izzati Putri Fadilah",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Haveza Sareva",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Ilona Probo Airra Meghra",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Kaif Artanabil Hariri",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Kenzo Athar Riza",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Khayru Alfaeyza Martasundjaya",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "M. Alfarizi Reshwara Mumtaz",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Muhammad Alman Ramadhan",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Muhammad Fatih Adiputra",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Muhammad Fatih Agil Gudban",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Muhammad Kaysan Alsyazani",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Muhammad Zhafran Aqila Dirgantara",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Nadhira Almira Azmi",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Naira Nazneen Arisanti",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Pradhika Fairuz Yazdi",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Raihana Dayu Utama",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Syarifah Hedy Almahyra Putri",
+                "homebase": "Hijau"
+            }
+        ]
+    },
+    {
+        "2C": [
+            {
+                "name": "Agam Mahendra Alfatih",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Ahmad Zulhadi Ar-Rasyid",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Althafiz Riffa Aldebaran",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Anindita Azzahra Jaswinder",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Aretha Aluna Kenda",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Ayra Zahra Malika Shaliha",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Dafiqi Zulfikar Alhamiz",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Dyra Fathia Azkayra",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Hideo Aldric Adyaraka Saputra",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Isvara Farzana Hikari",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Javier Athalla Khalfani",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Kai Anindito Pertama",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Khansa Alea Zahra",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Mohammad Rayyan",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Muhammad Arkana Chairyzi",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Muhammad Raja Imanulhaq",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Muhammad Sam Sulaiman",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Mustofa Rajaban Ananta",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Nadam Abiyoso",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Naladhipa Ahsana Dzikra",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Nayla Clarine Anindyaswari",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "R.P.Maxime Junior Tjakradiputra",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Riddari Alsaki Ganisena",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Salma Adreena Primariayu",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Shakira Putri Pradhana",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Tsamara Rania Chairyza",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Zivanka Qalesya Alfatih",
+                "homebase": "Biru"
+            }
+        ]
+    },
+    {
+        "2D": [
+            {
+                "name": "Abqary Runako Arsenio Romadhoni",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Abqori Kenzie Ramadhan",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Adediivo Ramadhana Nandadhiva",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Adreena Shakila Maulidina Arifin",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Ameera Lovia Kinarian",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Andyra Cahya Almira",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Arthur Niam Alfatah",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Ayesha Mikhayla Adreena Setiawan",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Diandra Syafira Putri Harjanto",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Farezell Uwais Al Fatih",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Firdano Alvaro Rayhan",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Gi Pio Affandra Alsaki Muslim",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Harumi Iqlima Azzahra",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Hatmia Immi Prasmita",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Ihya Syauqi Al Faruq Askha",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Kiani Lanika Nurhadhy",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Maureen Abelia Thalita",
+                "homebase": "Biru"
+            },
+            {
+                "name": "Muhammad Althaf Abidin",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Muhammad Damar Aruna Gemintang",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Muhammad Hafiz Al Ihsan",
+                "homebase": "Ungu"
+            },
+            {
+                "name": "Muhammad Haidar Rasyid Dirgantara",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Muhammad Tsaqif Adnani Rahman",
+                "homebase": "Merah"
+            },
+            {
+                "name": "Narendra Rafa Putra Sugiharto",
+                "homebase": "Hijau"
+            },
+            {
+                "name": "Quinza Aqila Melody",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Rafif Alfarezi Laksana",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Reva Nirwasita Putri",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Zafran Latif Maulana",
+                "homebase": "Kuning"
+            }
+        ]
+    }
+]

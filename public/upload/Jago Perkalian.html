@@ -142,34 +142,110 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // State Management
+        // Global State Variables
         let view = 'login';
         let score = 0;
-        let questionCount = 0;
-        let currentQuestion = null;
+        let questionCount = 1;
+        let currentQuestion = {};
         let isFeedbackActive = false;
         const TOTAL_QUESTIONS = 30;
 
-        // Student Data
+        // Student Database from JSON
+        let studentDatabase = [];
+        let availableStudents = [];
+
         let studentData = {
-            id: null,
             name: '',
             class: '',
-            sessionId: null,
+            homebase: '',
+            id: '',
+            sessionId: '',
             answers: []
         };
 
-        const praiseMessages = ["Luar Biasa!", "Hebat Sekali!", "Kamu Cerdas!", "Kerja Bagus!", "Mantap Jiwa!", "Sempurna!", "Keren Abis!", "Jempolan!", "Wow, Benar!"];
-        const motivationMessages = ["Jangan Menyerah!", "Ayo Coba Lagi!", "Tetap Semangat!", "Belajar dari Kesalahan!", "Kamu Pasti Bisa!", "Hampir Benar!", "Jangan Putus Asa!", "Coba Fokus Lagi!"];
-
+        // Story Templates for Quiz Story
         const storyTemplates = [
-            { text: "Ibu membeli {num1} keranjang buah. Setiap keranjang berisi {num2} apel. Berapa jumlah apel seluruhnya?", icon: '🍎' },
-            { text: "Di garasi ada {num1} mobil mainan. Setiap mobil memiliki {num2} roda. Berapa jumlah roda seluruhnya?", icon: '🚗' },
-            { text: "Budi punya {num1} kotak kue. Satu kotak isinya {num2} kue. Berapa total kue Budi?", icon: '🍪' },
-            { text: "Seekor kucing punya {num2} kaki. Jika ada {num1} kucing, berapa jumlah kakinya?", icon: '🐈' },
+            { text: "Ibu membeli {num1} kantong permen. Setiap kantong berisi {num2} permen. Berapa total permen yang dibeli Ibu?", icon: '🍬' },
+            { text: "Di kelas ada {num1} meja. Setiap meja ada {num2} pensil. Berapa total pensil di kelas?", icon: '✏️' },
+            { text: "Ayah menanam {num1} pot bunga. Setiap pot ada {num2} bunga. Berapa total bunga yang ditanam Ayah?", icon: '🌺' },
+            { text: "Kakak punya {num1} kotak mainan. Setiap kotak berisi {num2} mainan. Berapa total mainan Kakak?", icon: '🎁' },
+            { text: "Di kebun ada {num1} pohon mangga. Setiap pohon ada {num2} mangga. Berapa total mangga di kebun?", icon: '🥭' },
             { text: "Setiap hari Ani menabung {num2} ribu. Berapa tabungan Ani selama {num1} hari? (dalam ribu)", icon: '💰' },
             { text: "Ada {num1} vas bunga. Setiap vas diisi {num2} bunga mawar. Berapa total bunga mawar?", icon: '🌹' }
         ];
+
+        // Praise and Motivation Messages
+        const praiseMessages = [
+            "Kamu hebat sekali!",
+            "Luar biasa!",
+            "Pintar!",
+            "Sempurna!",
+            "Mantap!",
+            "Keren banget!",
+            "Terus semangat!"
+        ];
+
+        const motivationMessages = [
+            "Jangan menyerah, coba lagi!",
+            "Hampir benar, ayo semangat!",
+            "Tetap semangat belajar ya!",
+            "Kamu pasti bisa!",
+            "Ayo coba lagi!"
+        ];
+
+        // Load Student Data from JSON
+        async function loadStudentData() {
+            try {
+                const response = await fetch('../data/datasiswa.json');
+                studentDatabase = await response.json();
+                console.log('Student data loaded successfully');
+            } catch (error) {
+                console.error('Error loading student data:', error);
+                alert('Gagal memuat data siswa. Silakan refresh halaman.');
+            }
+        }
+
+        // Get students by class
+        function getStudentsByClass(className) {
+            const classData = studentDatabase.find(item => item[className]);
+            return classData ? classData[className] : [];
+        }
+
+        // Update student list when class is selected
+        function updateStudentList() {
+            const className = document.getElementById('student-class').value;
+            const studentSelect = document.getElementById('student-name');
+            const homebaseDisplay = document.getElementById('homebase-display');
+
+            if (className) {
+                availableStudents = getStudentsByClass(className);
+                studentSelect.disabled = false;
+                studentSelect.innerHTML = '<option value="">Pilih Nama</option>';
+
+                availableStudents.forEach((student, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = student.name;
+                    studentSelect.appendChild(option);
+                });
+            } else {
+                studentSelect.disabled = true;
+                studentSelect.innerHTML = '<option value="">Pilih kelas terlebih dahulu</option>';
+                homebaseDisplay.classList.add('hidden');
+            }
+
+            // Add event listener to show homebase when student is selected
+            studentSelect.onchange = function () {
+                const selectedIndex = this.value;
+                if (selectedIndex !== '') {
+                    const selectedStudent = availableStudents[selectedIndex];
+                    document.getElementById('homebase-value').textContent = selectedStudent.homebase;
+                    homebaseDisplay.classList.remove('hidden');
+                } else {
+                    homebaseDisplay.classList.add('hidden');
+                }
+            };
+        }
 
         function render() {
             const main = document.getElementById('main-content');
@@ -201,24 +277,15 @@
                             <div class="text-center mb-8">
                                 <div class="text-6xl mb-4">📚</div>
                                 <h2 class="text-3xl font-bold text-slate-800 mb-2">Selamat Datang!</h2>
-                                <p class="text-slate-500">Silakan isi data diri kamu terlebih dahulu</p>
+                                <p class="text-slate-500">Silakan pilih kelas dan nama kamu</p>
                             </div>
                             <form onsubmit="handleLogin(event)" class="space-y-4">
-                                <div>
-                                    <label class="block text-slate-700 font-semibold mb-2">Nama Lengkap</label>
-                                    <input 
-                                        type="text" 
-                                        id="student-name" 
-                                        required
-                                        class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all"
-                                        placeholder="Masukkan nama lengkap"
-                                    >
-                                </div>
                                 <div>
                                     <label class="block text-slate-700 font-semibold mb-2">Kelas</label>
                                     <select 
                                         id="student-class" 
                                         required
+                                        onchange="updateStudentList()"
                                         class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all"
                                     >
                                         <option value="">Pilih Kelas</option>
@@ -227,6 +294,28 @@
                                         <option value="2C">2C</option>
                                         <option value="2D">2D</option>
                                     </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-semibold mb-2">Nama Lengkap</label>
+                                    <select 
+                                        id="student-name" 
+                                        required
+                                        disabled
+                                        class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 transition-all disabled:bg-slate-100 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="">Pilih kelas terlebih dahulu</option>
+                                    </select>
+                                </div>
+                                <div id="homebase-display" class="hidden">
+                                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-2 border-purple-200">
+                                        <div class="flex items-center gap-3">
+                                            <div class="text-2xl">🏠</div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 font-medium">Homebase Kamu</p>
+                                                <p id="homebase-value" class="text-lg font-bold text-purple-600"></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <button 
                                     type="submit"
@@ -476,13 +565,16 @@
 
         function handleLogin(e) {
             e.preventDefault();
-            const name = document.getElementById('student-name').value;
+            const studentIndex = document.getElementById('student-name').value;
             const className = document.getElementById('student-class').value;
 
-            if (name && className) {
-                studentData.name = name;
+            if (studentIndex !== '' && className) {
+                const selectedStudent = availableStudents[studentIndex];
+
+                studentData.name = selectedStudent.name;
                 studentData.class = className;
-                studentData.id = `${name.replace(/\s+/g, '_').toLowerCase()}_${Date.now()}`;
+                studentData.homebase = selectedStudent.homebase;
+                studentData.id = `${selectedStudent.name.replace(/\s+/g, '_').toLowerCase()}_${Date.now()}`;
 
                 view = 'home';
                 render();
@@ -681,7 +773,8 @@
                 verified: true,
                 timestamp: firebase.database.ServerValue.TIMESTAMP,
                 studentName: studentData.name,
-                studentClass: studentData.class
+                studentClass: studentData.class,
+                studentHomebase: studentData.homebase
             };
 
             database.ref(`jago-perkalian/sessions/${studentData.id}/${studySessionId}/studied`).set(studyData)
@@ -705,6 +798,7 @@
             const summary = {
                 studentName: studentData.name,
                 studentClass: studentData.class,
+                studentHomebase: studentData.homebase,
                 quizType: view,
                 totalQuestions: TOTAL_QUESTIONS,
                 correctAnswers: correctCount,
@@ -723,7 +817,10 @@
         }
 
         // Initial Render
-        window.onload = render;
+        window.onload = async function () {
+            await loadStudentData();
+            render();
+        };
 
     </script>
 </body>

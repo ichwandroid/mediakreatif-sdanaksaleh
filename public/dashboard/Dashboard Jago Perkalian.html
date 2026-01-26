@@ -84,7 +84,7 @@
             <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-slate-500 text-sm font-semibold uppercase">Total Sesi</p>
+                        <p class="text-slate-500 text-sm font-semibold uppercase">Total Materi Selesai</p>
                         <p class="text-3xl font-bold text-slate-800 mt-2" id="total-sessions">0</p>
                     </div>
                     <div class="bg-green-100 p-3 rounded-xl">
@@ -151,14 +151,14 @@
                     </select>
                 </div>
                 <div class="flex-1">
-                    <label class="block text-slate-700 font-semibold mb-2">Filter Jenis Quiz</label>
+                    <label class="block text-slate-700 font-semibold mb-2">Filter Penyelesaian Quiz</label>
                     <select id="filter-quiz" onchange="filterData()"
                         class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all">
-                        <option value="">Semua Jenis</option>
-                        <option value="quiz-easy">Latihan Dasar (1-5)</option>
-                        <option value="quiz-hard">Tantangan Pro (6-10)</option>
-                        <option value="quiz-image">Latihan Gambar</option>
-                        <option value="quiz-story">Soal Cerita</option>
+                        <option value="">Semua Siswa</option>
+                        <option value="quiz-easy">Sudah Quiz Easy</option>
+                        <option value="quiz-hard">Sudah Quiz Hard</option>
+                        <option value="quiz-image">Sudah Quiz Image</option>
+                        <option value="quiz-story">Sudah Quiz Story</option>
                     </select>
                 </div>
                 <button onclick="exportToCSV()"
@@ -193,13 +193,15 @@
                             <th class="p-4 text-left text-sm font-bold text-slate-600">No</th>
                             <th class="p-4 text-left text-sm font-bold text-slate-600">Nama Siswa</th>
                             <th class="p-4 text-left text-sm font-bold text-slate-600">Kelas</th>
-                            <th class="p-4 text-left text-sm font-bold text-slate-600">Jenis Quiz</th>
-                            <th class="p-4 text-left text-sm font-bold text-slate-600">Status Belajar</th>
-                            <th class="p-4 text-center text-sm font-bold text-slate-600">Benar</th>
-                            <th class="p-4 text-center text-sm font-bold text-slate-600">Salah</th>
-                            <th class="p-4 text-center text-sm font-bold text-slate-600">Nilai</th>
-                            <th class="p-4 text-left text-sm font-bold text-slate-600">Waktu</th>
-                            <th class="p-4 text-center text-sm font-bold text-slate-600">Aksi</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">Homebasse</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">Materi</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">quiz-easy</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">quiz-hard</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">quiz-image</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">quiz-story</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">total</th>
+                            <th class="p-4 text-left text-sm font-bold text-slate-600">waktu</th>
+                            <th class="p-4 text-center text-sm font-bold text-slate-600">action</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -249,16 +251,9 @@
         let allSessions = [];
         let filteredSessions = [];
 
-        const quizTypeNames = {
-            'quiz-easy': 'Latihan Dasar',
-            'quiz-hard': 'Tantangan Pro',
-            'quiz-image': 'Latihan Gambar',
-            'quiz-story': 'Soal Cerita'
-        };
-
         function loadData() {
             const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-500">Memuat data...</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="12" class="p-8 text-center text-slate-500">Memuat data...</td></tr>';
 
             database.ref('jago-perkalian/sessions').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -267,36 +262,77 @@
                 if (data) {
                     Object.keys(data).forEach(studentId => {
                         const studentSessions = data[studentId];
+                        const studentSummary = {
+                            studentId: studentId,
+                            studentName: '',
+                            studentClass: '',
+                            studentHomebase: '-',
+                            materi: false,
+                            'quiz-easy': '-',
+                            'quiz-hard': '-',
+                            'quiz-image': '-',
+                            'quiz-story': '-',
+                            total: 0,
+                            latestTime: 0,
+                            allAnswers: []
+                        };
+
                         Object.keys(studentSessions).forEach(sessionId => {
                             const session = studentSessions[sessionId];
-                            // Handle cases where only 'studied' exists or 'summary' exists or both
-                            if (session.summary || session.studied) {
-                                const entry = {
-                                    id: sessionId,
-                                    studentId: studentId,
-                                    ...session.summary, // Spread summary properties if they exist
-                                    studied: session.studied ? session.studied.verified : false,
-                                    answers: session.answers // Include answers for detail view
-                                };
 
-                                // If summary is missing (only studied), fill with defaults
-                                if (!session.summary) {
-                                    entry.studentName = studentId.split('_')[0].replace(/_/g, ' '); // Fallback name
-                                    entry.studentClass = '-';
-                                    entry.quizType = '-';
-                                    entry.correctAnswers = 0;
-                                    entry.wrongAnswers = 0;
-                                    entry.finalScore = 0;
-                                    entry.completedAt = session.studied.timestamp;
+                            if (session.studied && session.studied.verified) {
+                                studentSummary.materi = true;
+                                if (session.studied.timestamp > studentSummary.latestTime) {
+                                    studentSummary.latestTime = session.studied.timestamp;
+                                }
+                                if (!studentSummary.studentName) {
+                                    studentSummary.studentName = session.studied.studentName;
+                                    studentSummary.studentClass = session.studied.studentClass;
+                                    studentSummary.studentHomebase = session.studied.studentHomebase || '-';
+                                }
+                            }
+
+                            if (session.summary) {
+                                const s = session.summary;
+                                studentSummary.studentName = s.studentName;
+                                studentSummary.studentClass = s.studentClass;
+                                studentSummary.studentHomebase = s.studentHomebase || '-';
+
+                                const score = s.finalScore || 0;
+                                const quizType = s.quizType;
+
+                                if (studentSummary[quizType] === '-' || score > studentSummary[quizType]) {
+                                    studentSummary[quizType] = score;
                                 }
 
-                                allSessions.push(entry);
+                                if (s.completedAt > studentSummary.latestTime) {
+                                    studentSummary.latestTime = s.completedAt;
+                                }
+                            }
+
+                            if (session.answers) {
+                                Object.values(session.answers).forEach(ans => {
+                                    studentSummary.allAnswers.push(ans);
+                                });
                             }
                         });
+
+                        // Calculate total
+                        let total = 0;
+                        ['quiz-easy', 'quiz-hard', 'quiz-image', 'quiz-story'].forEach(type => {
+                            if (typeof studentSummary[type] === 'number') {
+                                total += studentSummary[type];
+                            }
+                        });
+                        studentSummary.total = total;
+
+                        if (studentSummary.studentName) {
+                            allSessions.push(studentSummary);
+                        }
                     });
 
-                    // Sort by latest
-                    allSessions.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+                    // Sort by latest activity
+                    allSessions.sort((a, b) => b.latestTime - a.latestTime);
                 }
 
                 filterData();
@@ -307,9 +343,9 @@
             const classFilter = document.getElementById('filter-class').value;
             const quizFilter = document.getElementById('filter-quiz').value;
 
-            filteredSessions = allSessions.filter(session => {
-                const matchClass = classFilter === '' || session.studentClass === classFilter;
-                const matchQuiz = quizFilter === '' || session.quizType === quizFilter;
+            filteredSessions = allSessions.filter(student => {
+                const matchClass = classFilter === '' || student.studentClass === classFilter;
+                const matchQuiz = quizFilter === '' || student[quizFilter] !== '-';
                 return matchClass && matchQuiz;
             });
 
@@ -321,84 +357,85 @@
             const tableBody = document.getElementById('table-body');
 
             if (filteredSessions.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-500">Belum ada data siswa</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="12" class="p-8 text-center text-slate-500">Belum ada data siswa</td></tr>';
                 return;
             }
 
-            tableBody.innerHTML = filteredSessions.map((session, index) => `
+            tableBody.innerHTML = filteredSessions.map((student, index) => `
                 <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td class="p-4 text-slate-500 font-medium">${index + 1}</td>
-                    <td class="p-4 font-semibold text-slate-700">${session.studentName}</td>
+                    <td class="p-4 font-semibold text-slate-700">${student.studentName}</td>
                     <td class="p-4">
-                        <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-bold">${session.studentClass}</span>
+                        <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-bold">${student.studentClass}</span>
                     </td>
-                    <td class="p-4">
-                        ${session.quizType !== '-' ? `
-                            <span class="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm font-medium">
-                                ${quizTypeNames[session.quizType] || session.quizType}
-                            </span>
-                        ` : '-'}
-                    </td>
-                    <td class="p-4">
-                        ${session.studied ?
-                    '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex w-fit items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sudah Belajar</span>' :
-                    '<span class="text-slate-300 font-bold">-</span>'}
-                    </td>
-                    <td class="p-4 text-center font-bold text-green-600">${session.correctAnswers}</td>
-                    <td class="p-4 text-center font-bold text-red-500">${session.wrongAnswers}</td>
+                    <td class="p-4 text-slate-600">${student.studentHomebase}</td>
                     <td class="p-4 text-center">
-                        <span class="text-lg font-black ${session.finalScore >= 80 ? 'text-blue-600' : 'text-orange-500'}">
-                            ${session.finalScore}
-                        </span>
+                        ${student.materi ?
+                    '<span class="text-green-500 font-bold">✅</span>' :
+                    '<span class="text-slate-300">-</span>'}
+                    </td>
+                    <td class="p-4 text-center font-bold ${student['quiz-easy'] !== '-' ? 'text-blue-600' : 'text-slate-300'}">${student['quiz-easy']}</td>
+                    <td class="p-4 text-center font-bold ${student['quiz-hard'] !== '-' ? 'text-purple-600' : 'text-slate-300'}">${student['quiz-hard']}</td>
+                    <td class="p-4 text-center font-bold ${student['quiz-image'] !== '-' ? 'text-orange-600' : 'text-slate-300'}">${student['quiz-image']}</td>
+                    <td class="p-4 text-center font-bold ${student['quiz-story'] !== '-' ? 'text-pink-600' : 'text-slate-300'}">${student['quiz-story']}</td>
+                    <td class="p-4 text-center">
+                        <span class="text-lg font-black text-slate-800">${student.total}</span>
                     </td>
                     <td class="p-4 text-sm text-slate-500">
-                        ${new Date(session.completedAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                        ${student.latestTime ? new Date(student.latestTime).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) : '-'}
                     </td>
                     <td class="p-4 text-center">
-                        ${session.answers ? `
-                            <button onclick="showDetail('${session.id}')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-colors">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="showDetail('${student.studentId}')" title="Detail Jawaban" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-lg transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
-                        ` : '<span class="text-slate-300">-</span>'}
+                            <button onclick="deleteStudent('${student.studentId}', '${student.studentName}')" title="Hapus Data" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
         }
 
         function calculateStats() {
-            const totalStudents = new Set(filteredSessions.map(s => s.studentName)).size;
-            const totalSessions = filteredSessions.length;
+            const totalStudents = filteredSessions.length;
+            const totalMateri = filteredSessions.filter(s => s.materi).length;
 
-            // Filter out sessions that have no score (only studied)
-            const scoredSessions = filteredSessions.filter(s => s.finalScore !== undefined);
-
-            const avgScore = scoredSessions.length > 0
-                ? Math.round(scoredSessions.reduce((acc, curr) => acc + curr.finalScore, 0) / scoredSessions.length)
+            const allScores = filteredSessions.map(s => s.total).filter(t => t > 0);
+            const avgScore = allScores.length > 0
+                ? Math.round(allScores.reduce((acc, curr) => acc + curr, 0) / allScores.length)
                 : 0;
 
-            const maxScore = scoredSessions.length > 0
-                ? Math.max(...scoredSessions.map(s => s.finalScore))
+            const maxScore = allScores.length > 0
+                ? Math.max(...allScores)
                 : 0;
 
             document.getElementById('total-students').innerText = totalStudents;
-            document.getElementById('total-sessions').innerText = totalSessions;
+            document.getElementById('total-sessions').innerText = totalMateri;
             document.getElementById('average-score').innerText = avgScore;
             document.getElementById('highest-score').innerText = maxScore;
         }
 
-        function showDetail(sessionId) {
-            const session = allSessions.find(s => s.id === sessionId);
-            if (!session || !session.answers) return;
+        function showDetail(studentId) {
+            const student = allSessions.find(s => s.studentId === studentId);
+            if (!student || student.allAnswers.length === 0) {
+                alert('Tidak ada detail jawaban untuk siswa ini.');
+                return;
+            }
 
             const content = `
                 <div class="grid gap-4">
-                    ${session.answers.map((answer, idx) => answer ? `
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-2">
+                        <p class="text-sm text-blue-700 font-bold">Menampilkan semua riwayat jawaban siswa.</p>
+                    </div>
+                    ${student.allAnswers.map((answer, idx) => answer ? `
                         <div class="bg-slate-50 p-4 rounded-xl border ${answer.isCorrect ? 'border-green-200' : 'border-red-200'} flex justify-between items-center">
                             <div>
-                                <p class="text-xs text-slate-500 font-bold mb-1">Soal ${idx}</p>
+                                <p class="text-xs text-slate-500 font-bold mb-1">Soal ${idx + 1}</p>
                                 <p class="text-lg font-bold text-slate-700">${answer.question}</p>
                                 <div class="mt-2 text-sm">
-                                    <span class="text-slate-500">Jawaban kamu: </span>
+                                    <span class="text-slate-500">Jawaban: </span>
                                     <span class="font-bold ${answer.isCorrect ? 'text-green-600' : 'text-red-500'}">${answer.userAnswer}</span>
                                     ${!answer.isCorrect ? `<span class="text-slate-400 mx-2">|</span> <span class="text-slate-500">Benar: </span><span class="font-bold text-green-600">${answer.correctAnswer}</span>` : ''}
                                 </div>
@@ -419,25 +456,38 @@
             document.getElementById('detail-modal').classList.add('hidden');
         }
 
+        function deleteStudent(studentId, studentName) {
+            if (confirm(`Apakah Anda yakin ingin menghapus semua data untuk ${studentName}? Tindakan ini tidak dapat dibatalkan.`)) {
+                database.ref(`jago-perkalian/sessions/${studentId}`).remove()
+                    .then(() => {
+                        alert(`Data ${studentName} berhasil dihapus.`);
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting student:", error);
+                        alert("Gagal menghapus data. Silakan coba lagi.");
+                    });
+            }
+        }
+
         function exportToCSV() {
             if (filteredSessions.length === 0) {
                 alert('Tidak ada data untuk di-export');
                 return;
             }
 
-            let csv = 'No,Nama Siswa,Kelas,Jenis Quiz,Status Belajar,Benar,Salah,Nilai,Waktu\n';
+            let csv = 'No,Nama Siswa,Kelas,Homebasse,Materi,quiz-easy,quiz-hard,quiz-image,quiz-story,total,waktu\n';
 
-            filteredSessions.forEach((session, index) => {
-                const date = new Date(session.completedAt).toLocaleString('id-ID');
-                const statusBelajar = session.studied ? 'Sudah Belajar' : 'Belum';
-                csv += `${index + 1},"${session.studentName}","${session.studentClass}","${quizTypeNames[session.quizType] || session.quizType}","${statusBelajar}",${session.correctAnswers},${session.wrongAnswers},${session.finalScore},"${date}"\n`;
+            filteredSessions.forEach((student, index) => {
+                const date = student.latestTime ? new Date(student.latestTime).toLocaleString('id-ID') : '-';
+                const statusMateri = student.materi ? 'Sudah' : 'Belum';
+                csv += `${index + 1},"${student.studentName}","${student.studentClass}","${student.studentHomebase}","${statusMateri}",${student['quiz-easy']},${student['quiz-hard']},${student['quiz-image']},${student['quiz-story']},${student.total},"${date}"\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', `nilai-jago-perkalian-${new Date().getTime()}.csv`);
+            link.setAttribute('download', `rekap-nilai-jago-perkalian-${new Date().getTime()}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();

@@ -204,6 +204,10 @@
             {
                 "name": "Syarifah Hedy Almahyra Putri",
                 "homebase": "Hijau"
+            },
+            {
+                "name": "Tsamara Rania Chairyza",
+                "homebase": "Kuning"
             }
         ]
     },
@@ -318,10 +322,6 @@
                 "homebase": "Ungu"
             },
             {
-                "name": "Tsamara Rania Chairyza",
-                "homebase": "Kuning"
-            },
-            {
                 "name": "Zafran Latif Maulana",
                 "homebase": "Kuning"
             },
@@ -428,6 +428,14 @@
             {
                 "name": "Rafif Alfarezi Laksana",
                 "homebase": "Kuning"
+            },
+            {
+                "name": "Sabrina Amadian Anka",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Zet Tisha Kekira Athleta",
+                "homebase": "Hijau"
             }
         ]
     }

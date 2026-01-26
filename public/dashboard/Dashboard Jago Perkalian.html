@@ -232,6 +232,23 @@
         </div>
     </div>
 
+    <!-- Custom Alert/Confirm Modal -->
+    <div id="custom-modal"
+        class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-95 opacity-0"
+            id="modal-container">
+            <div class="p-8 text-center">
+                <div id="modal-icon"
+                    class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                </div>
+                <h3 id="modal-title" class="text-2xl font-bold text-slate-800 mb-2">Pemberitahuan</h3>
+                <p id="modal-message" class="text-slate-600 mb-8">Pesan akan muncul di sini.</p>
+                <div id="modal-buttons" class="flex gap-3">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -250,6 +267,96 @@
 
         let allSessions = [];
         let filteredSessions = [];
+
+        function showCustomAlert(message, title = 'Pemberitahuan', type = 'info') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-modal');
+                const container = document.getElementById('modal-container');
+                const icon = document.getElementById('modal-icon');
+                const titleEl = document.getElementById('modal-title');
+                const messageEl = document.getElementById('modal-message');
+                const buttons = document.getElementById('modal-buttons');
+
+                titleEl.innerText = title;
+                messageEl.innerText = message;
+
+                if (type === 'success') {
+                    icon.className = "w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6";
+                    icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                } else if (type === 'error') {
+                    icon.className = "w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6";
+                    icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+                } else {
+                    icon.className = "w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6";
+                    icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+                }
+
+                buttons.innerHTML = `
+                    <button id="modal-ok" class="flex-1 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold transition-all">OK</button>
+                `;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    container.classList.remove('scale-95', 'opacity-0');
+                    container.classList.add('scale-100', 'opacity-100');
+                }, 10);
+
+                document.getElementById('modal-ok').onclick = () => {
+                    container.classList.remove('scale-100', 'opacity-100');
+                    container.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve();
+                    }, 200);
+                };
+            });
+        }
+
+        function showCustomConfirm(message, title = 'Konfirmasi') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-modal');
+                const container = document.getElementById('modal-container');
+                const icon = document.getElementById('modal-icon');
+                const titleEl = document.getElementById('modal-title');
+                const messageEl = document.getElementById('modal-message');
+                const buttons = document.getElementById('modal-buttons');
+
+                titleEl.innerText = title;
+                messageEl.innerText = message;
+
+                icon.className = "w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6";
+                icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+
+                buttons.innerHTML = `
+                    <button id="modal-cancel" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold transition-all">Batal</button>
+                    <button id="modal-confirm" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-red-100">Hapus</button>
+                `;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    container.classList.remove('scale-95', 'opacity-0');
+                    container.classList.add('scale-100', 'opacity-100');
+                }, 10);
+
+                document.getElementById('modal-cancel').onclick = () => {
+                    container.classList.remove('scale-100', 'opacity-100');
+                    container.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve(false);
+                    }, 200);
+                };
+
+                document.getElementById('modal-confirm').onclick = () => {
+                    container.classList.remove('scale-100', 'opacity-100');
+                    container.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve(true);
+                    }, 200);
+                };
+            });
+        }
 
         function loadData() {
             const tableBody = document.getElementById('table-body');
@@ -420,7 +527,7 @@
         function showDetail(studentId) {
             const student = allSessions.find(s => s.studentId === studentId);
             if (!student || student.allAnswers.length === 0) {
-                alert('Tidak ada detail jawaban untuk siswa ini.');
+                showCustomAlert('Tidak ada detail jawaban untuk siswa ini.', 'Info', 'info');
                 return;
             }
 
@@ -456,22 +563,23 @@
             document.getElementById('detail-modal').classList.add('hidden');
         }
 
-        function deleteStudent(studentId, studentName) {
-            if (confirm(`Apakah Anda yakin ingin menghapus semua data untuk ${studentName}? Tindakan ini tidak dapat dibatalkan.`)) {
+        async function deleteStudent(studentId, studentName) {
+            const confirmed = await showCustomConfirm(`Apakah Anda yakin ingin menghapus semua data untuk ${studentName}? Tindakan ini tidak dapat dibatalkan.`, 'Konfirmasi Hapus');
+            if (confirmed) {
                 database.ref(`jago-perkalian/sessions/${studentId}`).remove()
                     .then(() => {
-                        alert(`Data ${studentName} berhasil dihapus.`);
+                        showCustomAlert(`Data ${studentName} berhasil dihapus.`, 'Berhasil', 'success');
                     })
                     .catch((error) => {
                         console.error("Error deleting student:", error);
-                        alert("Gagal menghapus data. Silakan coba lagi.");
+                        showCustomAlert("Gagal menghapus data. Silakan coba lagi.", 'Error', 'error');
                     });
             }
         }
 
         function exportToCSV() {
             if (filteredSessions.length === 0) {
-                alert('Tidak ada data untuk di-export');
+                showCustomAlert('Tidak ada data untuk di-export', 'Info', 'info');
                 return;
             }
 

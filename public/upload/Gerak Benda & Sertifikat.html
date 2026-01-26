@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game IPAS: Gerak Benda & Sertifikat</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: #E0F7FA;
+            background-image: radial-gradient(#80DEEA 15%, transparent 16%), radial-gradient(#80DEEA 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 6px solid #FFCA28;
+            position: relative;
+        }
+
+        h1 { color: #FF6F00; margin-bottom: 20px; }
+
+        /* Input Styles */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #00838F; }
+        input, select {
+            width: 100%; padding: 12px; border: 3px solid #B2EBF2;
+            border-radius: 12px; font-size: 1.1em; font-family: 'Comic Neue', cursive;
+            box-sizing: border-box; outline: none;
+        }
+        input:focus, select:focus { border-color: #00BCD4; }
+
+        /* Button Styles */
+        button {
+            background-color: #FFCA28; border: none; padding: 15px;
+            font-size: 1.2em; border-radius: 50px; cursor: pointer;
+            color: #fff; font-weight: bold; width: 100%; margin-top: 10px;
+            box-shadow: 0 4px 0 #FF6F00; transition: all 0.1s;
+        }
+        button:active { transform: translateY(4px); box-shadow: none; }
+        
+        .option-btn {
+            background-color: #4DD0E1; box-shadow: 0 4px 0 #0097A7;
+            margin-bottom: 12px; text-align: left; display: flex; align-items: center;
+        }
+        .option-btn:hover { background-color: #26C6DA; }
+
+        /* Game Elements */
+        .hidden { display: none; }
+        #question-text { font-size: 1.4em; margin-bottom: 20px; color: #006064; font-weight: bold; }
+        .emoji-display { font-size: 3.5em; margin-bottom: 10px; display: block; animation: bounce 2s infinite; }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .feedback { font-size: 1.2em; margin-top: 15px; font-weight: bold; min-height: 30px; }
+        .correct { color: #43A047; }
+        .wrong { color: #E53935; }
+
+        /* SERTIFIKAT STYLES */
+        .certificate-box {
+            border: 8px double #FFD700;
+            padding: 20px;
+            margin-top: 20px;
+            background: #FFFDE7;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .cert-title {
+            font-size: 1.8em; color: #F57F17; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;
+            border-bottom: 2px solid #FBC02D; display: inline-block;
+        }
+        .cert-text { font-size: 1.1em; margin: 5px 0; color: #555; }
+        .cert-name { font-size: 1.5em; color: #1565C0; font-weight: bold; margin: 10px 0; display: block; }
+        .cert-score { font-size: 2em; color: #D84315; font-weight: bold; }
+        .ribbon { font-size: 3em; margin-top: 10px; }
+        .teacher-sig { margin-top: 20px; font-size: 0.9em; font-style: italic; color: #777; }
+
+        #speaker-btn {
+            background-color: #8E24AA; width: auto; display: inline-block;
+            margin-bottom: 15px; padding: 5px 20px; font-size: 0.9em;
+            box-shadow: 0 4px 0 #4A148C;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-section">
+            <h1>🌟 Kuis IPAS Kelas 1 🌟</h1>
+            <div class="emoji-display">🎒</div>
+            <p>Materi: Gerak Benda (Dorong & Tarik)</p>
+            
+            <div class="input-group">
+                <label>Nama Lengkap:</label>
+                <input type="text" id="nama" placeholder="Ketik namamu..." autocomplete="off">
+            </div>
+            
+            <div class="input-group">
+                <label>Pilih Kelas:</label>
+                <select id="kelas">
+                    <option value="">-- Pilih Kelas --</option>
+                    <option value="1A">Kelas 1A</option>
+                    <option value="1B">Kelas 1B</option>
+                    <option value="1C">Kelas 1C</option>
+                    <option value="1D">Kelas 1D</option>
+                </select>
+            </div>
+            
+            <button onclick="startGame()">Mulai Mengerjakan ▶</button>
+        </div>
+
+        <div id="game-section" class="hidden">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; color:#FF6F00;">
+                <span id="q-number">Soal 1/15</span>
+                <span id="score-display">Poin: 0</span>
+            </div>
+            <hr style="border:1px dashed #B2EBF2;">
+            
+            <button id="speaker-btn" onclick="speakQuestion()">🔊 Bacakan Soal</button>
+            
+            <div class="emoji-display" id="q-emoji"></div>
+            <div id="question-text"></div>
+            
+            <div id="options"></div>
+            <div id="feedback-text" class="feedback"></div>
+        </div>
+
+        <div id="result-section" class="hidden">
+            <h2>Hore! Selesai! 🎉</h2>
+            <p>Mintalah orang tuamu untuk <b>Screenshot</b> sertifikat di bawah ini:</p>
+            
+            <div class="certificate-box">
+                <div class="cert-title">SERTIFIKAT HEBAT</div>
+                <div class="ribbon">🎖️</div>
+                <p class="cert-text">Diberikan kepada siswa hebat:</p>
+                <span class="cert-name" id="cert-name">Nama Siswa</span>
+                <span style="font-weight:bold; color:#555;" id="cert-class">Kelas 1X</span>
+                
+                <p class="cert-text">Telah menyelesaikan Kuis IPAS<br>Materi Gerak Benda dengan nilai:</p>
+                <div class="cert-score" id="cert-score">100</div>
+                
+                <p class="cert-text" style="font-size:0.9em; margin-top:15px;">
+                    Tanggal: <span id="cert-date"></span>
+                </p>
+                <div class="teacher-sig">Guru IPAS Kelas 1 SD</div>
+            </div>
+
+            <button onclick="location.reload()" style="background-color:#4CAF50; box-shadow: 0 4px 0 #2E7D32; margin-top:20px;">🔄 Kerjakan Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        // Database Soal (15 Soal)
+        const questions = [
+            { q: "Jika meja didorong ke depan, meja akan bergerak...", options: ["Mendekat", "Menjauh", "Diam"], answer: 1, emoji: "🪑" },
+            { q: "Membuka laci meja adalah contoh gerakan...", options: ["Dorongan", "Tarikan", "Putaran"], answer: 1, emoji: "🗄️" },
+            { q: "Saat menendang bola, kita memberikan...", options: ["Dorongan", "Tarikan", "Pukulan"], answer: 0, emoji: "⚽" },
+            { q: "Benda bulat jika bergerak akan...", options: ["Menggeser", "Terbang", "Menggelinding"], answer: 2, emoji: "🏀" },
+            { q: "Menaikkan bendera dilakukan dengan cara...", options: ["Ditarik", "Didorong", "Ditendang"], answer: 0, emoji: "🇮🇩" },
+            { q: "Gerakan menutup pintu kulkas adalah...", options: ["Tarikan", "Dorongan", "Lompatan"], answer: 1, emoji: "🧊" },
+            { q: "Benda yang paling mudah bergerak adalah...", options: ["Batu besar", "Lemari kayu", "Bola kasti"], answer: 2, emoji: "🎾" },
+            { q: "Kuda menarik delman. Kuda melakukan gaya...", options: ["Tarikan", "Dorongan", "Gesekan"], answer: 0, emoji: "🐎" },
+            { q: "Apa yang terjadi jika plastisin (lilin mainan) ditekan?", options: ["Berubah warna", "Berubah bentuk", "Menjadi keras"], answer: 1, emoji: "🧱" },
+            { q: "Roda sepeda bergerak dengan cara...", options: ["Berputar", "Meluncur", "Melompat"], answer: 0, emoji: "🚲" },
+            { q: "Agar ayunan bergerak maju, kita harus memberi...", options: ["Tarikan", "Dorongan", "Tiupan"], answer: 1, emoji: "🎢" },
+            { q: "Benda kotak sulit menggelinding karena...", options: ["Punya sudut", "Warnanya bagus", "Ukurannya kecil"], answer: 0, emoji: "📦" },
+            { q: "Menghentikan sepeda melaju dengan cara...", options: ["Mengayuh", "Mengerem", "Berteriak"], answer: 1, emoji: "🛑" },
+            { q: "Bermain tarik tambang melakukan...", options: ["Dorongan", "Tarikan", "Putaran"], answer: 1, emoji: "➰" },
+            { q: "Menekan tombol bel pintu adalah...", options: ["Dorongan", "Tarikan", "Lemparan"], answer: 0, emoji: "🔔" }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+        let studentName = "";
+        let studentClass = "";
+        let isBusy = false;
+
+        // Fungsi Audio
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9; 
+                utterance.pitch = 1.2;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function startGame() {
+            studentName = document.getElementById('nama').value;
+            studentClass = document.getElementById('kelas').value;
+
+            if (!studentName || !studentClass) {
+                alert("Isi nama dan kelas dulu ya!");
+                return;
+            }
+
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('game-section').classList.remove('hidden');
+            speak("Halo " + studentName + ". Selamat mengerjakan!");
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQ >= questions.length) {
+                showCertificate();
+                return;
+            }
+
+            isBusy = false;
+            const q = questions[currentQ];
+            document.getElementById('q-number').innerText = "Soal " + (currentQ + 1) + "/15";
+            document.getElementById('q-emoji').innerText = q.emoji;
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('feedback-text').innerText = "";
+            document.getElementById('feedback-text').className = "feedback";
+
+            const optDiv = document.getElementById('options');
+            optDiv.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn";
+                btn.innerHTML = `<span style="margin-right:10px;">${["A","B","C"][idx]}.</span> ${opt}`;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optDiv.appendChild(btn);
+            });
+        }
+
+        function speakQuestion() {
+            speak(questions[currentQ].q);
+        }
+
+        function checkAnswer(idx, btnElement) {
+            if (isBusy) return;
+            isBusy = true;
+
+            const q = questions[currentQ];
+            const feedback = document.getElementById('feedback-text');
+            const allBtns = document.querySelectorAll('.option-btn');
+
+            if (idx === q.answer) {
+                score++;
+                document.getElementById('score-display').innerText = "Poin: " + (score * 10);
+                feedback.innerText = "Yey! Benar! 👍";
+                feedback.classList.add("correct");
+                btnElement.style.backgroundColor = "#81C784";
+                speak("Benar!");
+            } else {
+                feedback.innerText = "Yah, jawaban yang benar: " + q.options[q.answer];
+                feedback.classList.add("wrong");
+                btnElement.style.backgroundColor = "#EF5350";
+                allBtns[q.answer].style.backgroundColor = "#81C784"; // Tunjukkan yg benar
+                speak("Yah, kurang tepat.");
+            }
+
+            currentQ++;
+            setTimeout(loadQuestion, 2500);
+        }
+
+        function showCertificate() {
+            document.getElementById('game-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            const finalScore = Math.round((score / questions.length) * 100);
+            const dateNow = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Isi data sertifikat
+            document.getElementById('cert-name').innerText = studentName;
+            document.getElementById('cert-class').innerText = studentClass;
+            document.getElementById('cert-score').innerText = finalScore;
+            document.getElementById('cert-date').innerText = dateNow;
+
+            let msg = "Kamu hebat " + studentName + "!";
+            if(finalScore === 100) msg = "Wow! Sempurna! Kamu luar biasa " + studentName;
+            speak(msg + " Jangan lupa simpan sertifikatmu ya.");
+        }
+    </script>
+</body>
+</html>

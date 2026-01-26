@@ -210,6 +210,10 @@
     {
         "2C": [
             {
+                "name": "Abqori Kenzie Ramadhan",
+                "homebase": "Kuning"
+            },
+            {
                 "name": "Agam Mahendra Alfatih",
                 "homebase": "Ungu"
             },
@@ -302,6 +306,10 @@
                 "homebase": "Hijau"
             },
             {
+                "name": "Reva Nirwasita Putri",
+                "homebase": "Kuning"
+            },
+            {
                 "name": "Salma Adreena Primariayu",
                 "homebase": "Ungu"
             },
@@ -311,6 +319,10 @@
             },
             {
                 "name": "Tsamara Rania Chairyza",
+                "homebase": "Kuning"
+            },
+            {
+                "name": "Zafran Latif Maulana",
                 "homebase": "Kuning"
             },
             {
@@ -324,10 +336,6 @@
             {
                 "name": "Abqary Runako Arsenio Romadhoni",
                 "homebase": "Biru"
-            },
-            {
-                "name": "Abqori Kenzie Ramadhan",
-                "homebase": "Kuning"
             },
             {
                 "name": "Adediivo Ramadhana Nandadhiva",
@@ -419,14 +427,6 @@
             },
             {
                 "name": "Rafif Alfarezi Laksana",
-                "homebase": "Kuning"
-            },
-            {
-                "name": "Reva Nirwasita Putri",
-                "homebase": "Kuning"
-            },
-            {
-                "name": "Zafran Latif Maulana",
                 "homebase": "Kuning"
             }
         ]

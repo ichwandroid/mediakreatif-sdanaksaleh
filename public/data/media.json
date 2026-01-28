@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1769576117596,
+    "title": "EDU Assemblrworld",
+    "category": "Umum",
+    "description": "platform bernama Assemblr EDU, yaitu sebuah platform edukasi imersif berbasis 3D dan Augmented Reality (AR) yang dirancang untuk guru, siswa, dan orang tua agar kegiatan belajar dan mengajar menjadi lebih interaktif, visual, dan seru.",
+    "type": "Website",
+    "url": "https://edu.assemblrworld.com/id",
+    "date": "2026-01-28T04:55:17.596Z"
+  },
+  {
+    "id": 1769575989502,
+    "title": "Tarik Tambang Matematika",
+    "category": "Matematika",
+    "description": "Game Tarik Tambang Matematika",
+    "type": "Website",
+    "url": "https://script.google.com/macros/s/AKfycbzquKCL4g5CpL6J_Hy4m2cGibHebo2aL27gmh1fn74FsfSMVxpyYUK1TLOcP-Suu2hjLw/exec",
+    "date": "2026-01-28T04:53:09.502Z"
+  },
+  {
+    "id": 1769575863824,
+    "title": "PPID",
+    "category": "Media Interaktif",
+    "description": "Permainan Papan Interaktif Digital",
+    "type": "Website",
+    "url": "https://denigames.netlify.app/",
+    "date": "2026-01-28T04:51:03.824Z"
+  },
+  {
+    "id": 1769575265752,
+    "title": "Human Biodigital",
+    "category": "IPA / Biologi",
+    "description": "platform web interaktif 3D bernama BioDigital Human, yang memvisualisasikan tubuh manusia secara lengkap dan realistis dalam tiga dimensi.",
+    "type": "Website",
+    "url": "https://human.biodigital.com/",
+    "date": "2026-01-28T04:41:05.752Z"
+  },
+  {
+    "id": 1769574720821,
+    "title": "Javalab",
+    "category": "Sains & Matematika",
+    "description": "sebuah situs sumber belajar sains interaktif gratis yang menyediakan simulasi fenomena alam dan percobaan sains dalam bentuk aplikasi berbasis web",
+    "type": "Website",
+    "url": "https://javalab.org/en/",
+    "date": "2026-01-28T04:32:00.821Z"
+  },
+  {
+    "id": 1769574561759,
+    "title": "Jherr DOF",
+    "category": "Camera",
+    "description": "sebuah simulator online interaktif untuk membantu kamu memahami dan menghitung depth of field (DOF)—yaitu kedalaman ruang fokus kamera, yaitu jarak dari objek terdekat sampai terjauh yang masih terlihat tajam dalam foto.",
+    "type": "Website",
+    "url": "https://jherr.github.io/depth-of-field/",
+    "date": "2026-01-28T04:29:21.759Z"
+  },
+  {
+    "id": 1,
+    "title": "Canva for Education",
+    "category": "Desain Grafis",
+    "description": "Platform desain grafis online yang sangat populer untuk membuat presentasi, poster, dan materi visual lainnya.",
+    "type": "Website",
+    "url": "https://www.canva.com/education/",
+    "date": "2026-01-28T11:15:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "wayground (Quizizz)",
+    "category": "Evaluasi & Game",
+    "description": "Platform untuk membuat kuis interaktif dan game edukasi yang menyenangkan bagi siswa.",
+    "type": "Platform",
+    "url": "https://quizizz.com/",
+    "date": "2026-01-28T11:15:00.000Z"
+  },
+  {
+    "id": 3,
+    "title": "PhET Simulations",
+    "category": "Sains & Matematika",
+    "description": "Simulasi interaktif untuk sains dan matematika dari University of Colorado Boulder.",
+    "type": "Website",
+    "url": "https://phet.colorado.edu/",
+    "date": "2026-01-28T11:15:00.000Z"
+  }
+]

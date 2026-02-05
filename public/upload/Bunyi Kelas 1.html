@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game IPAS Kelas 1 - Bunyi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: #E0F7FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 0 #006064;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            border: 4px solid #00BCD4;
+        }
+
+        h1 { color: #0097A7; margin: 0 0 20px 0; }
+        
+        /* Tombol Start & Navigasi */
+        .btn-main {
+            background-color: #FF9800;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #E65100;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .btn-main:active { transform: translateY(4px); box-shadow: 0 1px 0 #E65100; }
+
+        /* Layar */
+        .screen { display: none; }
+        .active { display: block; }
+
+        /* Input */
+        input, select {
+            width: 80%; padding: 12px; margin: 8px 0;
+            border: 2px solid #B2EBF2; border-radius: 10px;
+            font-family: inherit; font-size: 16px;
+        }
+
+        /* Area Game */
+        .speaker-btn {
+            background-color: #2196F3;
+            color: white;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            border: none;
+            font-size: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #0D47A1;
+            margin: 20px auto;
+            display: flex;
+            align-items: center; justify-content: center;
+            transition: transform 0.1s;
+        }
+        .speaker-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 0 #0D47A1;
+        }
+
+        .backup-text {
+            font-size: 14px; color: #555;
+            background: #fff3cd; padding: 5px;
+            border-radius: 5px; display: none; /* Sembunyi default */
+            margin-bottom: 10px;
+        }
+
+        .options {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+        }
+
+        .opt-btn {
+            background: #8BC34A; color: white;
+            padding: 20px; border: none;
+            border-radius: 15px; font-size: 18px;
+            cursor: pointer; font-weight: bold;
+            box-shadow: 0 5px 0 #558B2F;
+        }
+        .opt-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #558B2F; }
+        .opt-btn:hover { background: #9CCC65; }
+
+        .score-board { font-size: 24px; color: #FF5722; font-weight: bold; margin-bottom: 10px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="screen-login" class="container active">
+        <h1>🎵 Tebak Bunyi 🎵</h1>
+        <p>Kelas 1 SD</p>
+        <input type="text" id="input-name" placeholder="Nama Siswa">
+        <select id="input-class">
+            <option value="1A">Kelas 1A</option>
+            <option value="1B">Kelas 1B</option>
+            <option value="1C">Kelas 1C</option>
+            <option value="1D">Kelas 1D</option>
+        </select>
+        <br>
+        <button class="btn-main" onclick="goToGame()">MULAI MAIN</button>
+    </div>
+
+    <div id="screen-game" class="container screen">
+        <div class="score-board">Skor: <span id="score">0</span></div>
+        <p>Soal No: <span id="q-num">1</span> / 20</p>
+        
+        <button class="speaker-btn" onclick="playQuestion()">🔊</button>
+        <p>Klik tombol biru untuk dengar!</p>
+        
+        <div id="backup-text" class="backup-text"></div>
+
+        <div class="options" id="options-area">
+            </div>
+    </div>
+
+    <div id="screen-result" class="container screen">
+        <h1>🎉 SELESAI! 🎉</h1>
+        <h2 id="final-name"></h2>
+        <h3 id="final-class"></h3>
+        <p>Nilai Akhir Kamu:</p>
+        <div style="font-size: 60px; color: #E91E63; font-weight:bold;" id="final-score">0</div>
+        <button class="btn-main" onclick="location.reload()">Main Lagi</button>
+    </div>
+
+    <script>
+        // --- DATA SOAL ---
+        const questions = [
+            { text: "Suara apakah ini? Meooong... Meooong...", ans: "Kucing", bad: "Sapi" },
+            { text: "Dengarkan... Guk guk guk!", ans: "Anjing", bad: "Ayam" },
+            { text: "Kukuruyuuuuk.... Petok petok...", ans: "Ayam", bad: "Kambing" },
+            { text: "Mbeeeek.... Mbeeeek....", ans: "Kambing", bad: "Singa" },
+            { text: "Mooooo.... Mooooo....", ans: "Sapi", bad: "Bebek" },
+            { text: "Cit cit cit... cit cit...", ans: "Tikus", bad: "Gajah" },
+            { text: "Wek wek wek... wek wek...", ans: "Bebek", bad: "Kucing" },
+            { text: "Auuuummmm.... Auuuummmm...", ans: "Singa", bad: "Burung" },
+            { text: "Cuit cuit... Cuit cuit...", ans: "Burung", bad: "Ular" },
+            { text: "Tokek... Tokek...", ans: "Tokek", bad: "Nyamuk" },
+            
+            { text: "Brum brum brum... Ngenggg...", ans: "Motor", bad: "Sepeda" },
+            { text: "Ninuninu ninuninu...", ans: "Ambulan", bad: "Pesawat" },
+            { text: "Jes gujes gujes... Tuuut tuuut...", ans: "Kereta Api", bad: "Mobil" },
+            { text: "Kring kring... Kring kring...", ans: "Bel Sepeda", bad: "Drum" },
+            { text: "Prok prok prok...", ans: "Tepuk Tangan", bad: "Ombak" },
+            { text: "Tik tik tik... bunyi air di atas genting", ans: "Hujan", bad: "Petir" },
+            { text: "Jedaarrr! Gludug gludug...", ans: "Petir", bad: "Angin" },
+            { text: "Wusssss.... Wusssss....", ans: "Angin", bad: "Api" },
+            { text: "Pranggg!", ans: "Gelas Pecah", bad: "Kertas Sobek" },
+            { text: "Dung dung tak... dung dung tak...", ans: "Drum", bad: "Gitar" }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let studentName = "";
+        let studentClass = "";
+
+        // --- FUNGSI AUDIO MANUAL (TANPA FILE EKSTERNAL) ---
+        // Ini membuat browser menghasilkan bunyi 'beep' sendiri (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq, type, duration) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type; // 'sine', 'square', 'triangle'
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function sfxCorrect() {
+            // Bunyi "Ting!" (High pitch sine wave)
+            playTone(600, 'sine', 0.1);
+            setTimeout(() => playTone(800, 'sine', 0.2), 100);
+        }
+
+        function sfxWrong() {
+            // Bunyi "Tet-tot" (Low pitch saw wave)
+            playTone(150, 'sawtooth', 0.3);
+            setTimeout(() => playTone(100, 'sawtooth', 0.3), 200);
+        }
+
+        // --- LOGIKA GAME ---
+
+        function goToGame() {
+            const n = document.getElementById('input-name').value;
+            if(!n) { alert("Isi nama dulu ya!"); return; }
+            
+            studentName = n;
+            studentClass = document.getElementById('input-class').value;
+            
+            // PENTING: Memancing audio context supaya jalan di HP
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            document.getElementById('screen-login').classList.remove('active');
+            document.getElementById('screen-game').classList.add('active');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('q-num').innerText = currentIdx + 1;
+            document.getElementById('backup-text').style.display = 'none'; // Sembunyikan teks
+            
+            const area = document.getElementById('options-area');
+            area.innerHTML = ""; // Bersihkan tombol lama
+
+            // Acak posisi tombol
+            let btn1, btn2;
+            if(Math.random() < 0.5) {
+                btn1 = createBtn(q.ans, true);
+                btn2 = createBtn(q.bad, false);
+            } else {
+                btn1 = createBtn(q.bad, false);
+                btn2 = createBtn(q.ans, true);
+            }
+            area.appendChild(btn1);
+            area.appendChild(btn2);
+        }
+
+        function createBtn(text, isCorrect) {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = text;
+            btn.onclick = function() { answer(isCorrect); };
+            return btn;
+        }
+
+        function playQuestion() {
+            const text = questions[currentIdx].text;
+            
+            // Tampilkan teks cadangan di layar (jaga-jaga jika suara error)
+            const backupDisplay = document.getElementById('backup-text');
+            backupDisplay.innerText = text;
+            backupDisplay.style.display = 'block';
+
+            // Coba bunyikan suara robot
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop suara sebelumnya
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'id-ID'; 
+                msg.rate = 0.9;
+                msg.pitch = 1.1;
+                window.speechSynthesis.speak(msg);
+            } else {
+                alert("Maaf, HP/Browser ini tidak mendukung suara robot. Silakan baca teks di bawah tombol biru.");
+            }
+        }
+
+        function answer(isCorrect) {
+            window.speechSynthesis.cancel(); // Matikan suara soal
+
+            if(isCorrect) {
+                score += 5;
+                document.getElementById('score').innerText = score;
+                sfxCorrect(); // Bunyi Ting
+                // Efek visual sederhana
+                document.body.style.backgroundColor = "#C8E6C9"; // Hijau sekilas
+                setTimeout(() => document.body.style.backgroundColor = "#E0F7FA", 300);
+            } else {
+                sfxWrong(); // Bunyi Tet-tot
+                document.body.style.backgroundColor = "#FFCDD2"; // Merah sekilas
+                setTimeout(() => document.body.style.backgroundColor = "#E0F7FA", 300);
+                alert("Salah sayang.. Jawaban yang benar: " + questions[currentIdx].ans);
+            }
+
+            currentIdx++;
+            if(currentIdx < questions.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('screen-game').classList.remove('active');
+            document.getElementById('screen-result').classList.add('active');
+            
+            document.getElementById('final-name').innerText = studentName;
+            document.getElementById('final-class').innerText = studentClass;
+            document.getElementById('final-score').innerText = score;
+            
+            // Tepuk tangan meriah (pake nada beep beruntun)
+            if(score > 70) {
+                let count = 0;
+                const clap = setInterval(() => {
+                    playTone(400 + Math.random()*200, 'square', 0.05);
+                    count++;
+                    if(count > 10) clearInterval(clap);
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>

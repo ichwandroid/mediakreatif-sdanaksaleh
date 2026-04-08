@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Iklan - Kelas 5 SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
+        .timer-bar { transition: width 1s linear; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 glass shadow-md px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-indigo-700 flex items-center">
+                <i class="fas fa-rectangle-ad mr-2"></i>EduIklan
+            </h1>
+            <div class="hidden md:flex space-x-8">
+                <button onclick="showSection('materi')" class="hover:text-indigo-600 font-semibold transition">Materi</button>
+                <button onclick="startQuizFlow()" class="hover:text-indigo-600 font-semibold transition">Kuis (30 Detik)</button>
+                <button onclick="showSection('esai')" class="hover:text-indigo-600 font-semibold transition">Latihan Esai</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12 px-6 text-center shadow-inner">
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-3">Kuasai Materi Iklan!</h2>
+        <p class="text-lg opacity-90 max-w-2xl mx-auto">Mari belajar mengenali pesan persuasif dan jenis-jenis iklan dengan cara yang seru dan interaktif.</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6">
+        
+        <!-- Materi Section -->
+        <section id="section-materi" class="space-y-10 py-6">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border-t-8 border-indigo-500">
+                    <div class="text-indigo-500 mb-4 text-3xl"><i class="fas fa-lightbulb"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">Apa itu Iklan?</h3>
+                    <p class="text-gray-600 leading-relaxed text-lg">Iklan adalah berita pesanan untuk mendorong atau membujuk khalayak ramai agar tertarik pada barang dan jasa yang ditawarkan.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border-t-8 border-purple-500">
+                    <div class="text-purple-500 mb-4 text-3xl"><i class="fas fa-check-double"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">Ciri-Ciri Utama</h3>
+                    <ul class="space-y-3 text-gray-600 font-medium">
+                        <li class="flex items-center"><i class="fas fa-info-circle mr-3 text-green-500"></i> Informatif (Memberi keterangan)</li>
+                        <li class="flex items-center"><i class="fas fa-comment-dots mr-3 text-blue-500"></i> Komunikatif (Bahasa akrab)</li>
+                        <li class="flex items-center"><i class="fas fa-bolt mr-3 text-yellow-500"></i> Singkat & Padat</li>
+                        <li class="flex items-center"><i class="fas fa-image mr-3 text-red-500"></i> Visual Menarik</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white p-10 rounded-3xl shadow-sm text-center">
+                <h3 class="text-3xl font-bold mb-10 text-indigo-900">4 Jenis Iklan Berdasarkan Isi</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="p-6 bg-blue-50 rounded-2xl hover:scale-105 transition duration-300 border-b-4 border-blue-400">
+                        <i class="fas fa-bell text-3xl text-blue-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Pemberitahuan</h4>
+                        <p class="text-sm text-gray-600">Info duka cita, reuni, atau acara keluarga.</p>
+                    </div>
+                    <div class="p-6 bg-emerald-50 rounded-2xl hover:scale-105 transition duration-300 border-b-4 border-emerald-400">
+                        <i class="fas fa-heart text-3xl text-emerald-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Layanan Masyarakat</h4>
+                        <p class="text-sm text-gray-600">Edukasi positif: kesehatan, lingkungan.</p>
+                    </div>
+                    <div class="p-6 bg-amber-50 rounded-2xl hover:scale-105 transition duration-300 border-b-4 border-amber-400">
+                        <i class="fas fa-tag text-3xl text-amber-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Penawaran (Niaga)</h4>
+                        <p class="text-sm text-gray-600">Menawarkan produk atau jasa (Laundry, dll).</p>
+                    </div>
+                    <div class="p-6 bg-purple-50 rounded-2xl hover:scale-105 transition duration-300 border-b-4 border-purple-400">
+                        <i class="fas fa-search-dollar text-3xl text-purple-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Permintaan</h4>
+                        <p class="text-sm text-gray-600">Mengajak kerja sama/lowongan kerja.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kuis Section -->
+        <section id="section-kuis" class="hidden py-6">
+            <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+                <!-- Progress Timer Bar -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gray-100">
+                    <div id="timer-progress" class="h-full bg-indigo-600 timer-bar" style="width: 100%"></div>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                    <div class="text-indigo-900">
+                        <span id="q-number" class="text-sm font-bold uppercase tracking-widest text-indigo-400">Soal 1 / 20</span>
+                    </div>
+                    <div class="flex items-center space-x-3 bg-indigo-50 px-5 py-2 rounded-full border border-indigo-100">
+                        <i class="fas fa-clock text-indigo-600 animate-pulse"></i>
+                        <span id="timer-text" class="text-2xl font-mono font-bold text-indigo-700">30s</span>
+                    </div>
+                </div>
+                
+                <div id="quiz-content" class="min-h-[300px]">
+                    <!-- Questions will be injected here -->
+                </div>
+
+                <div id="quiz-result" class="hidden text-center py-12 animate-fadeIn">
+                    <div id="score-circle" class="w-40 h-40 bg-indigo-600 text-white rounded-full flex flex-col items-center justify-center mx-auto mb-6 shadow-xl border-8 border-indigo-100">
+                        <span class="text-5xl font-black" id="final-score">0</span>
+                        <span class="text-xs font-bold uppercase">Skor Akhir</span>
+                    </div>
+                    <h4 class="text-3xl font-bold mb-4" id="result-title">Selesai!</h4>
+                    <p id="result-message" class="text-gray-600 text-lg mb-8 max-w-md mx-auto"></p>
+                    <button onclick="resetQuiz()" class="bg-indigo-600 text-white px-10 py-4 rounded-2xl hover:bg-indigo-700 transition font-bold shadow-lg">Mainkan Lagi</button>
+                </div>
+
+                <div id="quiz-controls" class="flex justify-between mt-10 border-t pt-8">
+                    <button id="prev-btn" onclick="changeQuestion(-1)" class="px-6 py-3 font-bold text-gray-500 hover:text-indigo-600 disabled:opacity-0 transition">
+                        <i class="fas fa-arrow-left mr-2"></i> Kembali
+                    </button>
+                    <button id="next-btn" onclick="manualNext()" class="bg-indigo-600 text-white px-10 py-3 rounded-2xl hover:bg-indigo-700 transition font-bold shadow-lg">
+                        Berikutnya <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Esai Section -->
+        <section id="section-esai" class="hidden py-6">
+            <div class="bg-white p-10 rounded-3xl shadow-xl">
+                <h3 class="text-2xl font-bold mb-8 text-indigo-900 border-b pb-4">Latihan Menulis Esai</h3>
+                <div class="space-y-8">
+                    <div class="space-y-3">
+                        <label class="font-bold text-gray-700 block">1. Jelaskan perbedaan Iklan Layanan Masyarakat dan Iklan Niaga!</label>
+                        <textarea class="w-full p-5 rounded-2xl border-2 border-gray-100 focus:border-indigo-400 focus:ring-0 transition outline-none" rows="3" placeholder="Jawabanmu..."></textarea>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="font-bold text-gray-700 block">2. Mengapa gambar yang menarik sangat penting dalam iklan cetak?</label>
+                        <textarea class="w-full p-5 rounded-2xl border-2 border-gray-100 focus:border-indigo-400 focus:ring-0 transition outline-none" rows="3" placeholder="Jawabanmu..."></textarea>
+                    </div>
+                    <button onclick="alert('Bagus! Teruslah berlatih agar semakin mahir!')" class="w-full gradient-bg text-white py-4 rounded-2xl font-bold hover:opacity-90 transition shadow-xl text-lg">Kirim Jawaban</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-indigo-950 text-white py-12 mt-20">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <p class="text-xl font-bold mb-2">EduIklan v2.0</p>
+            <p class="text-indigo-300 opacity-70">Media Belajar Digital Bahasa Indonesia - Berdasarkan Materi Iklan Kelas 5</p>
+        </div>
+    </footer>
+
+    <script>
+        const questions = [
+            { q: "Menurut KBBI, iklan bertujuan membujuk khalayak agar...", a: ["Tertarik pada barang/jasa", "Ingin berteman", "Pintar menabung", "Rajin membaca"], c: 0 },
+            { q: "Ciri bahasa iklan yang komunikatif biasanya terasa...", a: ["Kaku dan formal", "Akrab dan santai", "Sulit dimengerti", "Sangat panjang"], c: 1 },
+            { q: "Kalimat yang menjelaskan detail harga dan bahan produk disebut kalimat...", a: ["Narasi", "Persuasif", "Komunikatif", "Informatif"], c: 3 },
+            { q: "Iklan lowongan pekerjaan termasuk jenis iklan...", a: ["Penawaran", "Pemberitahuan", "Permintaan", "Layanan Masyarakat"], c: 2 },
+            { q: "Iklan duka cita termasuk kategori iklan...", a: ["Pemberitahuan", "Niaga", "Permintaan", "Layanan Masyarakat"], c: 0 },
+            { q: "Siapa yang biasanya membuat Iklan Layanan Masyarakat?", a: ["Toko kelontong", "Pemerintah/LSM", "Anak sekolah", "Penjual jasa cuci"], c: 1 },
+            { q: "Televisi, radio, dan internet adalah media iklan jenis...", a: ["Cetak", "Luar ruang", "Elektronik", "Statik"], c: 2 },
+            { q: "Koran dan majalah termasuk media iklan...", a: ["Digital", "Cetak", "Elektronik", "Audio"], c: 1 },
+            { q: "Iklan 'Stop Pemanasan Global' bertujuan untuk...", a: ["Menjual kipas angin", "Edukasi publik", "Menawarkan AC", "Mencari kerja"], c: 1 },
+            { q: "Iklan Niaga memiliki tujuan utama untuk...", a: ["Mencari keuntungan", "Menghibur", "Pemberitahuan reuni", "Belajar bahasa"], c: 0 },
+            { q: "Contoh kalimat komunikatif adalah...", a: ["Harga Rp10.000", "Bahan katun 100%", "Yuk, coba sekarang!", "Diskon hari ini"], c: 2 },
+            { q: "Mana warna kertas yang DILARANG di materi untuk poster?", a: ["Merah", "Kuning", "Hitam & Ungu", "Hijau"], c: 2 },
+            { q: "Agar menarik, teks iklan sebaiknya dipadukan dengan...", a: ["Video panjang", "Gambar menarik", "Lirik lagu", "Berita koran"], c: 1 },
+            { q: "Iklan penawaran jasa disebut juga iklan...", a: ["Permintaan", "Niaga", "Pemberitahuan", "Pribadi"], c: 1 },
+            { q: "Bahasa iklan harus 'padat', artinya...", a: ["Banyak kata", "Tidak ada jeda", "Inti pesan langsung", "Susah dibaca"], c: 2 },
+            { q: "Benar atau Salah: Iklan Niaga bertujuan mencari tenaga kerja.", a: ["Benar", "Salah"], c: 1 },
+            { q: "Benar atau Salah: Baliho termasuk media elektronik.", a: ["Benar", "Salah"], c: 1 },
+            { q: "Benar atau Salah: Iklan harus informatif.", a: ["Benar", "Salah"], c: 0 },
+            { q: "Benar atau Salah: 'Yuk' adalah contoh kata akrab.", a: ["Benar", "Salah"], c: 0 },
+            { q: "Benar atau Salah: Iklan duka cita dipasang oleh keluarga.", a: ["Benar", "Salah"], c: 0 }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timeLeft = 30;
+        let timerInterval = null;
+
+        function showSection(id) {
+            ['materi', 'kuis', 'esai'].forEach(s => {
+                document.getElementById(`section-${s}`).classList.add('hidden');
+            });
+            document.getElementById(`section-${id}`).classList.remove('hidden');
+            
+            if (id !== 'kuis') stopTimer();
+            window.scrollTo(0,0);
+        }
+
+        function startQuizFlow() {
+            showSection('kuis');
+            resetQuiz();
+        }
+
+        function startTimer() {
+            stopTimer();
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    autoNext();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function updateTimerDisplay() {
+            const timerText = document.getElementById('timer-text');
+            const progress = document.getElementById('timer-progress');
+            
+            timerText.innerText = `${timeLeft}s`;
+            
+            const percentage = (timeLeft / 30) * 100;
+            progress.style.width = `${percentage}%`;
+            
+            if (timeLeft <= 5) {
+                timerText.classList.add('text-red-500');
+                progress.classList.replace('bg-indigo-600', 'bg-red-500');
+            } else {
+                timerText.classList.remove('text-red-500');
+                progress.classList.replace('bg-red-500', 'bg-indigo-600');
+            }
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quiz-content');
+            const qNumber = document.getElementById('q-number');
+            const q = questions[currentQuestion];
+            
+            qNumber.innerText = `Soal ${currentQuestion + 1} / ${questions.length}`;
+
+            let optionsHtml = q.a.map((opt, idx) => `
+                <button onclick="selectOption(${idx})" 
+                        class="group w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 transform hover:scale-[1.01] ${userAnswers[currentQuestion] === idx ? 'border-indigo-600 bg-indigo-50 shadow-md ring-2 ring-indigo-200' : 'border-gray-100 hover:border-indigo-200 bg-white'}">
+                    <div class="flex items-center">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center font-bold mr-4 transition ${userAnswers[currentQuestion] === idx ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-indigo-100'}">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span class="text-lg ${userAnswers[currentQuestion] === idx ? 'text-indigo-900 font-bold' : 'text-gray-700'}">${opt}</span>
+                    </div>
+                </button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="animate-fadeIn">
+                    <h4 class="text-2xl font-bold mb-8 text-indigo-950 leading-snug">${q.q}</h4>
+                    <div class="grid gap-4">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('next-btn').innerHTML = currentQuestion === questions.length - 1 ? 'Lihat Hasil <i class="fas fa-flag-checkered ml-2"></i>' : 'Berikutnya <i class="fas fa-arrow-right ml-2"></i>';
+            
+            startTimer();
+        }
+
+        function selectOption(idx) {
+            userAnswers[currentQuestion] = idx;
+            renderQuestion();
+        }
+
+        function manualNext() {
+            if (currentQuestion === questions.length - 1) {
+                finishQuiz();
+            } else {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        function autoNext() {
+            if (currentQuestion === questions.length - 1) {
+                finishQuiz();
+            } else {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        function changeQuestion(step) {
+            currentQuestion += step;
+            renderQuestion();
+        }
+
+        function finishQuiz() {
+            stopTimer();
+            const score = userAnswers.reduce((acc, curr, idx) => (curr === questions[idx].c ? acc + 1 : acc), 0);
+            const finalScore = Math.round((score / questions.length) * 100);
+            
+            document.getElementById('quiz-content').classList.add('hidden');
+            document.getElementById('quiz-controls').classList.add('hidden');
+            document.getElementById('q-number').parentElement.classList.add('hidden');
+            document.getElementById('timer-text').parentElement.classList.add('hidden');
+            document.getElementById('timer-progress').parentElement.classList.add('hidden');
+            
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('final-score').innerText = finalScore;
+            
+            let msg = "";
+            if(finalScore === 100) msg = "Luar biasa! Kamu memahami semua materi iklan dengan sangat baik.";
+            else if(finalScore >= 75) msg = "Bagus sekali! Kamu sudah menguasai sebagian besar materi.";
+            else msg = "Ayo belajar lagi! Kamu bisa mengulang materi di atas.";
+            
+            document.getElementById('result-message').innerText = msg;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            
+            document.getElementById('quiz-content').classList.remove('hidden');
+            document.getElementById('quiz-controls').classList.remove('hidden');
+            document.getElementById('q-number').parentElement.classList.remove('hidden');
+            document.getElementById('timer-text').parentElement.classList.remove('hidden');
+            document.getElementById('timer-progress').parentElement.classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            
+            renderQuestion();
+        }
+
+        // Initialize first render
+        window.onload = () => {
+            // Pre-load default state
+        };
+    </script>
+</body>
+</html>

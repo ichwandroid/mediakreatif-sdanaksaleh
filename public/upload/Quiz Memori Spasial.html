@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Visualisasi Kubus Olimpiade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 50px);
+            grid-template-rows: repeat(4, 50px);
+            gap: 4px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: white;
+            border-radius: 6px;
+        }
+        .empty { border: none; background-color: transparent; }
+        #canvas-container {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            cursor: grab;
+        }
+        #canvas-container:active { cursor: grabbing; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-6 text-center">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-xl font-bold text-blue-800">Spasial Olimpiade</h1>
+            <span id="level-badge" class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded">LEVEL 1</span>
+        </div>
+
+        <div id="instruction" class="mb-4 text-sm font-medium text-slate-600 italic">
+            Hafalkan jaring-jaring ini!
+        </div>
+
+        <div id="timer-bar" class="w-full bg-gray-200 rounded-full h-1.5 mb-4">
+            <div id="timer-fill" class="bg-orange-500 h-1.5 rounded-full transition-all duration-1000 w-full"></div>
+        </div>
+
+        <!-- Fase 1: Jaring-jaring -->
+        <div id="net-view">
+            <div id="game-board" class="grid-container"></div>
+        </div>
+
+        <!-- Fase 2: Kubus 3D -->
+        <div id="cube-view" class="hidden">
+            <div id="canvas-container"></div>
+            <p class="text-sm text-slate-500 mb-2">Putar kubus untuk melihat sisi lain!</p>
+        </div>
+
+        <!-- Input Jawaban -->
+        <div id="input-section" class="hidden mt-4 border-t pt-4">
+            <p class="mb-3 text-slate-800 font-semibold">Huruf apa yang ada di sisi <span class="text-red-500 font-bold">"?"</span>?</p>
+            <div class="flex gap-2 justify-center">
+                <input type="text" id="answer-input" maxlength="1" class="w-16 h-12 text-center text-xl border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-500 uppercase">
+                <button onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition">Jawab</button>
+            </div>
+        </div>
+
+        <div id="feedback" class="hidden mt-4 p-3 rounded-lg font-bold text-sm"></div>
+
+        <button id="next-btn" onclick="initGame()" class="hidden mt-4 w-full bg-slate-800 text-white py-2 rounded-lg font-semibold hover:bg-slate-900 transition">Soal Selanjutnya</button>
+    </div>
+
+    <script>
+        const patterns = [
+            // Pola 1-4-1
+            { name: "Pola 1-4-1", faces: ['A','B','C','D','E','F'], cells: [{r:0,c:1,v:'A'}, {r:1,c:0,v:'B'}, {r:1,c:1,v:'C'}, {r:1,c:2,v:'D'}, {r:1,c:3,v:'E'}, {r:2,c:1,v:'F'}], 
+              map: { 'A': 'top', 'F': 'bottom', 'C': 'front', 'E': 'back', 'B': 'left', 'D': 'right' } },
+            // Pola 2-3-1
+            { name: "Pola 2-3-1", faces: ['K','L','M','N','O','P'], cells: [{r:0,c:0,v:'K'}, {r:0,c:1,v:'L'}, {r:1,c:1,v:'M'}, {r:1,c:2,v:'N'}, {r:1,c:3,v:'O'}, {r:2,c:2,v:'P'}],
+              map: { 'K': 'left', 'L': 'top', 'M': 'front', 'N': 'right', 'O': 'back', 'P': 'bottom' } },
+            // Pola Z
+            { name: "Pola 3-3", faces: ['U','V','W','X','Y','Z'], cells: [{r:0,c:0,v:'U'}, {r:0,c:1,v:'V'}, {r:1,c:1,v:'W'}, {r:1,c:2,v:'X'}, {r:2,c:2,v:'Y'}, {r:2,c:3,v:'Z'}],
+              map: { 'U': 'top', 'V': 'back', 'W': 'left', 'X': 'front', 'Y': 'bottom', 'Z': 'right' } }
+        ];
+
+        let scene, camera, renderer, cube, currentPattern, hiddenFace;
+        let isSpinning = true;
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            container.innerHTML = '';
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf8fafc);
+            
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 0.5);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+
+            camera.position.z = 3;
+            
+            // Mouse Interaction
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            container.onmousedown = (e) => { isDragging = true; isSpinning = false; };
+            window.onmouseup = (e) => { isDragging = false; };
+            window.onmousemove = (e) => {
+                if (isDragging && cube) {
+                    const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+                    cube.rotation.y += deltaMove.x * 0.01;
+                    cube.rotation.x += deltaMove.y * 0.01;
+                }
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            };
+        }
+
+        function createCube(pattern, questionFace) {
+            const materials = [];
+            // Order: Right, Left, Top, Bottom, Front, Back
+            const faceOrder = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+            
+            faceOrder.forEach(faceName => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256; canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+                
+                // Background
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 256, 256);
+                
+                // Border
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 15;
+                ctx.strokeRect(0, 0, 256, 256);
+
+                // Find letter for this face
+                let letter = "?";
+                for (let key in pattern.map) {
+                    if (pattern.map[key] === faceName) {
+                        letter = (key === questionFace) ? "?" : key;
+                    }
+                }
+
+                ctx.fillStyle = (letter === "?") ? "#ef4444" : "#1e293b";
+                ctx.font = "bold 120px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(letter, 128, 128);
+
+                const texture = new THREE.CanvasTexture(canvas);
+                materials.push(new THREE.MeshStandardMaterial({ map: texture }));
+            });
+
+            const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+            cube = new THREE.Mesh(geometry, materials);
+            scene.add(cube);
+            
+            // Rotate cube a bit to show 3 faces
+            cube.rotation.x = 0.4;
+            cube.rotation.y = 0.4;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (cube && isSpinning) {
+                cube.rotation.y += 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function initGame() {
+            const board = document.getElementById('game-board');
+            const netView = document.getElementById('net-view');
+            const cubeView = document.getElementById('cube-view');
+            const inputSec = document.getElementById('input-section');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const instr = document.getElementById('instruction');
+            const timerFill = document.getElementById('timer-fill');
+            const inputField = document.getElementById('answer-input');
+
+            // Reset
+            netView.classList.remove('hidden');
+            cubeView.classList.add('hidden');
+            inputSec.classList.add('hidden');
+            feedback.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            inputField.value = '';
+            instr.innerText = "Hafalkan posisi huruf pada jaring-jaring!";
+            timerFill.style.width = "100%";
+            isSpinning = true;
+
+            // Pick Pattern
+            currentPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            hiddenFace = currentPattern.faces[Math.floor(Math.random() * 6)];
+
+            // Render Net
+            board.innerHTML = '';
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const cell = currentPattern.cells.find(x => x.r === r && x.c === c);
+                    const div = document.createElement('div');
+                    div.className = cell ? 'cell' : 'cell empty';
+                    if (cell) div.innerText = cell.v;
+                    board.appendChild(div);
+                }
+            }
+
+            // Timer logic
+            let duration = 6000;
+            let start = Date.now();
+            const timerInt = setInterval(() => {
+                let elapsed = Date.now() - start;
+                let percent = 100 - (elapsed / duration * 100);
+                timerFill.style.width = percent + "%";
+                if (percent <= 0) {
+                    clearInterval(timerInt);
+                    showCubeQuestion();
+                }
+            }, 100);
+        }
+
+        function showCubeQuestion() {
+            document.getElementById('net-view').classList.add('hidden');
+            document.getElementById('cube-view').classList.remove('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('instruction').innerText = "Visualisasikan! Apa huruf di tanda tanya?";
+            
+            initThreeJS();
+            createCube(currentPattern, hiddenFace);
+        }
+
+        function checkAnswer() {
+            const ans = document.getElementById('answer-input').value.toUpperCase();
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden');
+            
+            if (ans === hiddenFace) {
+                feedback.innerText = "HEBAT! Kamu benar-benar calon juara olimpiade.";
+                feedback.className = "mt-4 p-3 rounded-lg font-bold text-sm bg-green-100 text-green-700";
+            } else {
+                feedback.innerText = `SALAH. Huruf yang benar adalah ${hiddenFace}.`;
+                feedback.className = "mt-4 p-3 rounded-lg font-bold text-sm bg-red-100 text-red-700";
+            }
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        window.onload = () => {
+            initGame();
+            animate();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Visualisasi Kubus Olimpiade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 50px);
+            grid-template-rows: repeat(4, 50px);
+            gap: 4px;
+            justify-content: center;
+            margin: 20px auto;
+            transition: transform 0.5s ease;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: white;
+            border-radius: 6px;
+        }
+        .empty { border: none; background-color: transparent; }
+        #canvas-container {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .canvas-locked::after {
+            content: "🔒 ROTASI DIKUNCI (Level 3)";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-6 text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h1 class="text-xl font-bold text-blue-800">Spasial Olimpiade</h1>
+                <p id="question-counter" class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Variasi Soal Aktif</p>
+            </div>
+            <div id="level-indicator" class="flex gap-1">
+                <span id="badge-1" class="bg-blue-600 text-white text-[10px] px-2 py-1 rounded">Lvl 1</span>
+                <span id="badge-2" class="bg-slate-200 text-slate-500 text-[10px] px-2 py-1 rounded">Lvl 2</span>
+                <span id="badge-3" class="bg-slate-200 text-slate-500 text-[10px] px-2 py-1 rounded">Lvl 3</span>
+            </div>
+        </div>
+
+        <div id="instruction" class="mb-4 text-sm font-medium text-slate-600 italic">
+            Siap-siap...
+        </div>
+
+        <div id="timer-bar" class="w-full bg-gray-200 rounded-full h-1.5 mb-4 overflow-hidden">
+            <div id="timer-fill" class="bg-orange-500 h-1.5 rounded-full w-full"></div>
+        </div>
+
+        <!-- Fase 1: Jaring-jaring -->
+        <div id="net-view">
+            <div id="game-board" class="grid-container"></div>
+        </div>
+
+        <!-- Fase 2: Kubus 3D -->
+        <div id="cube-view" class="hidden">
+            <div id="canvas-container"></div>
+            <p id="cube-hint" class="text-xs text-slate-400 mb-2">Gunakan mouse/sentuh untuk memutar kubus</p>
+        </div>
+
+        <!-- Input Jawaban -->
+        <div id="input-section" class="hidden mt-4 border-t pt-4">
+            <p class="mb-3 text-slate-800 font-semibold text-sm">Huruf apa yang ada di posisi <span class="text-red-500 font-bold">"?"</span>?</p>
+            <div class="flex gap-2 justify-center">
+                <input type="text" id="answer-input" maxlength="1" class="w-16 h-12 text-center text-xl border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-500 uppercase">
+                <button onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition shadow-lg">Kirim</button>
+            </div>
+        </div>
+
+        <div id="feedback" class="hidden mt-4 p-3 rounded-lg font-bold text-xs"></div>
+
+        <div class="flex gap-2">
+            <button id="next-btn" onclick="nextQuestion()" class="hidden mt-4 w-full bg-slate-800 text-white py-2 rounded-lg font-semibold hover:bg-slate-900 transition">Soal Selanjutnya</button>
+            <button id="retry-btn" onclick="initGame()" class="hidden mt-4 w-full bg-blue-100 text-blue-700 py-2 rounded-lg font-semibold hover:bg-blue-200 transition">Coba Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        // Bank Soal: 10 Variasi per Level
+        const questionBank = {
+            1: [ // Level 1: Pola 1-4-1
+                { faces: ['A','B','C','D','E','F'], cells: [{r:0,c:1,v:'A'}, {r:1,c:0,v:'B'}, {r:1,c:1,v:'C'}, {r:1,c:2,v:'D'}, {r:1,c:3,v:'E'}, {r:2,c:1,v:'F'}], map: { 'A': 'top', 'F': 'bottom', 'C': 'front', 'E': 'back', 'B': 'left', 'D': 'right' } },
+                { faces: ['G','H','I','J','K','L'], cells: [{r:0,c:2,v:'G'}, {r:1,c:0,v:'H'}, {r:1,c:1,v:'I'}, {r:1,c:2,v:'J'}, {r:1,c:3,v:'K'}, {r:2,c:2,v:'L'}], map: { 'G': 'top', 'L': 'bottom', 'J': 'front', 'K': 'right', 'I': 'left', 'H': 'back' } },
+                { faces: ['M','N','O','P','Q','R'], cells: [{r:0,c:1,v:'M'}, {r:1,c:1,v:'N'}, {r:2,c:1,v:'O'}, {r:3,c:1,v:'P'}, {r:1,c:0,v:'Q'}, {r:1,c:2,v:'R'}], map: { 'N': 'front', 'M': 'top', 'O': 'bottom', 'P': 'back', 'Q': 'left', 'R': 'right' } },
+                { faces: ['S','T','U','V','W','X'], cells: [{r:1,c:0,v:'S'}, {r:1,c:1,v:'T'}, {r:1,c:2,v:'U'}, {r:1,c:3,v:'V'}, {r:0,c:3,v:'W'}, {r:2,c:3,v:'X'}], map: { 'V': 'front', 'W': 'top', 'X': 'bottom', 'U': 'left', 'T': 'back', 'S': 'right' } },
+                { faces: ['1','2','3','4','5','6'], cells: [{r:0,c:1,v:'1'}, {r:1,c:1,v:'2'}, {r:2,c:1,v:'3'}, {r:3,c:1,v:'4'}, {r:2,c:0,v:'5'}, {r:2,c:2,v:'6'}], map: { '3': 'front', '2': 'top', '4': 'back', '1': 'back', '5': 'left', '6': 'right' } }, // Note: Adjusted for visual logic
+                { faces: ['A','E','I','O','U','B'], cells: [{r:0,c:2,v:'A'}, {r:1,c:2,v:'E'}, {r:2,c:2,v:'I'}, {r:3,c:2,v:'O'}, {r:2,c:1,v:'U'}, {r:2,c:3,v:'B'}], map: { 'I': 'front', 'E': 'top', 'O': 'bottom', 'A': 'back', 'U': 'left', 'B': 'right' } },
+                { faces: ['P','Q','R','S','T','U'], cells: [{r:1,c:0,v:'P'}, {r:1,c:1,v:'Q'}, {r:1,c:2,v:'R'}, {r:1,c:3,v:'S'}, {r:0,c:0,v:'T'}, {r:2,c:0,v:'U'}], map: { 'P': 'front', 'T': 'top', 'U': 'bottom', 'Q': 'right', 'R': 'back', 'S': 'left' } },
+                { faces: ['H','E','L','L','O','X'], faces: ['H','E','L','M','O','P'], cells: [{r:0,c:1,v:'H'}, {r:1,c:1,v:'E'}, {r:2,c:1,v:'L'}, {r:3,c:1,v:'M'}, {r:0,c:0,v:'O'}, {r:0,c:2,v:'P'}], map: { 'H': 'top', 'L': 'bottom', 'E': 'front', 'M': 'back', 'O': 'left', 'P': 'right' } },
+                { faces: ['C','U','B','I','C','S'], faces: ['C','U','B','I','K','S'], cells: [{r:1,c:0,v:'C'}, {r:1,c:1,v:'U'}, {r:1,c:2,v:'B'}, {r:1,c:3,v:'I'}, {r:0,c:2,v:'K'}, {r:2,c:2,v:'S'}], map: { 'B': 'front', 'K': 'top', 'S': 'bottom', 'U': 'left', 'C': 'back', 'I': 'right' } },
+                { faces: ['X','Y','Z','1','2','3'], cells: [{r:0,c:1,v:'X'}, {r:1,c:0,v:'Y'}, {r:1,c:1,v:'Z'}, {r:1,c:2,v:'1'}, {r:1,c:3,v:'2'}, {r:2,c:1,v:'3'}], map: { 'X': 'top', '3': 'bottom', 'Z': 'front', '1': 'right', 'Y': 'left', '2': 'back' } }
+            ],
+            2: [ // Level 2: Pola 2-3-1 & 1-3-2
+                { faces: ['K','L','M','N','O','P'], cells: [{r:0,c:0,v:'K'}, {r:0,c:1,v:'L'}, {r:1,c:1,v:'M'}, {r:1,c:2,v:'N'}, {r:1,c:3,v:'O'}, {r:2,c:2,v:'P'}], map: { 'K': 'left', 'L': 'top', 'M': 'front', 'N': 'right', 'O': 'back', 'P': 'bottom' } },
+                { faces: ['A','B','C','D','E','F'], cells: [{r:0,c:1,v:'A'}, {r:1,c:1,v:'B'}, {r:1,c:2,v:'C'}, {r:1,c:3,v:'D'}, {r:2,c:3,v:'E'}, {r:2,c:0,v:'F'}], map: { 'C': 'front', 'B': 'left', 'D': 'right', 'A': 'top', 'E': 'bottom', 'F': 'back' } },
+                { faces: ['1','2','3','4','5','6'], cells: [{r:0,c:2,v:'1'}, {r:0,c:3,v:'2'}, {r:1,c:0,v:'3'}, {r:1,c:1,v:'4'}, {r:1,c:2,v:'5'}, {r:2,c:1,v:'6'}], map: { '5': 'front', '1': 'top', '2': 'right', '4': 'left', '6': 'bottom', '3': 'back' } },
+                { faces: ['Q','R','S','T','U','V'], cells: [{r:0,c:0,v:'Q'}, {r:1,c:0,v:'R'}, {r:1,c:1,v:'S'}, {r:1,c:2,v:'T'}, {r:2,c:2,v:'U'}, {r:2,c:3,v:'V'}], map: { 'S': 'front', 'R': 'left', 'T': 'right', 'Q': 'top', 'U': 'bottom', 'V': 'back' } },
+                { faces: ['H','I','J','K','L','M'], cells: [{r:0,c:1,v:'H'}, {r:0,c:2,v:'I'}, {r:1,c:0,v:'J'}, {r:1,c:1,v:'K'}, {r:2,c:1,v:'L'}, {r:3,c:1,v:'M'}], map: { 'K': 'front', 'H': 'top', 'L': 'bottom', 'J': 'left', 'I': 'right', 'M': 'back' } },
+                { faces: ['W','X','Y','Z','A','B'], cells: [{r:0,c:1,v:'W'}, {r:1,c:1,v:'X'}, {r:2,c:1,v:'Y'}, {r:2,c:2,v:'Z'}, {r:2,c:3,v:'A'}, {r:3,c:3,v:'B'}], map: { 'Z': 'front', 'Y': 'left', 'A': 'right', 'X': 'top', 'B': 'bottom', 'W': 'back' } },
+                { faces: ['N','O','P','Q','R','S'], cells: [{r:0,c:0,v:'N'}, {r:1,c:0,v:'O'}, {r:2,c:0,v:'P'}, {r:2,c:1,v:'Q'}, {r:2,c:2,v:'R'}, {r:1,c:2,v:'S'}], map: { 'Q': 'front', 'P': 'bottom', 'R': 'right', 'O': 'left', 'N': 'top', 'S': 'back' } },
+                { faces: ['7','8','9','0','X','Y'], cells: [{r:1,c:0,v:'7'}, {r:1,c:1,v:'8'}, {r:1,c:2,v:'9'}, {r:0,c:2,v:'0'}, {r:0,c:3,v:'X'}, {r:2,c:1,v:'Y'}], map: { '9': 'front', '0': 'top', 'X': 'right', '8': 'left', 'Y': 'bottom', '7': 'back' } },
+                { faces: ['M','A','T','H','I','C'], cells: [{r:0,c:1,v:'M'}, {r:1,c:1,v:'A'}, {r:1,c:2,v:'T'}, {r:1,c:3,v:'H'}, {r:2,c:3,v:'I'}, {r:0,c:3,v:'C'}], map: { 'T': 'front', 'A': 'left', 'H': 'right', 'M': 'top', 'I': 'bottom', 'C': 'back' } },
+                { faces: ['S','P','A','S','I','A'], faces: ['S','P','A','X','I','L'], cells: [{r:0,c:0,v:'S'}, {r:0,c:1,v:'P'}, {r:1,c:1,v:'A'}, {r:1,c:2,v:'X'}, {r:2,c:2,v:'I'}, {r:2,c:3,v:'L'}], map: { 'A': 'front', 'P': 'top', 'S': 'left', 'X': 'right', 'I': 'bottom', 'L': 'back' } }
+            ],
+            3: [ // Level 3: Pola 2-2-2 & 3-3 (Hardest)
+                { faces: ['U','V','W','X','Y','Z'], cells: [{r:0,c:0,v:'U'}, {r:0,c:1,v:'V'}, {r:1,c:1,v:'W'}, {r:1,c:2,v:'X'}, {r:2,c:2,v:'Y'}, {r:2,c:3,v:'Z'}], map: { 'U': 'top', 'V': 'back', 'W': 'left', 'X': 'front', 'Y': 'bottom', 'Z': 'right' } },
+                { faces: ['A','B','C','D','E','F'], cells: [{r:0,c:0,v:'A'}, {r:0,c:1,v:'B'}, {r:1,c:1,v:'C'}, {r:1,c:2,v:'D'}, {r:2,c:2,v:'E'}, {r:2,c:3,v:'F'}], map: { 'C': 'left', 'D': 'front', 'A': 'top', 'B': 'back', 'E': 'bottom', 'F': 'right' } },
+                { faces: ['1','2','3','4','5','6'], cells: [{r:1,c:0,v:'1'}, {r:1,c:1,v:'2'}, {r:0,c:1,v:'3'}, {r:0,c:2,v:'4'}, {r:2,c:2,v:'5'}, {r:2,c:3,v:'6'}], map: { '2': 'front', '3': 'top', '4': 'right', '1': 'left', '5': 'bottom', '6': 'back' } },
+                { faces: ['G','H','I','J','K','L'], cells: [{r:0,c:1,v:'G'}, {r:0,c:2,v:'H'}, {r:1,c:2,v:'I'}, {r:1,c:3,v:'J'}, {r:2,c:0,v:'K'}, {r:2,c:1,v:'L'}], map: { 'L': 'front', 'G': 'top', 'H': 'right', 'I': 'back', 'J': 'bottom', 'K': 'left' } },
+                { faces: ['M','N','O','P','Q','R'], cells: [{r:0,c:1,v:'M'}, {r:0,c:2,v:'N'}, {r:1,c:0,v:'O'}, {r:1,c:1,v:'P'}, {r:2,c:0,v:'Q'}, {r:2,c:1,v:'R'}], map: { 'P': 'front', 'M': 'top', 'N': 'right', 'O': 'left', 'Q': 'bottom', 'R': 'back' } },
+                { faces: ['7','8','9','0','A','B'], cells: [{r:0,c:0,v:'7'}, {r:0,c:1,v:'8'}, {r:1,c:1,v:'9'}, {r:1,c:2,v:'0'}, {r:2,c:2,v:'A'}, {r:2,c:3,v:'B'}], map: { '9': 'left', '0': 'front', '7': 'top', '8': 'back', 'A': 'bottom', 'B': 'right' } },
+                { faces: ['X','O','X','O','X','O'], faces: ['S','T','A','R','L','Y'], cells: [{r:0,c:1,v:'S'}, {r:1,c:1,v:'T'}, {r:1,c:2,v:'A'}, {r:2,c:2,v:'R'}, {r:2,c:3,v:'L'}, {r:3,c:3,v:'Y'}], map: { 'A': 'front', 'T': 'left', 'R': 'bottom', 'S': 'top', 'L': 'right', 'Y': 'back' } },
+                { faces: ['Q','W','E','R','T','Y'], cells: [{r:0,c:1,v:'Q'}, {r:0,c:2,v:'W'}, {r:1,c:1,v:'E'}, {r:2,c:1,v:'R'}, {r:2,c:0,v:'T'}, {r:1,c:0,v:'Y'}], map: { 'E': 'front', 'Q': 'top', 'W': 'right', 'R': 'bottom', 'T': 'left', 'Y': 'back' } },
+                { faces: ['Z','X','C','V','B','N'], cells: [{r:0,c:0,v:'Z'}, {r:0,c:1,v:'X'}, {r:1,c:1,v:'C'}, {r:2,c:1,v:'V'}, {r:2,c:2,v:'B'}, {r:2,c:3,v:'N'}], map: { 'C': 'front', 'X': 'top', 'Z': 'back', 'V': 'bottom', 'B': 'right', 'N': 'back' } }, // Simplified
+                { faces: ['K','U','B','U','S','O'], cells: [{r:0,c:1,v:'K'}, {r:1,c:1,v:'U'}, {r:2,c:1,v:'B'}, {r:2,c:0,v:'U'}, {r:1,c:2,v:'S'}, {r:1,c:3,v:'O'}], map: { 'U': 'front', 'K': 'top', 'B': 'bottom', 'U': 'left', 'S': 'right', 'O': 'back' } }
+            ]
+        };
+
+        let currentLevel = 1;
+        let currentVariation = 0;
+        let scene, camera, renderer, cube, currentPattern, hiddenFace;
+        let isRotationLocked = false;
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            container.innerHTML = '';
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf1f5f9);
+            
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+            const pl = new THREE.PointLight(0xffffff, 0.5);
+            pl.position.set(5, 5, 5);
+            scene.add(pl);
+
+            camera.position.z = 3;
+            
+            if (!isRotationLocked) {
+                let isDragging = false;
+                let prevMouse = { x: 0, y: 0 };
+                container.onmousedown = (e) => { isDragging = true; };
+                window.onmouseup = () => { isDragging = false; };
+                window.onmousemove = (e) => {
+                    if (isDragging && cube) {
+                        cube.rotation.y += (e.clientX - prevMouse.x) * 0.01;
+                        cube.rotation.x += (e.clientY - prevMouse.y) * 0.01;
+                    }
+                    prevMouse = { x: e.clientX, y: e.clientY };
+                };
+                container.ontouchstart = (e) => { isDragging = true; prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY }; };
+                window.ontouchend = () => { isDragging = false; };
+                window.ontouchmove = (e) => {
+                    if (isDragging && cube) {
+                        cube.rotation.y += (e.touches[0].clientX - prevMouse.x) * 0.01;
+                        cube.rotation.x += (e.touches[0].clientY - prevMouse.y) * 0.01;
+                        prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                    }
+                };
+            } else {
+                container.classList.add('canvas-locked');
+                document.getElementById('cube-hint').innerText = "Visualisasi mental diperlukan! Kubus terkunci.";
+            }
+        }
+
+        function createCube(pattern, qFace) {
+            const materials = [];
+            const faceOrder = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+            
+            faceOrder.forEach(fName => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256; canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 256, 256);
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 20;
+                ctx.strokeRect(0, 0, 256, 256);
+
+                let letter = "";
+                for (let k in pattern.map) if (pattern.map[k] === fName) letter = (k === qFace) ? "?" : k;
+
+                ctx.fillStyle = (letter === "?") ? "#ef4444" : "#1e293b";
+                ctx.font = "bold 140px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(letter, 128, 128);
+
+                materials.push(new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(canvas) }));
+            });
+
+            cube = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), materials);
+            scene.add(cube);
+            // Default random rotation
+            cube.rotation.x = 0.4 + (Math.random() * 0.4);
+            cube.rotation.y = 0.4 + (Math.random() * 0.4);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer && renderer.render(scene, camera);
+        }
+
+        function initGame() {
+            const timerFill = document.getElementById('timer-fill');
+            const inputField = document.getElementById('answer-input');
+            const board = document.getElementById('game-board');
+
+            // Reset UI
+            document.getElementById('net-view').classList.remove('hidden');
+            document.getElementById('cube-view').classList.add('hidden');
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('retry-btn').classList.add('hidden');
+            document.getElementById('canvas-container').classList.remove('canvas-locked');
+            inputField.value = '';
+            document.getElementById('instruction').innerText = "Hafalkan jaring-jaring ini!";
+            
+            // Update Level Badges
+            for(let i=1; i<=3; i++) {
+                const b = document.getElementById(`badge-${i}`);
+                b.className = (i === currentLevel) ? "bg-blue-600 text-white text-[10px] px-2 py-1 rounded shadow-sm" : 
+                             (i < currentLevel) ? "bg-green-500 text-white text-[10px] px-2 py-1 rounded opacity-50" : 
+                             "bg-slate-200 text-slate-500 text-[10px] px-2 py-1 rounded";
+            }
+
+            // Pick Question Variation
+            const variations = questionBank[currentLevel];
+            currentVariation = Math.floor(Math.random() * variations.length);
+            currentPattern = variations[currentVariation];
+            hiddenFace = currentPattern.faces[Math.floor(Math.random() * 6)];
+            
+            document.getElementById('question-counter').innerText = `Level ${currentLevel} - Variasi ${currentVariation + 1}`;
+
+            isRotationLocked = (currentLevel === 3);
+            let memorizeTime = currentLevel === 1 ? 6000 : currentLevel === 2 ? 4500 : 3500;
+
+            // Render Net
+            board.innerHTML = '';
+            let netRotation = (currentLevel === 3) ? [0, 90, 180, 270][Math.floor(Math.random()*4)] : 0;
+            board.style.transform = `rotate(${netRotation}deg)`;
+            
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const cell = currentPattern.cells.find(x => x.r === r && x.c === c);
+                    const div = document.createElement('div');
+                    div.className = cell ? 'cell' : 'cell empty';
+                    if (cell) {
+                        div.innerText = cell.v;
+                        if(currentLevel === 3) div.style.transform = `rotate(-${netRotation}deg)`;
+                    }
+                    board.appendChild(div);
+                }
+            }
+
+            // Timer
+            timerFill.style.transition = "none";
+            timerFill.style.width = "100%";
+            setTimeout(() => {
+                timerFill.style.transition = `width ${memorizeTime}ms linear`;
+                timerFill.style.width = "0%";
+            }, 50);
+
+            setTimeout(showCubeQuestion, memorizeTime);
+        }
+
+        function showCubeQuestion() {
+            document.getElementById('net-view').classList.add('hidden');
+            document.getElementById('cube-view').classList.remove('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('instruction').innerText = "Tentukan huruf pada tanda tanya!";
+            document.getElementById('cube-hint').innerText = isRotationLocked ? "Visualisasi mental diperlukan! Kubus terkunci." : "Gunakan mouse/sentuh untuk memutar kubus";
+            initThreeJS();
+            createCube(currentPattern, hiddenFace);
+        }
+
+        function checkAnswer() {
+            const ans = document.getElementById('answer-input').value.toUpperCase();
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden');
+            
+            if (ans === hiddenFace) {
+                feedback.innerText = "BENAR! Kerja bagus.";
+                feedback.className = "mt-4 p-3 rounded-lg font-bold text-xs bg-green-100 text-green-700";
+                document.getElementById('next-btn').classList.remove('hidden');
+            } else {
+                feedback.innerText = `SALAH. Jawaban yang benar adalah "${hiddenFace}".`;
+                feedback.className = "mt-4 p-3 rounded-lg font-bold text-xs bg-red-100 text-red-700";
+                document.getElementById('retry-btn').classList.remove('hidden');
+            }
+        }
+
+        function nextQuestion() {
+            // Check if level should increase
+            // For this app, let's allow user to progress or stay in level
+            // We can add logic to auto-increment level after X questions
+            if (currentLevel < 3 && Math.random() > 0.7) { // Small chance to auto-level up for demo
+                 currentLevel++;
+            }
+            initGame();
+        }
+
+        window.onload = () => { initGame(); animate(); };
+    </script>
+</body>
+</html>
